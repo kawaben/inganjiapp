@@ -42,16 +42,16 @@ export default function AdminPanel() {
   }
 
   return (
-    <div className="p-6 min-h-screen bg-gray-100">
-      <h1 className="text-3xl font-bold mb-6 text-center">Admin Messages</h1>
+    <div className="p-6 min-h-screen bg-gray-900">
+      <h1 className="text-3xl text-yellow-600 font-bold mb-6 text-center">Admin Messages</h1>
 
       {loading ? (
         <p>Loading messages...</p>
       ) : messages.length === 0 ? (
-        <p className="text-gray-600 text-center">No messages yet.</p>
+        <p className="text-yellow-600 text-center">No messages yet.</p>
       ) : (
-        <table className="w-full bg-white shadow-md rounded-lg overflow-hidden">
-          <thead className="bg-gray-200">
+        <table className="w-full bg-gray-800 shadow-md rounded-lg overflow-hidden">
+          <thead className="bg-gray-700 text-yellow-600">
             <tr>
               <th className="p-3 text-left">Name</th>
               <th className="p-3 text-left">Email</th>
@@ -62,13 +62,13 @@ export default function AdminPanel() {
           <tbody>
             {messages.map((msg) => (
               <tr key={msg.id} className="border-b">
-                <td className="p-3">{msg.name}</td>
-                <td className="p-3">{msg.email}</td>
-                <td className="p-3">{msg.message}</td>
-                <td className="p-3">
+                <td className="p-3 text-yellow-700">{msg.name}</td>
+                <td className="p-3 text-yellow-700">{msg.email}</td>
+                <td className="p-3 text-yellow-700">{msg.message}</td>
+                <td className="p-3 text-yellow-700">
                   <button
                     onClick={() => deleteMessage(msg.id)}
-                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                    className="bg-red-900 text-yellow-600 px-3 py-1 rounded hover:bg-red-800"
                   >
                     Delete
                   </button>
