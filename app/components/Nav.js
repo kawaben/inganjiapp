@@ -1,7 +1,9 @@
 // app/components/Nav.js
 import Link from "next/link";
+import { useState } from "react";
 
 export default function Nav() {
+  const [isOpen, setIsOpen] = useState(false);
   return (
     <nav className="bg-red-900 p-5">
       <div className="container mx-auto flex justify-between items-center">
@@ -26,7 +28,7 @@ export default function Nav() {
 
         {/* Mobile Hamburger Icon */}
         <div className="md:hidden flex items-center">
-          <button id="menu-toggle" className="text-yellow-600">
+          <button id="menu-toggle" onClick={() => setIsOpen(!isOpen)} className="text-yellow-600 hover:text-yellow-300">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -46,22 +48,22 @@ export default function Nav() {
       </div>
 
       {/* Mobile Menu (hidden by default) */}
-      <div id="mobile-menu" className="md:hidden bg-blue-700 hidden">
+      <div id="mobile-menu" className={`md:hidden transition-all duration-300 ${isOpen ? "block" : "hidden"}`} >
         <Link
           href="/"
-          className="block text-white py-2 px-4 hover:bg-blue-500"
+          className="block text-yellow-600 py-2 px-4 hover:text-yellow-300"
         >
           Home
         </Link>
         <Link
           href="/about"
-          className="block text-white py-2 px-4 hover:bg-blue-500"
+          className="block text-yellow-600 py-2 px-4 hover:text-yellow-300"
         >
           About
         </Link>
         <Link
           href="/contact"
-          className="block text-white py-2 px-4 hover:bg-blue-500"
+          className="block text-yellow-600 py-2 px-4 hover:text-yellow-300"
         >
           Contact
         </Link>

@@ -33,43 +33,43 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
-      <h1 className="text-3xl font-bold mb-6">Contact Us</h1>
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 p-4">
+      <h1 className="text-3xl text-yellow-600 font-bold mb-6">Contact Us</h1>
+      <form onSubmit={handleSubmit} className="bg-gray-800 p-6 rounded-lg shadow-md w-full max-w-md">
         <input
           type="text"
           name="name"
-          placeholder="Your Name"
+          placeholder="Name"
           value={formData.name}
           onChange={handleChange}
           required
-          className="w-full p-3 border border-gray-300 rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full p-3 text-white border border-gray-700 rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-yellow-600"
         />
         <input
           type="email"
           name="email"
-          placeholder="Your Email"
+          placeholder="Email"
           value={formData.email}
           onChange={handleChange}
           required
-          className="w-full p-3 border border-gray-300 rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full p-3 text-white border border-gray-700 rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-yellow-600"
         />
         <textarea
           name="message"
-          placeholder="Your Message"
+          placeholder="Message"
           value={formData.message}
           onChange={handleChange}
           required
-          className="w-full p-3 border border-gray-300 rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full p-3 text-white border border-gray-700 rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-yellow-600"
         />
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition"
+          className="w-full bg-red-900 text-yellow-600 p-3 rounded-lg hover:bg-red-800 text-yellow-300 transition"
         >
           Send Message
         </button>
       </form>
-      {status && <p className="mt-4 text-gray-700">{status}</p>}
+      {status && <p className="mt-4 text-yellow-600">{status}</p>}
     </div>
   );
 }
