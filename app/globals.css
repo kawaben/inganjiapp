@@ -1,26 +1,55 @@
+/* styles/globals.css */
 @import "tailwindcss";
 
+/* Custom CSS Variables (Colors) */
 :root {
-  --background: #ffffff;
+  --background: #F4C198;
   --foreground: #171717;
+  --text: #0c0805;
+  --primary: #e08325;
+  --secondary: #B8B8B8;
+  --accent: #FF5733;
+  --link: #007BFF;
+  --hover: #FF4500;
+  --border: #CCCCCC;
+  --highlight: #FFFF00;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
+/* Dark Mode Customization */
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --primary: #3498db;
+    --secondary: #7f8c8d;
   }
 }
 
+/* Tailwind's Custom Classes */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global Body Styles */
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Example Custom Styles */
+nav{
+  background: var(--background);
+}
+a {
+  color: var(--text);
+}
+a:hover {
+  color: var(--primary);
+}
+
+
+
+.highlight {
+  background-color: var(--highlight);
 }
