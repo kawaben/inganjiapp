@@ -14,6 +14,9 @@ import "../globals.css";
 export default function Nav() {
   const [isOpen, setIsOpen] = useState(false);
   const [activePanel, setActivePanel] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredSuggestions, setFilteredSuggestions] = useState([]);
+  const allSuggestions = ["Tshirt", "Shoes", "Jacket", "Hat", "Underwear", "Glasses"];
 
   const handleIconClick = (panelName) => {
     setActivePanel(activePanel === panelName ? null : panelName);
@@ -37,6 +40,19 @@ export default function Nav() {
     { id: 3, name: "Glasses", price: 15.0, quantity: 1 },
   ]);
 
+  const [wishlistItems, setWishlistItems] = useState([
+    { id: 1, name: "Black T-Shirt" },
+    { id: 2, name: "Nike Sneakers" },
+    { id: 3, name: "Leather Jacket" },
+  ]);
+
+  const [notifications, setNotifications] = useState([
+    { id: 1, message: "🔥 New Sale on Shoes!" },
+    { id: 2, message: "📢 Your order is out for delivery!" },
+    { id: 3, message: "🎉 New products added to Accessories" },
+  ]);
+  
+
   const totalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
 
   const updateQuantity = (id, amount) => {
@@ -55,9 +71,40 @@ export default function Nav() {
   };
   
   
+  const removeFromWishlist = (id) => {
+    setWishlistItems((prev) => prev.filter((item) => item.id !== id));
+     // Prevent the wishlist from closing
+     setTimeout(() => setActivePanel("wishlist"), 0);
+  };
+  
+  const dismissNotification = (id) => {
+    setNotifications((prev) => prev.filter((notification) => notification.id !== id));
+     // Prevent the notification from closing
+     setTimeout(() => setActivePanel("notifications"), 0);
+  };
 
-
-
+  const handleSearchChange = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+  
+    if (query.length > 0) {
+      const filtered = allSuggestions.filter((item) =>
+        item.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredSuggestions(filtered);
+    } else {
+      setFilteredSuggestions([]);
+    }
+  };
+  // searcbar suggestion 
+  
+  const handleSuggestionClick = (suggestion, event) => {
+    setSearchQuery(suggestion);
+    setFilteredSuggestions([]); // Hide the suggestions after selection
+    setTimeout(() => setActivePanel("search"), 0);// Prevent closing the panel
+  };
+  
+  
   return (
     <nav className="fixed w-full p-3 z-50 bg-white shadow-md">
       <div className="container mx-auto flex justify-between items-center">
@@ -125,46 +172,68 @@ export default function Nav() {
               <h2 className="text-lg font-bold uppercase text-black mb-4">Search</h2>
               <input
                 type="text"
+                value={searchQuery}
+                onChange={handleSearchChange}
                 placeholder="What Are You Looking For?"
                 className="w-full p-3 border-none rounded-md bg-[#3a3a3a] text-white placeholder-gray-300"
               />
-              <h3 className="text-sm mt-6 text-gray-700 font-semibold">Suggestions</h3>
-              <ul className="mt-2 space-y-2 text-gray-800">
-                {["Tshirt", "Shoes", "Jacket", "Hat", "Underwear", "Glasses"].map((item) => (
-                  <li key={item} className="hover:text-orange-500 cursor-pointer">
-                    {item}
-                  </li>
-                ))}
-              </ul>
+              {filteredSuggestions.length > 0 && (
+                <ul className="mt-2 bg-white shadow-md rounded-md max-h-40 overflow-y-auto">
+                  {filteredSuggestions.map((item) => (
+                    <li
+                      key={item}
+                      className="p-2 hover:bg-gray-200 cursor-pointer"
+                      onClick={(e) => handleSuggestionClick(item, e)} // Pass event here
+                    >
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </>
           )}
+
+
 
           {/* Notifications Panel */}
           {activePanel === "notifications" && (
             <>
-              <h2 className="text-lg font-bold uppercase text-black mb-4">Notifications</h2>
+              <h2 className="text-lg font-bold uppercase text-black mb-4">Notifications 🔔</h2>
               <ul className="space-y-4">
-                <li className="p-3 bg-white rounded shadow-sm">🔥 New Sale on Shoes!</li>
-                <li className="p-3 bg-white rounded shadow-sm">📢 Your order is out for delivery!</li>
-                <li className="p-3 bg-white rounded shadow-sm">🎉 New products added to Accessories</li>
+                {notifications.length > 0 ? (
+                  notifications.map((notification) => (
+                    <li key={notification.id} className="p-3 bg-white rounded shadow-sm flex justify-between">
+                      {notification.message}
+                      <button onClick={() => dismissNotification(notification.id)} className="text-red-500">
+                        <TrashIcon className="w-5 h-5" />
+                      </button>
+                    </li>
+                  ))
+                ) : (
+                  <p className="text-gray-500">No new notifications.</p>
+                )}
               </ul>
             </>
           )}
+
 
           {/* Wishlist Panel */}
           {activePanel === "wishlist" && (
             <>
               <h2 className="text-lg font-bold uppercase text-black mb-4">Your Wishlist ❤️</h2>
               <ul className="space-y-4">
-                <li className="p-3 bg-white rounded shadow-sm flex justify-between">
-                  Black T-Shirt <button className="text-red-500">✕</button>
-                </li>
-                <li className="p-3 bg-white rounded shadow-sm flex justify-between">
-                  Nike Sneakers <button className="text-red-500">✕</button>
-                </li>
-                <li className="p-3 bg-white rounded shadow-sm flex justify-between">
-                  Leather Jacket <button className="text-red-500">✕</button>
-                </li>
+                {wishlistItems.length > 0 ? (
+                  wishlistItems.map((item) => (
+                    <li key={item.id} className="p-3 bg-white rounded shadow-sm flex justify-between">
+                      {item.name}
+                      <button onClick={() => removeFromWishlist(item.id)} className="text-red-500">
+                        <TrashIcon className="w-5 h-5" />
+                      </button>
+                    </li>
+                  ))
+                ) : (
+                  <p className="text-gray-500">Your wishlist is empty.</p>
+                )}
               </ul>
             </>
           )}
