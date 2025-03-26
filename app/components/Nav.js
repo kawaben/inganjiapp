@@ -153,7 +153,7 @@ export default function Nav() {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden transition-all duration-300 bg-white p-4">
+        <div className="md:hidden transition-all duration-300  p-4">
           <Link href="/men" className="block py-2">MEN</Link>
           <Link href="/accessories" className="block py-2">ACCESSORIES</Link>
           <Link href="/women" className="block py-2">WOMEN</Link>
@@ -163,7 +163,7 @@ export default function Nav() {
 
       {/* Panels */}
       {activePanel && (
-        <div className={`fixed top-16 right-0 w-full md:w-1/3 h-screen bg-[#F4C198] shadow-lg transition-transform duration-300 panel p-5 z-10 ${activePanel ? "translate-x-0" : "translate-x-full"}`}>
+        <div className={`fixed top-16 right-0 w-full md:w-1/3 h-screen bg-[#f8e2d2] shadow-lg transition-transform duration-300 panel p-5 z-10 ${activePanel ? "translate-x-0" : "translate-x-full"}`}>
           <button className="text-gray-500 float-right" onClick={() => setActivePanel(null)}>✕</button>
 
           {/* Search Panel */}
@@ -175,7 +175,7 @@ export default function Nav() {
                 value={searchQuery}
                 onChange={handleSearchChange}
                 placeholder="What Are You Looking For?"
-                className="w-full p-3 border-none rounded-md bg-[#3a3a3a] text-white placeholder-gray-300"
+                className="w-full p-3 border-none rounded-md bg-[#3a3a3a] text-[#f8e2d2] placeholder-gray-300"
               />
               {filteredSuggestions.length > 0 && (
                 <ul className="mt-2 bg-white shadow-md rounded-md max-h-40 overflow-y-auto">
@@ -197,7 +197,7 @@ export default function Nav() {
                     setFilteredSuggestions([]);
                     setTimeout(() => setActivePanel("search"), 0);
                   }}
-                  className="mt-3 bg-red-500 text-white p-2 w-full rounded-md"
+                  className="mt-3 bg-[#e08325] text-[#f8e2d2] p-2 w-full rounded-md"
                 >
                   Clear All
                 </button>
@@ -216,7 +216,7 @@ export default function Nav() {
                   notifications.map((notification) => (
                     <li key={notification.id} className="p-3 bg-white rounded shadow-sm flex justify-between">
                       {notification.message}
-                      <button onClick={() => dismissNotification(notification.id)} className="text-red-500">
+                      <button onClick={() => dismissNotification(notification.id)} className="text-[#e08325]">
                         <TrashIcon className="w-5 h-5" />
                       </button>
                     </li>
@@ -229,7 +229,7 @@ export default function Nav() {
                 <button
                   onClick={() => {setNotifications([]);setTimeout(() => setActivePanel("notifications"), 0);}}
                   
-                  className="mt-4 bg-red-500 text-white p-2 w-full rounded-md"
+                  className="mt-4 bg-[#e08325] text-[#f8e2d2] p-2 w-full rounded-md"
                 >
                   Clear All
                 </button>
@@ -248,7 +248,7 @@ export default function Nav() {
                     wishlistItems.map((item) => (
                       <li key={item.id} className="p-3 bg-white rounded shadow-sm flex justify-between">
                         {item.name}
-                        <button onClick={() => removeFromWishlist(item.id)} className="text-red-500">
+                        <button onClick={() => removeFromWishlist(item.id)} className="text-[#e08325]">
                           <TrashIcon className="w-5 h-5" />
                         </button>
                       </li>
@@ -260,7 +260,7 @@ export default function Nav() {
                 {wishlistItems.length > 0 && (
                   <button
                     onClick={() => {setWishlistItems([]);setTimeout(() => setActivePanel("wishlist"), 0);}}
-                    className="mt-4 bg-red-500 text-white p-2 w-full rounded-md"
+                    className="mt-4 bg-[#e08325] text-[#f8e2d2] p-2 w-full rounded-md"
                   >
                     Clear All
                   </button>
@@ -274,7 +274,8 @@ export default function Nav() {
               <>
                 <h2 className="text-lg font-bold uppercase text-black mb-4">Your Cart</h2>
                 <div className="space-y-4">
-                  {cartItems.map((item) => (
+                {wishlistItems.length > 0 ? (
+                  cartItems.map((item) => (
                     <div key={item.id} className="flex items-center justify-between bg-white p-3 rounded shadow-sm">
                       <div>
                         <p className="font-semibold">{item.name}</p>
@@ -296,18 +297,22 @@ export default function Nav() {
                         </button>
                       </div>
                     </div>
-                  ))}
+                  ))
+                ) : (
+                  <p className="text-gray-500">Your Cart is empty.</p>
+                )
+                }
                 </div>
                 <h3 className="mt-6 text-lg font-bold">Total: ${totalPrice.toFixed(2)}</h3>
                 {cartItems.length > 0 && (
                   <button
                     onClick={() => {setCartItems([]);setTimeout(() => setActivePanel("cart"), 0);}}
-                    className="mt-4 bg-red-500 text-white p-2 w-full rounded-md"
+                    className="mt-4 bg-[#e08325] text-[#f8e2d2] p-2 w-full rounded-md"
                   >
                     Clear All
                   </button>
                 )}
-                <button className="mt-4 w-full bg-black text-white p-3 rounded-md">
+                <button className="mt-4 w-full bg-[#0c0805] text-[#f8e2d2] p-3 rounded-md">
                   Proceed to Checkout
                 </button>
               </>
