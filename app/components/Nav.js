@@ -167,7 +167,7 @@ export default function Nav() {
           <button className="text-gray-500 float-right" onClick={() => setActivePanel(null)}>✕</button>
 
           {/* Search Panel */}
-          {activePanel === "search" && (
+            {activePanel === "search" && (
             <>
               <h2 className="text-lg font-bold uppercase text-black mb-4">Search</h2>
               <input
@@ -183,12 +183,24 @@ export default function Nav() {
                     <li
                       key={item}
                       className="p-2 hover:bg-gray-200 cursor-pointer"
-                      onClick={(e) => handleSuggestionClick(item, e)} // Pass event here
+                      onClick={(e) => handleSuggestionClick(item, e)}
                     >
                       {item}
                     </li>
                   ))}
                 </ul>
+              )}
+              {searchQuery && (
+                <button
+                  onClick={() => {
+                    setSearchQuery("");
+                    setFilteredSuggestions([]);
+                    setTimeout(() => setActivePanel("search"), 0);
+                  }}
+                  className="mt-3 bg-red-500 text-white p-2 w-full rounded-md"
+                >
+                  Clear All
+                </button>
               )}
             </>
           )}
@@ -213,67 +225,93 @@ export default function Nav() {
                   <p className="text-gray-500">No new notifications.</p>
                 )}
               </ul>
+              {notifications.length > 0 && (
+                <button
+                  onClick={() => {setNotifications([]);setTimeout(() => setActivePanel("notifications"), 0);}}
+                  
+                  className="mt-4 bg-red-500 text-white p-2 w-full rounded-md"
+                >
+                  Clear All
+                </button>
+              )}
             </>
           )}
+
 
 
           {/* Wishlist Panel */}
           {activePanel === "wishlist" && (
-            <>
-              <h2 className="text-lg font-bold uppercase text-black mb-4">Your Wishlist ❤️</h2>
-              <ul className="space-y-4">
-                {wishlistItems.length > 0 ? (
-                  wishlistItems.map((item) => (
-                    <li key={item.id} className="p-3 bg-white rounded shadow-sm flex justify-between">
-                      {item.name}
-                      <button onClick={() => removeFromWishlist(item.id)} className="text-red-500">
-                        <TrashIcon className="w-5 h-5" />
-                      </button>
-                    </li>
-                  ))
-                ) : (
-                  <p className="text-gray-500">Your wishlist is empty.</p>
+              <>
+                <h2 className="text-lg font-bold uppercase text-black mb-4">Your Wishlist ❤️</h2>
+                <ul className="space-y-4">
+                  {wishlistItems.length > 0 ? (
+                    wishlistItems.map((item) => (
+                      <li key={item.id} className="p-3 bg-white rounded shadow-sm flex justify-between">
+                        {item.name}
+                        <button onClick={() => removeFromWishlist(item.id)} className="text-red-500">
+                          <TrashIcon className="w-5 h-5" />
+                        </button>
+                      </li>
+                    ))
+                  ) : (
+                    <p className="text-gray-500">Your wishlist is empty.</p>
+                  )}
+                </ul>
+                {wishlistItems.length > 0 && (
+                  <button
+                    onClick={() => {setWishlistItems([]);setTimeout(() => setActivePanel("wishlist"), 0);}}
+                    className="mt-4 bg-red-500 text-white p-2 w-full rounded-md"
+                  >
+                    Clear All
+                  </button>
                 )}
-              </ul>
-            </>
-          )}
+              </>
+            )}
+
 
         {/* Shopping Cart Panel */}
-          {activePanel === "cart" && (
-            <>
-              <h2 className="text-lg font-bold uppercase text-black mb-4">Your Cart</h2>
-              <div className="space-y-4">
-                {cartItems.map((item) => (
-                  <div key={item.id} className="flex items-center justify-between bg-white p-3 rounded shadow-sm">
-                    <div>
-                      <p className="font-semibold">{item.name}</p>
-                      <p className="text-sm text-gray-600">${item.price.toFixed(2)} each</p>
+        {activePanel === "cart" && (
+              <>
+                <h2 className="text-lg font-bold uppercase text-black mb-4">Your Cart</h2>
+                <div className="space-y-4">
+                  {cartItems.map((item) => (
+                    <div key={item.id} className="flex items-center justify-between bg-white p-3 rounded shadow-sm">
+                      <div>
+                        <p className="font-semibold">{item.name}</p>
+                        <p className="text-sm text-gray-600">${item.price.toFixed(2)} each</p>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <button onClick={() => updateQuantity(item.id, -1)} className="bg-[#e08325] text-[#0c0805] px-2 py-1 rounded">-</button>
+                        <span className="px-3">{item.quantity}</span>
+                        <button onClick={() => updateQuantity(item.id, 1)} className="bg-[#e08325] text-[#0c0805] px-2 py-1 rounded">+</button>
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            removeItem(item.id);setTimeout(() => setActivePanel("cart"), 0);
+                          }}
+                          className="bg-[#e08325]  p-2 rounded"
+                        >
+                          <TrashIcon className="w-5 h-5 text-[#0c0805]" />
+                        </button>
+                      </div>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <button onClick={() => updateQuantity(item.id, -1)} className="bg-[#e08325] text-[#0c0805] px-2 py-1 rounded">-</button>
-                      <span className="px-3">{item.quantity}</span>
-                      <button onClick={() => updateQuantity(item.id, 1)} className="bg-[#e08325] text-[#0c0805] px-2 py-1 rounded">+</button>
-                      <button 
-                              onClick={(e) => {
-                                e.stopPropagation();  // Prevent event from bubbling up
-                                e.preventDefault();   // Ensure no unintended behavior
-                                removeItem(item.id);
-                              }}
-                              className="bg-[#e08325]  p-2 rounded"
-                            >
-                              <TrashIcon className="w-5 h-5 text-[#0c0805]" />
-                            </button>
-
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <h3 className="mt-6 text-lg font-bold">Total: ${totalPrice.toFixed(2)}</h3>
-              <button className="mt-4 w-full bg-black text-white p-3 rounded-md">
-                Proceed to Checkout
-              </button>
-            </>
-          )}
+                  ))}
+                </div>
+                <h3 className="mt-6 text-lg font-bold">Total: ${totalPrice.toFixed(2)}</h3>
+                {cartItems.length > 0 && (
+                  <button
+                    onClick={() => {setCartItems([]);setTimeout(() => setActivePanel("cart"), 0);}}
+                    className="mt-4 bg-red-500 text-white p-2 w-full rounded-md"
+                  >
+                    Clear All
+                  </button>
+                )}
+                <button className="mt-4 w-full bg-black text-white p-3 rounded-md">
+                  Proceed to Checkout
+                </button>
+              </>
+            )}
 
         </div>
       )}
