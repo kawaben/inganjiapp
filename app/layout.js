@@ -1,6 +1,7 @@
 "use client";
 
 import Nav from "./components/Nav";
+import Home from "./components/Body";
 import "./globals.css";
 
 
@@ -11,6 +12,7 @@ export default function RootLayout({ children }) {
       <body>
         <Nav />
         {children}
+        <Home />
       </body>
     </html>
   );

@@ -52,3 +52,49 @@ h1{
 .highlight {
   background-color: var(--highlight);
 }
+
+/* General Parallax Styling */
+.parallax {
+  height: 100vh; /* Full-screen height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background:#007BFF;
+}
+
+/* Background Image 1 */
+.bg-image-1 {
+  background-image: url('/background.jpg'); 
+  height: 100vh; /* Full-screen height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+/* Background Image 2 */
+.bg-image-2 {
+  background-image: url('/newarrival.jpg'); 
+  height: 100vh; /* Full-screen height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+/* Content Sections */
+.content {
+  padding: 50px;
+  text-align: center;
+  background: #F5E1D4;
+}
