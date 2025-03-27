@@ -10,6 +10,9 @@ const products = [
   { id: 5, name: "Gta PK", price: 15, image: "/images/product5.jpg", bg: "bg-green-600" },
 ];
 
+
+
+  
 export default function Products() {
   return (
     <div className="">

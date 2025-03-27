@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -11,9 +11,9 @@ const products = [
   { id: 5, name: "Gta PK", price: 15, image: "/images/product5.jpg", description: "Graphic print inspired by streetwear culture." },
 ];
 
-export default function ProductPage() {
+export default function ProductPage({ params }) {
   const router = useRouter();
-  const { id } = router.query;
+  const { id } = params;
   const product = products.find((p) => p.id === parseInt(id));
 
   if (!product) return <p>Product not found</p>;
