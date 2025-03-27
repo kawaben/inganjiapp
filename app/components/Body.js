@@ -1,6 +1,6 @@
 import Image from "next/image";
 import "../globals.css";
-import Products from "../api/products/page";
+import Products from "../products/page";
 
 export default function Home() {
     return (
