@@ -270,5 +270,7 @@ box-sizing: border-box;
       width: 80px;
       height: 100px;
     }
-    
+    .main-image{
+      overflow: hidden;
+    }
 }
