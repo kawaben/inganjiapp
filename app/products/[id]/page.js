@@ -36,7 +36,7 @@ const products = [
     id: 4,
     name: "I am King",
     price: 15,
-    images: ["/images/product5.jpg", "/images/product2.jpg", "/images/product3.jpg", "/images/product4.jpg", "/images/product1.png"],
+    images: ["/images/product4.jpg", "/images/product2.jpg", "/images/product3.jpg", "/images/product4.jpg", "/images/product1.png"],
     description: "Bold statement tee for kings.",
     colors: [{ name: "White", hex: "#fff" }, { name: "Black", hex: "#000" }],
     sizes: ["S", "M", "L", "XL", "XXL"]
@@ -45,7 +45,7 @@ const products = [
     id: 5,
     name: "Gta PK",
     price: 15,
-    images: ["/images/product1.png", "/images/product2.jpg", "/images/product3.jpg", "/images/product4.jpg", "/images/product5.jpg"],
+    images: ["/images/product5.jpg", "/images/product2.jpg", "/images/product3.jpg", "/images/product4.jpg", "/images/product1.png"],
     description: "Graphic print inspired by streetwear culture.",
     colors: [{ name: "White", hex: "#fff" }, { name: "Black", hex: "#000" }],
     sizes: ["S", "M", "L", "XL", "XXL"]
