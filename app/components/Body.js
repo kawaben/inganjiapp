@@ -1,6 +1,7 @@
 import Image from "next/image";
 import "../globals.css";
 import Products from "../products/page";
+import Shops from "../shop/page";
 
 export default function Home() {
     return (
@@ -14,6 +15,9 @@ export default function Home() {
         {/* Content Section */}
         <div className="content">
           <Products/>
+        </div>
+        <div className="content">
+          <Shops/>
         </div>
   
         {/* Parallax Section 2 */}
