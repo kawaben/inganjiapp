@@ -115,10 +115,10 @@ export default function Nav() {
 
         {/* Desktop Menu */}
         <div className="hidden md:flex flex-1 justify-center space-x-12">
-          <Link href="/men">MEN</Link>
-          <Link href="/accessories">ACCESSORIES</Link>
-          <Link href="/women">WOMEN</Link>
-          <Link href="/kids">KIDS</Link>
+          <Link href="/shop/men">MEN</Link>{' '}
+          <Link href="/shop/accessories">ACCESSORIES</Link>
+          <Link href="/shop/women">WOMEN</Link>
+          <Link href="/shop/kids">KIDS</Link>
         </div>
 
         {/* Icons */}

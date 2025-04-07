@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
-
+import ProductCard  from "@/app/components/ProductCard";
 const products = [
   {
     id: 1,
