@@ -4,10 +4,10 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 const shops = [
-  { id: 1, name: "Male", image: "/images/m1.jpg", },
-  { id: 2, name: "Female", image: "/images/f1.jpg",  },
-  { id: 3, name: "Kids", image: "/images/k1.jpg",  },
-  { id: 4, name: "Accessories", image: "/images/a1.jpg", },
+  { id: 1, type:"men",name: "Male", image: "/images/m1.jpg", },
+  { id: 2, type:"women",name: "Female", image: "/images/f1.jpg",  },
+  { id: 3, type:"kids",name: "Kids", image: "/images/k1.jpg",  },
+  { id: 4, type:"accessories",name: "Accessories", image: "/images/a1.jpg", },
   
 ];
 
@@ -26,7 +26,7 @@ export default function Shops() {
           <div
             key={shop.id}
             className="shop-item"
-            onClick={() => handleRedirect(shop.id)}
+            onClick={() => handleRedirect(shop.type)}
           >
             
               <img src={shop.image} alt={shop.name}  />

@@ -68,6 +68,55 @@ const allProducts = {
       colors: ['#FF69B4', '#8A2BE2'],
     },
   ],
+  kids: [
+    {
+      id: 1,
+      name: 'Complete',
+      image: '/images/k1.jpg',
+      price: 40,
+      oldPrice: 55,
+      rating: 4.7,
+      colors: ['#FF69B4', '#8A2BE2'],
+    },
+    {
+      id: 2,
+      name: 'Dress',
+      image: '/images/product3.jpg',
+      price: 40,
+      oldPrice: 55,
+      rating: 4.7,
+      colors: ['#FF69B4', '#8A2BE2'],
+    },
+  ],
+  accessories: [
+    {
+      id: 1,
+      name: 'Glasses',
+      image: '/images/a1.jpg',
+      price: 40,
+      oldPrice: 55,
+      rating: 4.7,
+      colors: ['#FF69B4', '#8A2BE2'],
+    },
+    {
+      id: 2,
+      name: 'hat',
+      image: '/images/a5.jpg',
+      price: 40,
+      oldPrice: 55,
+      rating: 4.7,
+      colors: ['#FF69B4', '#8A2BE2'],
+    },
+    {
+      id: 3,
+      name: 'hat',
+      image: '/images/a6.jpg',
+      price: 40,
+      oldPrice: 55,
+      rating: 4.7,
+      colors: ['#FF69B4', '#8A2BE2'],
+    },
+  ],
 }
 
 export default function CategoryPage() {
