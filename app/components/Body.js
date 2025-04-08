@@ -2,6 +2,7 @@ import Image from "next/image";
 import "../globals.css";
 import Products from "../products/page";
 import Shops from "../shop/page";
+import Slideshow from "./AsSeenOnYou";
 
 export default function Home() {
     return (
@@ -27,7 +28,7 @@ export default function Home() {
   
         {/* More Content */}
         <div className="content">
-          <p>Discover the perfect style for any occasion with our exclusive collection.</p>
+          <Slideshow/>
         </div>
       </div>
     );
