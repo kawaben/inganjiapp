@@ -11,7 +11,7 @@
   --foreground: #171717;
   --text: #1b1403;
   --primary: #e08325;
-  --secondary: #B8B8B8;
+  --secondary: #554e48;
   --accent: #FF5733;
   --link: #007BFF;
   --hover: #FF4500;
@@ -48,6 +48,7 @@ nav{
 }
 a {
   color: var(--text);
+  cursor: pointer;
 }
 a:hover {
   color: #e08325;
