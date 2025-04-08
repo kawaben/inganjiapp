@@ -106,7 +106,7 @@ export default function Nav() {
   
   
   return (
-    <nav className="fixed w-full p-3 z-50 bg-white shadow-md">
+    <nav className="">
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo */}
         <Link href="/">

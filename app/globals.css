@@ -9,7 +9,7 @@
 :root {
   --background: #f8e2d2;
   --foreground: #171717;
-  --text: #0c0805;
+  --text: #1b1403;
   --primary: #e08325;
   --secondary: #B8B8B8;
   --accent: #FF5733;
@@ -22,8 +22,8 @@
 /* Dark Mode Customization */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #f8e2d2;
+    --foreground: #1b1403;
     --primary: #3498db;
     --secondary: #7f8c8d;
   }
@@ -39,20 +39,24 @@ body {
 
 /* Example Custom Styles */
 nav{
-  background: var(--background);
+  background-color:var(--background);
+  position:fixed;
+  width: 100%;
+  padding: 15px;
+  z-index: 2000;
+
 }
 a {
   color: var(--text);
 }
 a:hover {
-  color: var(--primary);
+  color: #e08325;
 }
 
 h1{
   size: 2000px;
   
 }
-
 .highlight {
   background-color: var(--highlight);
 }
