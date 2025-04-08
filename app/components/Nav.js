@@ -154,10 +154,10 @@ export default function Nav() {
       {/* Mobile Menu */}
       {isOpen && (
         <div className="md:hidden transition-all duration-300  p-4">
-          <Link href="/men" className="block py-2">MEN</Link>
-          <Link href="/accessories" className="block py-2">ACCESSORIES</Link>
-          <Link href="/women" className="block py-2">WOMEN</Link>
-          <Link href="/kids" className="block py-2">KIDS</Link>
+          <Link href="/shop/men" className="block py-2">MEN</Link>
+          <Link href="/shop/accessories" className="block py-2">ACCESSORIES</Link>
+          <Link href="/shop/women" className="block py-2">WOMEN</Link>
+          <Link href="/shop/kids" className="block py-2">KIDS</Link>
         </div>
       )}
 
