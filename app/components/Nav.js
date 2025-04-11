@@ -7,6 +7,7 @@ import {
   HeartIcon,
   ShoppingBagIcon,
   TrashIcon,
+  UserIcon
 } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import "../globals.css";
@@ -140,9 +141,12 @@ export default function Nav() {
           <button onClick={() => handleIconClick("cart")} className="icon">
             <ShoppingBagIcon className="w-6 h-6 hover:text-[#e08325]" />
           </button>
+          <button  onClick={() => handleIconClick("account")} className="icon">
+            <UserIcon className="w-6 h-6 hover:text-[#e08325] " />
+          </button>
+
         </div>
 
-        {/* Mobile Menu Button */}
         {/* Mobile Menu Button (as icon panel) */}
         <button onClick={() => handleIconClick("menu")} className="md:hidden icon">
           <svg
@@ -316,6 +320,23 @@ export default function Nav() {
               </>
             )}
 
+        { /* Account Panel*/}
+        {activePanel === "account" && (
+          <>
+            <h2 className="text-lg font-bold uppercase text-black mb-4">Account</h2>
+            <div className="space-y-4">
+              <button className="w-full bg-[#0c0805] text-[#f8e2d2] py-2 rounded-md">
+                Login
+              </button>
+              <button className="w-full bg-[#e08325] text-[#0c0805] py-2 rounded-md">
+                Register
+              </button>
+              <p className="text-sm text-gray-600 text-center">Or continue as guest</p>
+            </div>
+          </>
+        )}
+
+
         {/* Mobile Menu Panel */}
         {activePanel === "menu" && (
           <>
@@ -324,9 +345,9 @@ export default function Nav() {
             <Link href="/shop/accessories" className="block py-2" onClick={() => setActivePanel(null)}>ACCESSORIES</Link>
             <Link href="/shop/women" className="block py-2" onClick={() => setActivePanel(null)}>WOMEN</Link>
             <Link href="/shop/kids" className="block py-2" onClick={() => setActivePanel(null)}>KIDS</Link>
+
           </>
         )}
-
 
 
         </div>
