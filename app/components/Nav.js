@@ -24,8 +24,13 @@ export default function Nav() {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (!event.target.closest(".panel") && !event.target.closest(".icon")) {
+      const clickedInsidePanel = event.target.closest(".panel");
+      const clickedIcon = event.target.closest(".icon");
+      const clickedHamburger = event.target.closest(".hamburger-menu");
+
+      if (!clickedInsidePanel && !clickedIcon && !clickedHamburger) {
         setActivePanel(null);
+        setIsOpen(false);
       }
     };
 
@@ -138,7 +143,8 @@ export default function Nav() {
         </div>
 
         {/* Mobile Menu Button */}
-        <button onClick={() => setIsOpen(!isOpen)} className="md:hidden">
+        {/* Mobile Menu Button (as icon panel) */}
+        <button onClick={() => handleIconClick("menu")} className="md:hidden icon">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -149,17 +155,9 @@ export default function Nav() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
+
       </div>
 
-      {/* Mobile Menu */}
-      {isOpen && (
-        <div className="md:hidden transition-all duration-300  p-4">
-          <Link href="/shop/men" className="block py-2">MEN</Link>
-          <Link href="/shop/accessories" className="block py-2">ACCESSORIES</Link>
-          <Link href="/shop/women" className="block py-2">WOMEN</Link>
-          <Link href="/shop/kids" className="block py-2">KIDS</Link>
-        </div>
-      )}
 
       {/* Panels */}
       {activePanel && (
@@ -317,6 +315,19 @@ export default function Nav() {
                 </button>
               </>
             )}
+
+        {/* Mobile Menu Panel */}
+        {activePanel === "menu" && (
+          <>
+            
+            <Link href="/shop/men" className="block py-2" onClick={() => setActivePanel(null)}>MEN</Link>
+            <Link href="/shop/accessories" className="block py-2" onClick={() => setActivePanel(null)}>ACCESSORIES</Link>
+            <Link href="/shop/women" className="block py-2" onClick={() => setActivePanel(null)}>WOMEN</Link>
+            <Link href="/shop/kids" className="block py-2" onClick={() => setActivePanel(null)}>KIDS</Link>
+          </>
+        )}
+
+
 
         </div>
       )}
