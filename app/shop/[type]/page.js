@@ -8,8 +8,8 @@ import './style.css'
 const allProducts = {
   men: [
     { id: 1, name: 'Product 1',  images: { '#FFA500': '/images/m1-orange.jpg', '#008000': '/images/m1-green.jpg', '#0000FF': '/images/m1-blue.jpg', }, price: 25.99, oldPrice: 30.99, rating: 4.5, sizes: ['S', 'M', 'L'], colors: ['#FFA500', '#008000', '#0000FF'] },
-    { id: 2, name: 'Product 2',  images: { '#e24405': '/images/m2-orange.jpg', '#ffff': '/images/m2-white.jpg', '#01053f': '/images/m2-blue.jpg', }, price: 25.99, oldPrice: 30.99, rating: 4.5, sizes: ['S', 'M', 'L'], colors: ['#e24405', '#ffff', '#01053f'] },
-    { id: 3, name: 'Product 3',  images: { '#FFA500': '/images/m1-orange.jpg', '#008000': '/images/m1-green.jpg', '#0000FF': '/images/m1-blue.jpg', }, price: 25.99, oldPrice: 30.99, rating: 4.5, sizes: ['S', 'M', 'L'], colors: ['#FFA500', '#008000', '#0000FF'] },
+    { id: 2, name: 'Product 2',  images: { '#e24405': '/images/m2-orange.jpg', '#ffff': '/images/m2-white.jpg', '#01053f': '/images/m2-blue.jpg', }, price: 25.99, oldPrice: 30.99, rating: 4.5, sizes: ['S','L'], colors: ['#e24405', '#ffff', '#01053f'] },
+    { id: 3, name: 'Product 3',  images: { '#000': '/images/m3-black.jpg', '#ff0000': '/images/m3-red.jpg', '#ffff': '/images/m3-white.jpg', }, price: 25.99, oldPrice: 30.99, rating: 4.5, sizes: ['S', 'M', 'L'], colors: ['#000', '#ff0000', '#ffff'] },
     { id: 4, name: 'Product 4',  images: { '#FFA500': '/images/m1-orange.jpg', '#008000': '/images/m1-green.jpg', '#0000FF': '/images/m1-blue.jpg', }, price: 25.99, oldPrice: 30.99, rating: 4.5, sizes: ['S', 'M', 'L'], colors: ['#FFA500', '#008000', '#0000FF'] },
     { id: 5, name: 'Product 5',  images: { '#FFA500': '/images/m1-orange.jpg', '#008000': '/images/m1-green.jpg', '#0000FF': '/images/m1-blue.jpg', }, price: 25.99, oldPrice: 30.99, rating: 4.5, sizes: ['S', 'M', 'L'], colors: ['#FFA500', '#008000', '#0000FF'] },
   ],
