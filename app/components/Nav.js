@@ -109,6 +109,18 @@ export default function Nav() {
     setFilteredSuggestions([]); // Hide the suggestions after selection
     setTimeout(() => setActivePanel("search"), 0);// Prevent closing the panel
   };
+
+
+  const [email, setEmail] = useState(""); const [password, setPassword] = useState(""); const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const handleLogin = (e) => { e.preventDefault(); // Dummy auth check
+   if (email === "kabagema@nuovire.com" && password === "king") { setIsLoggedIn(true); //  Close panel after login 
+    } 
+   else { alert("Invalid credentials"); } };
+
+
+
+
   
   
   return (
@@ -321,20 +333,22 @@ export default function Nav() {
             )}
 
         { /* Account Panel*/}
-        {activePanel === "account" && (
-          <>
-            <h2 className="text-lg font-bold uppercase text-black mb-4">Account</h2>
-            <div className="space-y-4">
-              <button className="w-full bg-[#0c0805] text-[#f8e2d2] py-2 rounded-md">
-                Login
-              </button>
-              <button className="w-full bg-[#e08325] text-[#0c0805] py-2 rounded-md">
-                Register
-              </button>
-              <p className="text-sm text-gray-600 text-center">Or continue as guest</p>
-            </div>
-          </>
-        )}
+        {activePanel === "account" && ( 
+          <> 
+          <h2 className="text-lg font-bold uppercase text-black mb-4">Account</h2> 
+          {!isLoggedIn ? ( 
+            <form onSubmit={handleLogin} className="space-y-4"> 
+              <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-3 rounded bg-[#3a3a3a] text-[#f8e2d2] placeholder-gray-300" required /> 
+              <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full p-3 rounded bg-[#3a3a3a] text-[#f8e2d2] placeholder-gray-300" required /> 
+              <button type="submit" className="w-full bg-[#e08325] text-[#0c0805] p-3 rounded-md" > Log In </button> 
+              <p className="text-sm text-black text-center"> Don't have an account? <span className="underline cursor-pointer">Sign up</span> </p> </form> 
+            ) : ( <div className="space-y-4"> 
+              <p className="text-black">Welcome back, kabagema@nuovire.com</p> 
+              <button className="w-full bg-[#0c0805] text-[#f8e2d2] p-3 rounded-md" onClick={() => setIsLoggedIn(false)} > Log Out </button> 
+                  </div>
+                )} 
+            </> 
+          )}
 
 
         {/* Mobile Menu Panel */}
