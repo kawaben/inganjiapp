@@ -118,7 +118,10 @@ export default function Nav() {
     } 
    else { alert("Invalid credentials"); } };
 
-
+  const [showSignUp, setShowSignUp] = useState(false);
+  const [newEmail, setNewEmail] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+   
 
 
   
@@ -336,17 +339,85 @@ export default function Nav() {
         {activePanel === "account" && ( 
           <> 
           <h2 className="text-lg font-bold uppercase text-black mb-4">Account</h2> 
-          {!isLoggedIn ? ( 
-            <form onSubmit={handleLogin} className="space-y-4"> 
-              <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-3 rounded bg-[#3a3a3a] text-[#f8e2d2] placeholder-gray-300" required /> 
-              <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full p-3 rounded bg-[#3a3a3a] text-[#f8e2d2] placeholder-gray-300" required /> 
-              <button type="submit" className="w-full bg-[#e08325] text-[#0c0805] p-3 rounded-md" > Log In </button> 
-              <p className="text-sm text-black text-center"> Don't have an account? <span className="underline cursor-pointer">Sign up</span> </p> </form> 
-            ) : ( <div className="space-y-4"> 
-              <p className="text-black">Welcome back, kabagema@nuovire.com</p> 
-              <button className="w-full bg-[#0c0805] text-[#f8e2d2] p-3 rounded-md" onClick={() => setIsLoggedIn(false)} > Log Out </button> 
-                  </div>
-                )} 
+          {!isLoggedIn ? (
+                showSignUp ? (
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      alert(`Account created for ${newEmail}`);
+                      setShowSignUp(false); // Switch back to login after sign-up
+                      setNewEmail("");
+                      setNewPassword("");
+                    }}
+                    className="space-y-4"
+                  >
+                    <input
+                      type="email"
+                      placeholder="Email"
+                      value={newEmail}
+                      onChange={(e) => setNewEmail(e.target.value)}
+                      className="w-full p-3 rounded bg-[#3a3a3a] text-[#f8e2d2] placeholder-gray-300"
+                      required
+                    />
+                    <input
+                      type="password"
+                      placeholder="Password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      className="w-full p-3 rounded bg-[#3a3a3a] text-[#f8e2d2] placeholder-gray-300"
+                      required
+                    />
+                    <button type="submit" className="w-full bg-[#e08325] text-[#0c0805] p-3 rounded-md">
+                      Sign Up
+                    </button>
+                    <p className="text-sm text-black text-center">
+                      Already have an account?{" "}
+                      <span className="underline cursor-pointer" onClick={() => setShowSignUp(false)}>Log in</span>
+                    </p>
+                  </form>
+                ) : (
+                  <form onSubmit={handleLogin} className="space-y-4">
+                    <input
+                      type="email"
+                      placeholder="Email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full p-3 rounded bg-[#3a3a3a] text-[#f8e2d2] placeholder-gray-300"
+                      required
+                    />
+                    <input
+                      type="password"
+                      placeholder="Password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full p-3 rounded bg-[#3a3a3a] text-[#f8e2d2] placeholder-gray-300"
+                      required
+                    />
+                    <button type="submit" className="w-full bg-[#e08325] text-[#0c0805] p-3 rounded-md">
+                      Log In
+                    </button>
+                    <p className="text-sm text-black text-center">
+                      Don’t have an account?{" "}
+                      <span className="underline cursor-pointer" onClick={() => setShowSignUp(true)}>Sign up</span>
+                    </p>
+                  </form>
+                )
+              ) : (
+                <div className="space-y-4">
+                  <p className="text-black">Welcome back, {email}</p>
+                  <button
+                    className="w-full bg-[#0c0805] text-[#f8e2d2] p-3 rounded-md"
+                    onClick={() => {
+                      setIsLoggedIn(false);
+                      setEmail("");
+                      setPassword("");
+                    }}
+                  >
+                    Log Out
+                  </button>
+                </div>
+              )}
+
             </> 
           )}
 
