@@ -23,37 +23,24 @@ export default function Nav() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
   const allSuggestions = ["Tshirt", "Shoes", "Jacket", "Hat", "Underwear", "Glasses"];
-  const users = [
-    { email: "kabagema@nuovire.com", password: "king"},
+  const defaultUsers = [
+    { email: "kabagema@nuovire.com", password: "king" },
     { email: "keza@nuovire.com", password: "tracy" },
   ];
   
   const [newUsers, setNewUsers] = useState(() => {
-    // Load from localStorage on first render
-      if (typeof window !== "undefined") {
-        const stored = localStorage.getItem("users");
-        return stored ? JSON.parse(stored) : users;
-      }
-      return users;
-    });
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("users");
+      return stored ? JSON.parse(stored) : defaultUsers;
+    }
+    return defaultUsers;
+  });
   
-    // Save to localStorage whenever newUsers changes
-    useEffect(() => {
-      if (typeof window !== "undefined") {
-        localStorage.setItem("users", JSON.stringify(newUsers));
-      }
-    }, [newUsers]);
-  
-  
-  // Localstorage
-    useEffect(() => {
-      const storedUsers = JSON.parse(localStorage.getItem("users"));
-      if (storedUsers) setNewUsers(storedUsers);
-    }, []);
-    
-    useEffect(() => {
+  useEffect(() => {
+    if (typeof window !== "undefined") {
       localStorage.setItem("users", JSON.stringify(newUsers));
-    }, [newUsers]);
+    }
+  }, [newUsers]);
   
 
 

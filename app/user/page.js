@@ -5,7 +5,9 @@ import { useRouter } from "next/navigation";
 export default function UserPage() {
   const [user, setUser] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState(
+    
+    {
     username: "",
     image: "",
     bio: "",
@@ -42,24 +44,32 @@ export default function UserPage() {
   };
 
   const handleSave = () => {
-    // Get all users
     const storedUsers = JSON.parse(localStorage.getItem("users")) || [];
   
-    // Find and update the user by email 
+    // DEBUG: Log current users before updating
+    console.log("Before update:", storedUsers);
+  
+    // Find and update the specific user
     const updatedUsers = storedUsers.map((u) =>
       u.email === user.email ? { ...u, ...formData } : u
     );
   
-    // Save back the updated users array
+    // DEBUG: Log updated users
+    console.log("After update:", updatedUsers);
+  
+    // Save updated list back to localStorage
     localStorage.setItem("users", JSON.stringify(updatedUsers));
   
-    // Update currently logged-in user too
-    localStorage.setItem("user", JSON.stringify(formData));
-    setUser(formData);
+    // Update currently logged-in user
+    const updatedUser = updatedUsers.find(u => u.email === user.email);
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+    setUser(updatedUser);
   
-    // Close modal
+    // Close the modal
     setIsModalOpen(false);
   };
+  
+  
   
   
 
