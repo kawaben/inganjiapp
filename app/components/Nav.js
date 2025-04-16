@@ -24,7 +24,7 @@ export default function Nav() {
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
   const allSuggestions = ["Tshirt", "Shoes", "Jacket", "Hat", "Underwear", "Glasses"];
   const users = [
-    { email: "kabagema@nuovire.com", password: "king" },
+    { email: "kabagema@nuovire.com", password: "king"},
     { email: "keza@nuovire.com", password: "tracy" },
   ];
   
@@ -187,7 +187,7 @@ export default function Nav() {
       setNewUsers((prev) => [...prev, newUser]);
       setIsLoggedIn(true);
       localStorage.setItem("loggedInUser", JSON.stringify(newUser));
-      setShowPanel(false);
+     
       router.push("/user");
       
     }
@@ -443,7 +443,7 @@ export default function Nav() {
                         className="underline cursor-pointer"
                         onClick={() => {
                           setIsSignUp(false);
-                          setTimeout(() => setActivePanel(null));
+                          
                         }
                         }
                       >
@@ -457,7 +457,7 @@ export default function Nav() {
                         className="underline cursor-pointer"
                         onClick={() => {
                           setIsSignUp(true);
-                          setTimeout(() => setActivePanel(null));
+                          
                         }
 
                         }
