@@ -110,7 +110,7 @@
   .filter-sidebar {
     flex: 1;
     position: absolute;
-    height: auto; /* Full viewport height */
+    height: auto;
     width: 250px;
     overflow-y:auto;
   }
@@ -171,16 +171,16 @@
      .product-grid {
       display: grid;
       grid-template-columns: 1fr;  
-      margin: 0; /* Offset by sidebar width to avoid overlap */
-      width: 100%; /* Adjust width to account for sidebar */
+      margin: 0; 
+      width: 100%; 
       padding: 0;
     }
 
     .grid-container{
       display: grid;
       grid-template-columns: 1fr;  
-      margin: 0; /* Offset by sidebar width to avoid overlap */
-      width: 100%; /* Adjust width to account for sidebar */
+      margin: 0; 
+      width: 100%; 
       padding: 0;
       gap: 1rem;
     }
