@@ -23,6 +23,34 @@ export default function Nav() {
     { email: "keza@nuovire.com", password: "tracy" },
   ];
   
+  const [newUsers, setNewUsers] = useState(() => {
+    // Load from localStorage on first render
+      if (typeof window !== "undefined") {
+        const stored = localStorage.getItem("users");
+        return stored ? JSON.parse(stored) : users;
+      }
+      return users;
+    });
+  
+    // Save to localStorage whenever newUsers changes
+    useEffect(() => {
+      if (typeof window !== "undefined") {
+        localStorage.setItem("users", JSON.stringify(newUsers));
+      }
+    }, [newUsers]);
+  
+  
+  // Localstorage
+    useEffect(() => {
+      const storedUsers = JSON.parse(localStorage.getItem("users"));
+      if (storedUsers) setNewUsers(storedUsers);
+    }, []);
+    
+    useEffect(() => {
+      localStorage.setItem("users", JSON.stringify(newUsers));
+    }, [newUsers]);
+  
+
 
   const handleIconClick = (panelName) => {
     setActivePanel(activePanel === panelName ? null : panelName);
@@ -124,7 +152,7 @@ export default function Nav() {
   const [newEmail, setNewEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
-  const [newUsers, setNewUsers] = useState(users); // or load from localStorage later
+  
 
 
 
