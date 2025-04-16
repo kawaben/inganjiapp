@@ -18,6 +18,11 @@ export default function Nav() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
   const allSuggestions = ["Tshirt", "Shoes", "Jacket", "Hat", "Underwear", "Glasses"];
+  const users = [
+    { email: "kabagema@nuovire.com", password: "king" },
+    { email: "keza@nuovire.com", password: "tracy" },
+  ];
+  
 
   const handleIconClick = (panelName) => {
     setActivePanel(activePanel === panelName ? null : panelName);
@@ -113,15 +118,39 @@ export default function Nav() {
 
   const [email, setEmail] = useState(""); const [password, setPassword] = useState(""); const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const handleLogin = (e) => { e.preventDefault(); // Dummy auth check
-   if (email === "kabagema@nuovire.com" && password === "king") { setIsLoggedIn(true); //  Close panel after login 
-    } 
-   else { alert("Invalid credentials"); } };
+ 
 
   const [showSignUp, setShowSignUp] = useState(false);
   const [newEmail, setNewEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
-   
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [newUsers, setNewUsers] = useState(users); // or load from localStorage later
+
+
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    const user = newUsers.find((u) => u.email === email && u.password === password);
+    if (user) {
+      setIsLoggedIn(true);
+    } else {
+      alert("Invalid credentials");
+    }
+  };
+  
+  const handleSignup = (e) => {
+    e.preventDefault();
+    const userExists = newUsers.some((u) => u.email === email);
+    if (userExists) {
+      alert("User already exists");
+    } else {
+      const newUser = { email, password };
+      setNewUsers((prev) => [...prev, newUser]);
+      setIsLoggedIn(true);
+      setIsSignUp(false); // go back to login mode
+    }
+  };
+  
 
 
   
@@ -336,90 +365,77 @@ export default function Nav() {
             )}
 
         { /* Account Panel*/}
-        {activePanel === "account" && ( 
-          <> 
-          <h2 className="text-lg font-bold uppercase text-black mb-4">Account</h2> 
-          {!isLoggedIn ? (
-                showSignUp ? (
-                  <form
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      alert(`Account created for ${newEmail}`);
-                      setShowSignUp(false); // Switch back to login after sign-up
-                      setNewEmail("");
-                      setNewPassword("");
-                    }}
-                    className="space-y-4"
-                  >
-                    <input
-                      type="email"
-                      placeholder="Email"
-                      value={newEmail}
-                      onChange={(e) => setNewEmail(e.target.value)}
-                      className="w-full p-3 rounded bg-[#3a3a3a] text-[#f8e2d2] placeholder-gray-300"
-                      required
-                    />
-                    <input
-                      type="password"
-                      placeholder="Password"
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      className="w-full p-3 rounded bg-[#3a3a3a] text-[#f8e2d2] placeholder-gray-300"
-                      required
-                    />
-                    <button type="submit" className="w-full bg-[#e08325] text-[#0c0805] p-3 rounded-md">
-                      Sign Up
-                    </button>
-                    <p className="text-sm text-black text-center">
+        {activePanel === "account" && (
+          <>
+            <h2 className="text-lg font-bold uppercase text-black mb-4">Account</h2>
+            {!isLoggedIn ? (
+              <form onSubmit={isSignUp ? handleSignup : handleLogin} className="space-y-4">
+                
+                <input
+                  type="email"
+                  placeholder="Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full p-3 rounded bg-[#3a3a3a] text-[#f8e2d2] placeholder-gray-300"
+                  required
+                />
+                <input
+                  type="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full p-3 rounded bg-[#3a3a3a] text-[#f8e2d2] placeholder-gray-300"
+                  required
+                />
+                <button
+                  type="submit"
+                  className="w-full bg-[#e08325] text-[#0c0805] p-3 rounded-md"
+                >
+                  {isSignUp ? "Sign Up" : "Log In"}
+                </button>
+                <p className="text-sm text-black text-center">
+                  {isSignUp ? (
+                    <>
                       Already have an account?{" "}
-                      <span className="underline cursor-pointer" onClick={() => setShowSignUp(false)}>Log in</span>
-                    </p>
-                  </form>
-                ) : (
-                  <form onSubmit={handleLogin} className="space-y-4">
-                    <input
-                      type="email"
-                      placeholder="Email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="w-full p-3 rounded bg-[#3a3a3a] text-[#f8e2d2] placeholder-gray-300"
-                      required
-                    />
-                    <input
-                      type="password"
-                      placeholder="Password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="w-full p-3 rounded bg-[#3a3a3a] text-[#f8e2d2] placeholder-gray-300"
-                      required
-                    />
-                    <button type="submit" className="w-full bg-[#e08325] text-[#0c0805] p-3 rounded-md">
-                      Log In
-                    </button>
-                    <p className="text-sm text-black text-center">
-                      Don’t have an account?{" "}
-                      <span className="underline cursor-pointer" onClick={() => setShowSignUp(true)}>Sign up</span>
-                    </p>
-                  </form>
-                )
-              ) : (
-                <div className="space-y-4">
-                  <p className="text-black">Welcome back, {email}</p>
-                  <button
-                    className="w-full bg-[#0c0805] text-[#f8e2d2] p-3 rounded-md"
-                    onClick={() => {
-                      setIsLoggedIn(false);
-                      setEmail("");
-                      setPassword("");
-                    }}
-                  >
-                    Log Out
-                  </button>
-                </div>
-              )}
+                      <span
+                        className="underline cursor-pointer"
+                        onClick={() => setIsSignUp(false)}
+                      >
+                        Log In
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      Don't have an account?{" "}
+                      <span
+                        className="underline cursor-pointer"
+                        onClick={() => setIsSignUp(true)}
+                      >
+                        Sign Up
+                      </span>
+                    </>
+                  )}
+                </p>
+              </form>
+            ) : (
+              <div className="space-y-4">
+                <p className="text-black">Welcome back, {email}</p>
+                <button
+                  className="w-full bg-[#0c0805] text-[#f8e2d2] p-3 rounded-md"
+                  onClick={() => {
+                    setIsLoggedIn(false);
+                    setEmail("");
+                    setPassword("");
+                    setTimeout(() => setActivePanel("account"));
+                  }}
+                >
+                  Log Out
+                </button>
+              </div>
+            )}
+          </>
+)}
 
-            </> 
-          )}
 
 
         {/* Mobile Menu Panel */}
