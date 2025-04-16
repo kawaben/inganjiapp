@@ -12,7 +12,12 @@ import {
 import Image from "next/image";
 import "../globals.css";
 
+import { useRouter } from "next/navigation";
+
+
 export default function Nav() {
+  const router = useRouter();
+
   const [isOpen, setIsOpen] = useState(false);
   const [activePanel, setActivePanel] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -152,18 +157,24 @@ export default function Nav() {
   const [newEmail, setNewEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
+  const [showPanel, setShowPanel] = useState(false);
+
   
 
-
+  // user authentication
 
   const handleLogin = (e) => {
     e.preventDefault();
     const user = newUsers.find((u) => u.email === email && u.password === password);
     if (user) {
       setIsLoggedIn(true);
+      localStorage.setItem("loggedInUser", JSON.stringify(user));
+      setShowPanel(false);
+      router.push("/user");
     } else {
       alert("Invalid credentials");
     }
+    
   };
   
   const handleSignup = (e) => {
@@ -175,7 +186,10 @@ export default function Nav() {
       const newUser = { email, password };
       setNewUsers((prev) => [...prev, newUser]);
       setIsLoggedIn(true);
-      setIsSignUp(false); // go back to login mode
+      localStorage.setItem("loggedInUser", JSON.stringify(newUser));
+      setShowPanel(false);
+      router.push("/user");
+      
     }
   };
   
@@ -348,7 +362,7 @@ export default function Nav() {
               <>
                 <h2 className="text-lg font-bold uppercase text-black mb-4">Your Cart</h2>
                 <div className="space-y-4">
-                {wishlistItems.length > 0 ? (
+                {cartItems.length > 0 ? (
                   cartItems.map((item) => (
                     <div key={item.id} className="flex items-center justify-between bg-white p-3 rounded shadow-sm">
                       <div>
@@ -427,7 +441,11 @@ export default function Nav() {
                       Already have an account?{" "}
                       <span
                         className="underline cursor-pointer"
-                        onClick={() => setIsSignUp(false)}
+                        onClick={() => {
+                          setIsSignUp(false);
+                          setTimeout(() => setActivePanel(null));
+                        }
+                        }
                       >
                         Log In
                       </span>
@@ -437,7 +455,12 @@ export default function Nav() {
                       Don't have an account?{" "}
                       <span
                         className="underline cursor-pointer"
-                        onClick={() => setIsSignUp(true)}
+                        onClick={() => {
+                          setIsSignUp(true);
+                          setTimeout(() => setActivePanel(null));
+                        }
+
+                        }
                       >
                         Sign Up
                       </span>
