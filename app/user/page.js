@@ -4,6 +4,10 @@ import { useRouter } from "next/navigation";
 import '../globals.css';
 
 export default function UserPage() {
+
+  const [activeSection, setActiveSection] = useState("My Profile");
+
+
   const [user, setUser] = useState({
       firstname: "Jack",
       lastname: "Adams",
@@ -112,62 +116,96 @@ const handleImageChange = (e) => {
             {/* Sidebar */}
             <aside className="w-64 rounded p-4 pt-15">
                 <ul className="space-y-3">
-                <li className="text-blue-600 font-medium">My Profile</li>
-                <li>Cart</li>
-                <li>Notification</li>
-                <li>Wishlist</li>
-                <li>Settings</li>
+                <li className={`cursor-pointer ${activeSection === "My Profile" ? "text-blue-600 font-semibold" : "text-black"}`} onClick={() => setActiveSection("My Profile")}>  My Profile</li>
+                <li className={`cursor-pointer ${activeSection === "Cart" ? "text-blue-600 font-semibold" : "text-black"}`} onClick={() => setActiveSection("Cart")}> Cart </li>
+
+
+                <li className={`cursor-pointer ${activeSection === "Notifications" ? "text-blue-600 font-semibold" : "text-black"}`} onClick={() => setActiveSection("Notifications")}> Notifications </li>
+                <li className={`cursor-pointer ${activeSection === "Wishlist" ? "text-blue-600 font-semibold" : "text-black"}`} onClick={() => setActiveSection("Wishlist")}> Wishlist </li>
+                <li className={`cursor-pointer ${activeSection === "Settings" ? "text-blue-600 font-semibold" : "text-black"}`} onClick={() => setActiveSection("Settings")}> Settings </li>
+                <li><button className="ml-auto text-sm text-[#1b1403] border border-gray-300 bg-[#e08325] rounded p-2 cursor-pointer" onClick={handleLogout}>Log Out</button></li>
                 </ul>
             </aside>
 
             {/* Main Content */}
             <main className="flex-1 p-8">
-                <h1 className="text-2xl font-bold mb-4">My Profile</h1>
+              
+              {activeSection === "My Profile" && (
+                  <>
+                    {/* Top Profile Card */}
+                    <h1 className="text-2xl font-bold mb-4">My Profile</h1>
+                    <div className="border border-gray-300 rounded  p-4 flex items-center gap-4 mb-6">
+                    <img
+                        src={user.image}
+                        alt="Profile"
+                        className="w-16 h-16 rounded-full object-cover"
+                    />
+                    <div>
+                        <h2 className="text-xl font-semibold">{user.firstname} {user.lastname} ({user.username})</h2>
+                        <p className="text-gray-500">{user.bio}</p>
+                        <p className="text-gray-400 text-sm">{user.location}</p>
+                    </div>
+                    <button className="ml-auto text-sm text-[#1b1403] border border-gray-300 bg-[#e08325] rounded p-1 cursor-pointer" onClick={openEditModal}>✎ Edit</button>
+                    </div>
 
-                {/* Top Profile Card */}
-                <div className="border border-gray-300 rounded  p-4 flex items-center gap-4 mb-6">
-                <img
-                    src={user.image}
-                    alt="Profile"
-                    className="w-16 h-16 rounded-full object-cover"
-                />
-                <div>
-                    <h2 className="text-xl font-semibold">{user.firstname} {user.lastname} ({user.username})</h2>
-                    <p className="text-gray-500">{user.bio}</p>
-                    <p className="text-gray-400 text-sm">{user.location}</p>
-                </div>
-                <button className="ml-auto text-sm text-[#1b1403] border border-gray-300 bg-[#e08325] rounded p-1 cursor-pointer" onClick={openEditModal}>✎ Edit</button>
-                </div>
+                    {/* Personal Info */}
+                    <div className="border border-gray-300 rounded  p-4 mb-6">
+                    <div className="flex justify-between items-center mb-4">
+                        <h3 className="font-semibold">Personal Information</h3>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div><strong>First Name:</strong> {user.firstname}</div>
+                        <div><strong>Last Name:</strong> {user.lastname}</div>
+                        <div><strong>Username:</strong> {user.username}</div>
+                        <div><strong>Email:</strong> {user.email}</div>
+                        <div><strong>Phone:</strong> {user.phone}</div>
+                        <div className="col-span-2"><strong>Bio:</strong> {user.bio}</div>
+                    </div>
+                    </div>
 
-                {/* Personal Info */}
-                <div className="border border-gray-300 rounded  p-4 mb-6">
-                <div className="flex justify-between items-center mb-4">
-                    <h3 className="font-semibold">Personal Information</h3>
-                    <button className="ml-auto text-sm text-[#1b1403] border border-gray-300 bg-[#e08325] rounded p-1 cursor-pointer">✎ Edit</button>
-                </div>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div><strong>First Name:</strong> {user.firstname}</div>
-                    <div><strong>Last Name:</strong> {user.lastname}</div>
-                    <div><strong>Username:</strong> {user.username}</div>
-                    <div><strong>Email:</strong> {user.email}</div>
-                    <div><strong>Phone:</strong> {user.phone}</div>
-                    <div className="col-span-2"><strong>Bio:</strong> {user.bio}</div>
-                </div>
-                </div>
+                    {/* Address Info */}
+                    <div className="border border-gray-300 rounded  p-4">
+                    <div className="flex justify-between items-center mb-4">
+                        <h3 className="font-semibold">Address</h3>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div><strong>Country:</strong> {user.country}</div>
+                        <div><strong>City/State:</strong> {user.location}</div>
+                    </div>
+                    </div>
+                  </>
+                )}
 
-                {/* Address Info */}
-                <div className="border border-gray-300 rounded  p-4">
-                <div className="flex justify-between items-center mb-4">
-                    <h3 className="font-semibold">Address</h3>
-                    <button className="ml-auto text-sm text-[#1b1403] border border-gray-300 bg-[#e08325] rounded p-1 cursor-pointer">✎ Edit</button>
-                </div>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div><strong>Country:</strong> {user.country}</div>
-                    <div><strong>City/State:</strong> {user.location}</div>
-                </div>
-                </div>
+                {activeSection === "Cart" && (
+                  <div>
+                    <h1 className="text-2xl font-bold mb-4">My Cart</h1>
+                    <p>Your cart items will show here...</p>
+                  </div>
+                )}
+
+                {activeSection === "Wishlist" && (
+                  <div>
+                    <h1 className="text-2xl font-bold mb-4">Wishlist</h1>
+                    <p>Your wishlist items will show here...</p>
+                  </div>
+                )}
+
+                {activeSection === "Notifications" && (
+                  <div>
+                    <h1 className="text-2xl font-bold mb-4">Notification</h1>
+                    <p>Your Notifications will show here...</p>
+                  </div>
+                )}
+                {activeSection === "Settings" && (
+                  <div>
+                    <h1 className="text-2xl font-bold mb-4">Settings</h1>
+                    <p>Your Settings will show here...</p>
+                  </div>
+                )}
+                
             </main>
         </div>
+
 
       {/* Edit Profile Modal */}
       {isModalOpen && (
@@ -281,6 +319,7 @@ const handleImageChange = (e) => {
           </div>
         </div>
       )}
+      
     </div>
   );
 }
