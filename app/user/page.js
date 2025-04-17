@@ -9,15 +9,14 @@ export default function UserPage() {
 
 
   const [user, setUser] = useState({
-      firstname: "Jack",
-      lastname: "Adams",
-      username: "JD",
-      email: "jackadams@gmail.com",
-      phone: "(213) 555-1234",
-      bio: "Product Designer",
-      location: "Los Angeles, California, USA",
-      country: "United States of America",
-      state: "California, USA",
+      firstname: "Kabagema",
+      lastname: "Ben",
+      username: "kb",
+      email: "Kabe@nuovire.com",
+      phone: "(2250) 555-5555",
+      bio: "Software Developer",
+      location: "Kigali",
+      country: "Rwanda",
       image: "https://randomuser.me/api/portraits/men/92.jpg",
     });
   const [isModalOpen, setIsModalOpen] = useState(false);
