@@ -111,10 +111,10 @@ const handleImageChange = (e) => {
   };
   
   return (
-    <div className="min-h-screen  bg-[#f8e2d2] p-4">
-      <div className="flex bg-[#f7eee8] border border-gray-300 rounded shadow m-30">
+    <div className="min-h-screen  bg-[#f8e2d2] p-2">
+      <div className="flex flex-col md:flex-row bg-[#f7eee8] border border-gray-300 rounded shadow mt-30">
             {/* Sidebar */}
-            <aside className="w-64 rounded p-4 pt-15">
+            <aside className="w-full md:w-64 rounded p-4 pt-6">
                 <ul className="space-y-3">
                 <li className={`cursor-pointer ${activeSection === "My Profile" ? "text-blue-600 font-semibold" : "text-black"}`} onClick={() => setActiveSection("My Profile")}>  My Profile</li>
                 <li className={`cursor-pointer ${activeSection === "Cart" ? "text-blue-600 font-semibold" : "text-black"}`} onClick={() => setActiveSection("Cart")}> Cart </li>
@@ -128,7 +128,7 @@ const handleImageChange = (e) => {
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 p-8">
+            <main className="flex-1 p-4 md:p-8">
               
               {activeSection === "My Profile" && (
                   <>
@@ -177,7 +177,7 @@ const handleImageChange = (e) => {
                 )}
 
               {activeSection === "Cart" && (
-                <div className="max-w-4xl mx-auto bg-gray-50 text-[#1b1403] p-20 rounded-lg shadow gap-5">
+                <div className="max-w-4xl text-[#1b1403] rounded-lg shadow gap-5">
                     <h1 className="text-2xl font-bold text-center mb-6">My Shopping Cart</h1>
             
                     {/* Cart Items */}
@@ -189,12 +189,12 @@ const handleImageChange = (e) => {
                       <div></div>
                     </div>
             
-                    {/* You can loop through this with map later */}
+                    
                     {[1, 2, 3].map((item, idx) => (
-                      <div key={idx} className="grid grid-cols-6 gap-6 items-center py-4 shadow">
+                      <div key={idx} className="grid grid-cols-6 gap-4 items-center py-2 shadow text-sm md:text-base lg:text-lg font-medium tracking-wide">
                         <div className="col-span-2 flex items-center gap-4">
                           <img
-                            src={`/images/m2.jpg`} // replace with your image paths
+                            src={`/images/m2.jpg`} 
                             alt="Product"
                             className="w-16 h-16 object-cover rounded"
                           />
@@ -209,7 +209,7 @@ const handleImageChange = (e) => {
                           <span>02</span>
                           <button className="px-2 border bg-[#e08325] rounded cursor-pointer">+</button>
                         </div>
-                        <div className="font-semibold">$50.00</div>
+                        <div className="p-4 md:p-0">$50.00</div>
                         <div className="text-[#e08325] cursor-pointer w-5 h-5"><TrashIcon/></div>
                       </div>
                     ))}
@@ -255,7 +255,7 @@ const handleImageChange = (e) => {
                       <button className="flex-1 py-2 bg-[#1b1403] text-[#f8e2d2] rounded cursor-pointer">
                         Back to Shop
                       </button>
-                      <button className="flex-1 py-2 bg-[#e08325] text-[#f8e2d2] rounded cursor-pointer">
+                      <button className="flex-1 py-2 bg-[#e08325] text-[#f8e2d2] rounded cursor-pointer" onClick={() => setActiveSection("Checkout")}>
                         Checkout
                       </button>
                     </div>
@@ -281,7 +281,104 @@ const handleImageChange = (e) => {
                   <p>Your Settings will show here...</p>
                 </div>
               )}
-                
+
+              {activeSection === "Checkout" && (
+                <div className="">
+                  <h2 className="text-2xl font-semibold mb-8">Checkout</h2>
+          
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  {/* Billing Details */}
+                  <div className="lg:col-span-2">
+                      <form className="space-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <input type="text" placeholder="First name" className="input" />
+                          <input type="text" placeholder="Last name" className="input" />
+                      </div>
+                      <input type="text" placeholder="Company name (optional)" className="input" />
+                      <input type="text" placeholder="Street address" className="input" />
+                      <input type="text" placeholder="Apartment, suite, etc. (optional)" className="input" />
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <input type="text" placeholder="Town / City" className="input" />
+                          <input type="text" placeholder="State" className="input" />
+                          <input type="text" placeholder="ZIP Code" className="input" />
+                      </div>
+                      <input type="text" placeholder="Phone" className="input" />
+                      <input type="email" placeholder="Email address" className="input" />
+          
+                      <div className="flex items-center space-x-2">
+                          <input type="checkbox" id="create-account" />
+                          <label htmlFor="create-account">Create an account?</label>
+                      </div>
+          
+                      <textarea placeholder="Order notes (optional)" className="input h-24" />
+                      </form>
+                  </div>
+          
+                  {/* Order Summary */}
+                  <div className="border border-gray-200 p-6 rounded-lg shadow-sm">
+                      <h3 className="text-xl font-semibold mb-4">Your order</h3>
+                      <ul className="space-y-2">
+                      <li className="flex justify-between">
+                          <span>Jogging Top × 1</span>
+                          <span>$15.00</span>
+                      </li>
+                      <li className="flex justify-between">
+                          <span>Neo Wear Bottle × 1</span>
+                          <span>$10.00</span>
+                      </li>
+                      <li className="flex justify-between">
+                          <span>Beanie Hat × 1</span>
+                          <span>$19.99</span>
+                      </li>
+                      </ul>
+          
+                      <div className="border-t mt-4 pt-4 space-y-2 text-sm">
+                      <div className="flex justify-between">
+                          <span>Subtotal</span>
+                          <span>$44.99</span>
+                      </div>
+                      <div className="flex justify-between">
+                          <span>Shipping</span>
+                          <span>Flat rate: $4.99</span>
+                      </div>
+                      <div className="flex justify-between font-semibold">
+                          <span>Total</span>
+                          <span>$49.98</span>
+                      </div>
+                      </div>
+          
+                      <div className="mt-6 space-y-3">
+                      <div>
+                          <input type="radio" id="bank" name="payment" className="mr-2" />
+                          <label htmlFor="bank">Direct bank transfer</label>
+                      </div>
+                      <div>
+                          <input type="radio" id="check" name="payment" className="mr-2" />
+                          <label htmlFor="check">Check payments</label>
+                      </div>
+                      </div>
+          
+                      <div className="mt-4">
+                      <input type="checkbox" id="terms" className="mr-2" />
+                      <label htmlFor="terms">
+                          I have read and agree to the website <a href="#" className="text-blue-600 underline">terms and conditions</a>
+                      </label>
+                      </div>
+          
+                      <button className="w-full bg-[#e08325] cursor-pointer text-white py-3 rounded-lg mt-6 font-semibold">
+                      Place order
+                      </button>
+          
+                      <div className="mt-4 flex justify-center gap-3">
+                      <img src="images/visa.svg" alt="Visa" className="h-6" />
+                      <img src="images/paypal.svg" alt="PayPal" className="h-6" />
+                      <img src="images/mastercard.svg" alt="MasterCard" className="h-6" />
+                      </div>
+                  </div>
+                  </div>
+                </div>
+              )}
+
             </main>
         </div>
 
