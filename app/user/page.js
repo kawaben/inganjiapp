@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import '../globals.css';
 import {TrashIcon,} from "@heroicons/react/24/solid";
-
 export default function UserPage() {
 
   const [activeSection, setActiveSection] = useState("My Profile");
@@ -21,8 +20,8 @@ export default function UserPage() {
       image: "https://randomuser.me/api/portraits/men/92.jpg",
     });
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState(
-    
+
+  const [formData, setFormData] = useState( 
     {
     firstname: "",
     lastname: "", 
@@ -33,6 +32,26 @@ export default function UserPage() {
     country: "",
     bio: "",
   });
+
+  const [cartItems, setCartItems] = useState([
+    { id: 1, name: "Tshirt",size:"xxl", price: 15.0, quantity: 2 },
+    { id: 2, name: "Beanie",size:"l", price: 15.0, quantity: 3 },
+    { id: 3, name: "Glasses",size:"m", price: 15.0, quantity: 1 },
+  ]);
+
+  const updateQuantity = (id, amount) => {
+    setCartItems((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, quantity: Math.max(1, item.quantity + amount) } : item
+      )
+    );
+  };
+
+  const removeItem = (id) => {
+    setCartItems((prev) => prev.filter((item) => item.id !== id));
+  };
+  const subTotalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+  const totalPrice = (subTotalPrice + 20);
 
   const router = useRouter();
 
@@ -95,9 +114,6 @@ export default function UserPage() {
     setIsModalOpen(false);
   };
   
-  
-  
-  
 
 const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -110,6 +126,9 @@ const handleImageChange = (e) => {
     }
   };
   
+
+
+
   return (
     <div className="min-h-screen  bg-[#f8e2d2] p-2">
       <div className="flex flex-col md:flex-row bg-[#f7eee8] border border-gray-300 rounded shadow mt-30">
@@ -190,29 +209,39 @@ const handleImageChange = (e) => {
                     </div>
             
                     
-                    {[1, 2, 3].map((item, idx) => (
-                      <div key={idx} className="grid grid-cols-6 gap-4 items-center py-2 shadow text-sm md:text-base lg:text-lg font-medium tracking-wide">
-                        <div className="col-span-2 flex items-center gap-4">
-                          <img
-                            src={`/images/m2.jpg`} 
-                            alt="Product"
-                            className="w-16 h-16 object-cover rounded"
-                          />
-                          <div>
-                            <div className="font-medium">Product Name</div>
-                            <div className="text-sm text-gray-400">Product ID: 12345678</div>
+                    {cartItems.length > 0 ? (
+                      cartItems.map((item) => (
+                        <div key={item.id} className="grid grid-cols-6 gap-4 items-center py-2 shadow text-sm md:text-base lg:text-lg font-medium tracking-wide">
+                          <div className="col-span-2 flex items-center gap-4">
+                            <img
+                              src={`/images/m2.jpg`} 
+                              alt="Product"
+                              className="w-16 h-16 object-cover rounded"
+                            />
+                            <div>
+                              <div className="font-medium">{item.name}</div>
+                              <div className="text-sm text-gray-400">Product ID: {item.id}</div>
+                            </div>
                           </div>
+                          <div>{item.size}</div>
+                          <div className="flex items-center gap-2">
+                            <button className="px-2 border bg-[#e08325] rounded cursor-pointer"  onClick={() => updateQuantity(item.id, -1)}>-</button>
+                            <span>{item.quantity}</span>
+                            <button className="px-2 border bg-[#e08325] rounded cursor-pointer"  onClick={() => updateQuantity(item.id, 1)}>+</button>
+                          </div>
+                          <div className="p-4 md:p-0">${item.price.toFixed(2)} each</div>
+                          <div className="text-[#e08325] cursor-pointer w-5 h-5"  onClick={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            removeItem(item.id);
+                          }}><TrashIcon/></div>
                         </div>
-                        <div>L</div>
-                        <div className="flex items-center gap-2">
-                          <button className="px-2 border bg-[#e08325] rounded cursor-pointer">-</button>
-                          <span>02</span>
-                          <button className="px-2 border bg-[#e08325] rounded cursor-pointer">+</button>
-                        </div>
-                        <div className="p-4 md:p-0">$50.00</div>
-                        <div className="text-[#e08325] cursor-pointer w-5 h-5"><TrashIcon/></div>
-                      </div>
-                    ))}
+                      ))
+                    )
+                    : (
+                      <p className="text-gray-500">Your Cart is empty.</p>
+                    )
+                    }
             
                     {/* Totals */}
                     <div className="grid grid-cols-2 mt-6 gap-6">
@@ -229,11 +258,11 @@ const handleImageChange = (e) => {
                       <div className="space-y-2">
                         <div className="flex justify-between text-sm">
                           <span>Subtotal</span>
-                          <span>$260.00</span>
+                          <span>${subTotalPrice.toFixed(2)}</span>
                         </div>
                         <div className="flex justify-between font-semibold">
                           <span>Total</span>
-                          <span>$280.00</span>
+                          <span>${totalPrice.toFixed(2)}</span>
                         </div>
                       </div>
                     </div>
