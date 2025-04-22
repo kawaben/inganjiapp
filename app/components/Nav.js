@@ -150,18 +150,29 @@ export default function Nav() {
 
   // user authentication
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    const user = newUsers.find((u) => u.email === email && u.password === password);
-    if (user) {
+    try {
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+  
+      const data = await res.json();
+  
+      if (!res.ok) {
+        throw new Error(data.error || "Login failed");
+      }
+  
+      // Store JWT token
+      localStorage.setItem("token", data.token); 
       setIsLoggedIn(true);
-      localStorage.setItem("loggedInUser", JSON.stringify(user));
       setShowPanel(false);
       router.push("/user");
-    } else {
-      alert("Invalid credentials");
+    } catch (error) {
+      alert(error.message);
     }
-    
   };
   
   const handleSignup = (e) => {

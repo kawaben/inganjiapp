@@ -2,7 +2,7 @@
 
 import { useParams } from 'next/navigation'
 import { useState } from 'react'
-import Pagination from '@/app/components/Pagination'
+import Pagination from '../../components/Pagination'
 import './style.css'
 
 const allProducts = {
