@@ -346,33 +346,36 @@ const handleImageChange = (e) => {
                   {/* Order Summary */}
                   <div className="border border-gray-200 p-6 rounded-lg shadow-sm">
                       <h3 className="text-xl font-semibold mb-4">Your order</h3>
-                      <ul className="space-y-2">
-                      <li className="flex justify-between">
-                          <span>Jogging Top × 1</span>
-                          <span>$15.00</span>
-                      </li>
-                      <li className="flex justify-between">
-                          <span>Neo Wear Bottle × 1</span>
-                          <span>$10.00</span>
-                      </li>
-                      <li className="flex justify-between">
-                          <span>Beanie Hat × 1</span>
-                          <span>$19.99</span>
-                      </li>
-                      </ul>
+                        {cartItems.length > 0 ? (
+                        cartItems.map((item) => (
+                          <ul key={item.id} className="space-y-2">
+                          <li className="flex justify-between">
+                              <span>{item.name} × {item.quantity}</span>
+                              <span>${item.price.toFixed(2)*item.quantity}</span>
+                          </li>
+                        
+                          </ul>
+
+                        ))
+                        )
+                        : (
+                          <p className="text-gray-500">Your Cart is empty.</p>
+                        )
+                        }
+
           
                       <div className="border-t mt-4 pt-4 space-y-2 text-sm">
                       <div className="flex justify-between">
                           <span>Subtotal</span>
-                          <span>$44.99</span>
+                          <span>${subTotalPrice.toFixed(2)}</span>
                       </div>
                       <div className="flex justify-between">
                           <span>Shipping</span>
-                          <span>Flat rate: $4.99</span>
+                          <span>Flat rate: $20.00</span>
                       </div>
                       <div className="flex justify-between font-semibold">
                           <span>Total</span>
-                          <span>$49.98</span>
+                          <span>${totalPrice}</span>
                       </div>
                       </div>
           
