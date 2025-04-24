@@ -10,17 +10,7 @@ export default function UserPage() {
   const [activeSection, setActiveSection] = useState("My Profile");
 
 
-  const [user, setUser] = useState({
-      firstname: "FirstName",
-      lastname: "LastName",
-      username: "UserName",
-      email: "name@nuovire.com",
-      phone: "+250 900 000 0000",
-      bio: "Your Bio",
-      location: "Kigali",
-      country: "Rwanda",
-      image: "https://randomuser.me/api/portraits/men/92.jpg",
-    });
+  const [user, setUser] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [formData, setFormData] = useState( 
@@ -69,7 +59,23 @@ export default function UserPage() {
   }, [loading, authenticated]);
 
   if (loading || !authenticated) return null;
-
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-[#f8e2d2] flex items-center justify-center text-center p-4">
+        <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+          <h2 className="text-xl font-semibold mb-2">You're not logged in</h2>
+          <p className="text-gray-600 mb-4">Please log in to view your profile.</p>
+          <a
+            href="/"
+            className="inline-block bg-[#e08325] text-white px-4 py-2 rounded hover:bg-[#c46d1d]"
+          >
+            Go to Home
+          </a>
+        </div>
+      </div>
+    );
+  }
+  
 
 
   const handleLogout = () => {
