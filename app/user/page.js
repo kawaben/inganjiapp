@@ -3,18 +3,20 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import '../globals.css';
 import {TrashIcon,} from "@heroicons/react/24/solid";
-export default function UserPage() {
+import useAuth from "../hooks/useAuth";
 
+export default function UserPage() {
+  const { authenticated, loading } = useAuth();
   const [activeSection, setActiveSection] = useState("My Profile");
 
 
   const [user, setUser] = useState({
-      firstname: "Kabagema",
-      lastname: "Ben",
-      username: "kb",
-      email: "Kabe@nuovire.com",
-      phone: "(250) 555-5555",
-      bio: "Software Developer",
+      firstname: "FirstName",
+      lastname: "LastName",
+      username: "UserName",
+      email: "name@nuovire.com",
+      phone: "+250 900 000 0000",
+      bio: "Your Bio",
       location: "Kigali",
       country: "Rwanda",
       image: "https://randomuser.me/api/portraits/men/92.jpg",
@@ -56,13 +58,19 @@ export default function UserPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("loggedInUser"));
-    if (storedUser) {
-      setUser(storedUser);
-    } else {
-      router.push("/");
+    if (!loading && !authenticated) {
+      const storedUser = JSON.parse(localStorage.getItem("loggedInUser"));
+      if (storedUser) {
+        setUser(storedUser);
+      } else {
+        router.push("/");
+      }
     }
-  }, []);
+  }, [loading, authenticated]);
+
+  if (loading || !authenticated) return null;
+
+
 
   const handleLogout = () => {
     localStorage.removeItem("loggedInUser");

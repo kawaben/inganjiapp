@@ -1,5 +1,6 @@
 import './globals.css';
-
+import Body from './components/Body';
 export default function Home() {
-  return <h1>Welcome to NUOVI RE's app</h1>;
+  return  <h1>okay</h1>
+  
 }

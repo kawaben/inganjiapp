@@ -1,0 +1,133 @@
+import { useState, useEffect } from "react";
+import "../globals.css";
+import { useRouter } from "next/navigation";
+
+export default function LoginPanel() {
+  const router = useRouter();
+  const [email, setEmail] = useState(""); const [password, setPassword] = useState(""); 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [showPanel, setShowPanel] = useState(false);
+
+  
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+  
+      const data = await res.json();
+  
+      if (!res.ok) {
+        throw new Error(data.error || "Login failed");
+      }
+  
+      // Store JWT token
+      localStorage.setItem("token", data.token); 
+      setIsLoggedIn(true);
+      setShowPanel(false);
+      router.push("/user");
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+  
+  const handleSignup = (e) => {
+    e.preventDefault();
+    const userExists = newUsers.some((u) => u.email === email);
+    if (userExists) {
+      alert("User already exists");
+    } else {
+      const newUser = { email, password };
+      setNewUsers((prev) => [...prev, newUser]);
+      setIsLoggedIn(true);
+      localStorage.setItem("loggedInUser", JSON.stringify(newUser));
+     
+      router.push("/user");
+      
+    }
+  };
+    return (
+      <div className={`fixed top-16 right-0 w-full md:w-1/3 h-screen bg-[#f8e2d2] shadow-lg transition-transform duration-300 panel p-5 z-10 "translate-x-0" : "translate-x-full"`}>
+            <h2 className="text-lg font-bold uppercase text-black mb-4">Account</h2>
+            {!isLoggedIn ? (
+              <form onSubmit={isSignUp ? handleSignup : handleLogin} className="space-y-4">
+                
+                <input
+                  type="email"
+                  placeholder="Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full p-3 rounded bg-[#3a3a3a] text-[#f8e2d2] placeholder-gray-300"
+                  required
+                />
+                <input
+                  type="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full p-3 rounded bg-[#3a3a3a] text-[#f8e2d2] placeholder-gray-300"
+                  required
+                />
+                <button
+                  type="submit"
+                  className="w-full bg-[#e08325] text-[#0c0805] p-3 rounded-md"
+                >
+                  {isSignUp ? "Sign Up" : "Log In"}
+                </button>
+                <p className="text-sm text-black text-center">
+                  {isSignUp ? (
+                    <>
+                      Already have an account?{" "}
+                      <span
+                        className="underline cursor-pointer"
+                        onClick={() => {
+                          setIsSignUp(false);
+                          
+                        }
+                        }
+                      >
+                        Log In
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      Don't have an account?{" "}
+                      <span
+                        className="underline cursor-pointer"
+                        onClick={() => {
+                          setIsSignUp(true);
+                          
+                        }
+
+                        }
+                      >
+                        Sign Up
+                      </span>
+                    </>
+                  )}
+                </p>
+              </form>
+            ) : (
+              <div className="space-y-4">
+                <p className="text-black">Welcome back, {email}</p>
+                <button
+                  className="w-full bg-[#0c0805] text-[#f8e2d2] p-3 rounded-md"
+                  onClick={() => {
+                    setIsLoggedIn(false);
+                    setEmail("");
+                    setPassword("");
+                  }}
+                >
+                  Log Out
+                </button>
+              </div>
+            )}
+          </div>
+    );
+  }
+  
