@@ -28,6 +28,10 @@ export default function LoginPanel() {
   
       // Store JWT token
       localStorage.setItem("token", data.token); 
+  
+      // ✅ Also store the full user profile
+      localStorage.setItem("loggedInUser", JSON.stringify(data.user));
+  
       setIsLoggedIn(true);
       setShowPanel(false);
       router.push("/user");
@@ -35,6 +39,8 @@ export default function LoginPanel() {
       alert(error.message);
     }
   };
+  
+  
   
   const handleSignup = (e) => {
     e.preventDefault();

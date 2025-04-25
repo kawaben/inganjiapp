@@ -17,5 +17,5 @@ export async function POST(req) {
     expiresIn: "1d",
   });
 
-  return NextResponse.json({ token, user: { email: user.email } });
+  return NextResponse.json({ token, user: { email: user.email, firstname: user.firstname } });
 }
