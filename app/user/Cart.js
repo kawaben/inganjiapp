@@ -1,6 +1,8 @@
 'use client';
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import {TrashIcon,} from "@heroicons/react/24/solid";
+import Checkout from "./Checkout";
 
 
 export default function Cart() {

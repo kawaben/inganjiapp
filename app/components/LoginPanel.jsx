@@ -3,44 +3,59 @@ import "../globals.css";
 import { useRouter } from "next/navigation";
 
 export default function LoginPanel() {
+  const users = [
+    { email: "kabagema@nuovire.com", password: "king" },
+    { email: "keza@nuovire.com", password: "tracy" },
+  ];
+
+  const [newUsers, setNewUsers] = useState(() => {
+    // Load from localStorage on first render
+      if (typeof window !== "undefined") {
+        const stored = localStorage.getItem("users");
+        return stored ? JSON.parse(stored) : users;
+      }
+      return users;
+    });
+  
+    // Save to localStorage whenever newUsers changes
+    useEffect(() => {
+      if (typeof window !== "undefined") {
+        localStorage.setItem("users", JSON.stringify(newUsers));
+      }
+    }, [newUsers]);
+  
+  
+  // Localstorage
+    useEffect(() => {
+      const storedUsers = JSON.parse(localStorage.getItem("users"));
+      if (storedUsers) setNewUsers(storedUsers);
+    }, []);
+    
+    useEffect(() => {
+      localStorage.setItem("users", JSON.stringify(newUsers));
+    }, [newUsers]);
+  
+  
   const router = useRouter();
   const [email, setEmail] = useState(""); const [password, setPassword] = useState(""); 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
-  const [showPanel, setShowPanel] = useState(false);
-
+  
+ 
   
 
-  const handleLogin = async (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
-    try {
-      const res = await fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-  
-      const data = await res.json();
-  
-      if (!res.ok) {
-        throw new Error(data.error || "Login failed");
-      }
-  
-      // Store JWT token
-      localStorage.setItem("token", data.token); 
-  
-      // ✅ Also store the full user profile
-      localStorage.setItem("loggedInUser", JSON.stringify(data.user));
-  
+    const user = newUsers.find((u) => u.email === email && u.password === password);
+    if (user) {
       setIsLoggedIn(true);
-      setShowPanel(false);
+      localStorage.setItem("loggedInUser", JSON.stringify(user));
       router.push("/user");
-    } catch (error) {
-      alert(error.message);
+    } else {
+      alert("Invalid credentials");
     }
+    
   };
-  
-  
   
   const handleSignup = (e) => {
     e.preventDefault();
@@ -52,15 +67,16 @@ export default function LoginPanel() {
       setNewUsers((prev) => [...prev, newUser]);
       setIsLoggedIn(true);
       localStorage.setItem("loggedInUser", JSON.stringify(newUser));
-     
       router.push("/user");
       
     }
   };
+
+
     return (
       <div className={`fixed top-16 right-0 w-full md:w-1/3 h-screen bg-[#f8e2d2] shadow-lg transition-transform duration-300 panel p-5 z-10 "translate-x-0" : "translate-x-full"`}>
             <h2 className="text-lg font-bold uppercase text-black mb-4">Account</h2>
-            {!isLoggedIn ? (
+             {!isLoggedIn ? (
               <form onSubmit={isSignUp ? handleSignup : handleLogin} className="space-y-4">
                 
                 <input
@@ -91,11 +107,7 @@ export default function LoginPanel() {
                       Already have an account?{" "}
                       <span
                         className="underline cursor-pointer"
-                        onClick={() => {
-                          setIsSignUp(false);
-                          
-                        }
-                        }
+                        onClick={() => setIsSignUp(false)}
                       >
                         Log In
                       </span>
@@ -105,12 +117,7 @@ export default function LoginPanel() {
                       Don't have an account?{" "}
                       <span
                         className="underline cursor-pointer"
-                        onClick={() => {
-                          setIsSignUp(true);
-                          
-                        }
-
-                        }
+                        onClick={() => setIsSignUp(true)}
                       >
                         Sign Up
                       </span>

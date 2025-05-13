@@ -1,12 +1,29 @@
 'use client';
 import { useEffect, useState } from "react";
 import useAuth from "../hooks/useAuth";
-
+import { useRouter } from "next/navigation";
 
 export default function Profile() {
+  const router = useRouter();
   const { authenticated, loading } = useAuth();
   const [user, setUser] = useState(null); // default null
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    // Check login status from localStorage
+    const storedUsers = JSON.parse(localStorage.getItem("users")) || [];
+    const loggedIn = JSON.parse(localStorage.getItem("loggedInUser"));
+    if (loggedIn) {
+      const user = storedUsers.find((u) => u.email === loggedIn.email);
+      if (user) setCurrentUser(user);
+      
+    } else {
+      router.push("/"); // Redirect to home if not logged in
+    }
+  }, [router]);
+
+
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
@@ -65,8 +82,6 @@ export default function Profile() {
     setIsModalOpen(false);
   };
   
-  
-
   const handleImageChange = (e) => {
       const file = e.target.files[0];
       if (file) {
@@ -78,20 +93,8 @@ export default function Profile() {
       }
     };
     
-  useEffect(() => {
-    if (!loading && !authenticated) {
-      const storedUser = JSON.parse(localStorage.getItem("loggedInUser"));
-      console.log("Stored user from localStorage:", storedUser);
-      if (storedUser) {
-        setUser(storedUser);
-      } else {
-        router.push("/");
-      }
-    }
-  }, [loading, authenticated]);
-
-  if  (loading || !authenticated) return null;
-  if (!user) {
+ 
+  if (!currentUser) {
     return (
       <div className="min-h-screen bg-[#f8e2d2] flex items-center justify-center text-center p-4">
         <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
@@ -111,7 +114,6 @@ export default function Profile() {
 
   return (
     <>
-    {/* Top Profile Card */}
     <h1 className="text-2xl font-bold mb-4">My Profile</h1>
     <div className="border border-gray-300 rounded  p-4 flex items-center gap-4 mb-6">
     <img
