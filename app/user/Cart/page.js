@@ -27,9 +27,10 @@ export default function Cart() {
       const subTotalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
       const totalPrice = (subTotalPrice + 20);
     
-  
-  
-
+      // Save to localStorage when cartItems change
+    useEffect(() => {
+      localStorage.setItem("cart", JSON.stringify(cartItems));
+    }, [cartItems]);
 
 
   return (
@@ -119,11 +120,13 @@ export default function Cart() {
             
                     {/* Bottom Buttons */}
                     <div className="mt-10 flex justify-between gap-4">
-                      <button className="flex-1 py-2 bg-[#1b1403] text-[#f8e2d2] rounded cursor-pointer">
-                        Back to Shop
-                      </button>
-                      <Link href="/user/Checkout">
-                        <button className="flex-1 py-2 bg-[#e08325] text-[#f8e2d2] rounded cursor-pointer">
+                      <Link href="/" className="flex-1 py-2 bg-[#1b1403]  rounded cursor-pointer flex justify-center items-center">
+                        <button className="py-2 text-[#f8e2d2] cursor-pointer">
+                          Back to Shop
+                        </button>
+                      </Link>
+                      <Link href="/user/Checkout" className="flex-1 py-2 bg-[#e08325] rounded cursor-pointer flex justify-center items-center">
+                        <button className="py-2 text-[#f8e2d2] cursor-pointer">
                           Checkout
                         </button>
                       </Link>

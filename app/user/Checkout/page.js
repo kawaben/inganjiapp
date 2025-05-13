@@ -1,18 +1,34 @@
 'use client';
 import { useEffect, useState } from "react";
-
+import { useRouter } from 'next/navigation';
 
 
 export default function Checkout() {
+
+    const router = useRouter();
   
-     const [cartItems, setCartItems] = useState([
+    const [cartItems, setCartItems] = useState([
             { id: 1, name: "Tshirt",size:"xxl", price: 15.0, quantity: 2 },
             { id: 2, name: "Beanie",size:"l", price: 15.0, quantity: 3 },
             { id: 3, name: "Glasses",size:"m", price: 15.0, quantity: 1 },
           ]);
+    useEffect(() => {
+        const storedCart = localStorage.getItem('cart');
+        if (storedCart) {
+        setCartItems(JSON.parse(storedCart));
+        }
+    }, []);
 
     const subTotalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
     const totalPrice = (subTotalPrice + 20);
+
+    const handlePlaceOrder = () => {
+         localStorage.removeItem('cart');
+        // Redirect to confirmation
+        router.push('/order/confirmation');
+    };
+
+
   return (
    
     <div className="pt-23 p-6">
@@ -100,14 +116,14 @@ export default function Checkout() {
                 </label>
                 </div>
 
-                <button className="w-full bg-[#e08325] cursor-pointer text-white py-3 rounded-lg mt-6 font-semibold">
+                <button className="w-full bg-[#e08325] cursor-pointer text-white py-3 rounded-lg mt-6 font-semibold" onClick={handlePlaceOrder}>
                 Place order
                 </button>
 
                 <div className="mt-4 flex justify-center gap-3">
-                <img src="images/visa.svg" alt="Visa" className="h-6" />
-                <img src="images/paypal.svg" alt="PayPal" className="h-6" />
-                <img src="images/mastercard.svg" alt="MasterCard" className="h-6" />
+                <img src="../images/visa.svg" alt="Visa" className="h-6" />
+                <img src="../images/paypal.svg" alt="PayPal" className="h-6" />
+                <img src="../images/mastercard.svg" alt="MasterCard" className="h-6" />
                 </div>
             </div>
         </div>

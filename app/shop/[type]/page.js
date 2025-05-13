@@ -3,6 +3,7 @@
 import { useParams } from 'next/navigation'
 import { useState } from 'react'
 import Pagination from '../../components/Pagination'
+import AddToCartButton from '../../components/AddToCartButton';
 import './style.css'
 
 const allProducts = {
@@ -123,6 +124,7 @@ export default function CategoryPage() {
               <strong>${product.price}</strong>{' '}
               <span style={{ textDecoration: 'line-through' }}>${product.oldPrice}</span>
             </p>
+            <AddToCartButton product={product} />
           </div>
         )
       })}
