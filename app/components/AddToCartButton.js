@@ -1,29 +1,41 @@
 'use client';
 import { useState } from 'react';
 
-export default function AddToCartButton({ product }) {
+export default function AddToCartButton({ product, selectedSize, selectedColor }) {
   const [added, setAdded] = useState(false);
 
   const handleAddToCart = () => {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-    // Check if the item already exists (match by id + size)
-    const existingItemIndex = cart.findIndex(
-      (item) => item.id === product.id && item.size === product.size
+    const image = product.images[selectedColor];
+
+    const newItem = {
+    id: product.id,
+    name: product.name,
+    price: product.price,
+    quantity: 1,
+    size: selectedSize,
+    color: selectedColor,
+    image, // <-- store specific image URL here
+  };
+
+    // Check if same item (same id, color, size) exists
+    const existingIndex = cart.findIndex(
+      (item) =>
+        item.id === newItem.id &&
+        item.selectedSize === newItem.selectedSize &&
+        item.selectedColor === newItem.selectedColor
     );
 
-    if (existingItemIndex > -1) {
-      // Update quantity
-      cart[existingItemIndex].quantity += product.quantity || 1;
+    if (existingIndex !== -1) {
+      cart[existingIndex].quantity += 1;
     } else {
-      // Add new item
-      cart.push({ ...product, quantity: product.quantity || 1 });
+      cart.push(newItem);
+      localStorage.setItem('cart', JSON.stringify(cart));
     }
 
     localStorage.setItem('cart', JSON.stringify(cart));
     setAdded(true);
-
-    // Optionally revert the button state after a delay
     setTimeout(() => setAdded(false), 1500);
   };
 
@@ -36,6 +48,5 @@ export default function AddToCartButton({ product }) {
     >
       {added ? 'Added!' : 'Add to Cart'}
     </button>
-    
   );
 }

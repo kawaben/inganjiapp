@@ -1,36 +1,43 @@
 'use client';
-import { useEffect, useState } from "react";
+import { useEffect, useState , useRef} from "react";
 import Link from "next/link";
 import {TrashIcon,} from "@heroicons/react/24/solid";
 
 
 
 export default function Cart() {
-    const [activeSection, setActiveSection] = useState(false);
-    const [cartItems, setCartItems] = useState([
-        { id: 1, name: "Tshirt",size:"xxl", price: 15.0, quantity: 2 },
-        { id: 2, name: "Beanie",size:"l", price: 15.0, quantity: 3 },
-        { id: 3, name: "Glasses",size:"m", price: 15.0, quantity: 1 },
-      ]);
-    
-      const updateQuantity = (id, amount) => {
-        setCartItems((prev) =>
-          prev.map((item) =>
-            item.id === id ? { ...item, quantity: Math.max(1, item.quantity + amount) } : item
-          )
-        );
-      };
-    
-      const removeItem = (id) => {
-        setCartItems((prev) => prev.filter((item) => item.id !== id));
-      };
-      const subTotalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
-      const totalPrice = (subTotalPrice + 20);
-    
-      // Save to localStorage when cartItems change
-    useEffect(() => {
-      localStorage.setItem("cart", JSON.stringify(cartItems));
-    }, [cartItems]);
+const [cartItems, setCartItems] = useState([]);
+const isFirstLoad = useRef(true);
+
+useEffect(() => {
+  const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
+  setCartItems(storedCart);
+}, []);
+
+useEffect(() => {
+  if (isFirstLoad.current) {
+    isFirstLoad.current = false;
+    return; // 🔒 Skip first run
+  }
+
+  localStorage.setItem('cart', JSON.stringify(cartItems));
+}, [cartItems]);
+
+const updateQuantity = (id, delta) => {
+  const updated = cartItems.map(item =>
+    item.id === id ? { ...item, quantity: Math.max(1, item.quantity + delta) } : item
+  );
+  setCartItems(updated);
+};
+
+const removeItem = (id) => {
+  const updated = cartItems.filter(item => item.id !== id);
+  setCartItems(updated);
+};
+
+const subTotalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+const totalPrice = subTotalPrice + 20;
+
 
 
   return (

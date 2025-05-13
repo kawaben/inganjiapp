@@ -124,7 +124,11 @@ export default function CategoryPage() {
               <strong>${product.price}</strong>{' '}
               <span style={{ textDecoration: 'line-through' }}>${product.oldPrice}</span>
             </p>
-            <AddToCartButton product={product} />
+            <AddToCartButton
+              product={product}
+              selectedColor="#FFA500"
+              selectedSize="M"
+            />
           </div>
         )
       })}

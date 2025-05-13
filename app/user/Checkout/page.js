@@ -12,6 +12,7 @@ export default function Checkout() {
             { id: 2, name: "Beanie",size:"l", price: 15.0, quantity: 3 },
             { id: 3, name: "Glasses",size:"m", price: 15.0, quantity: 1 },
           ]);
+          
     useEffect(() => {
         const storedCart = localStorage.getItem('cart');
         if (storedCart) {
@@ -23,10 +24,34 @@ export default function Checkout() {
     const totalPrice = (subTotalPrice + 20);
 
     const handlePlaceOrder = () => {
-         localStorage.removeItem('cart');
-        // Redirect to confirmation
-        router.push('/order/confirmation');
-    };
+  const orderId = 'TXN' + Date.now(); // Simple ID generator
+  const cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+  if (cart.length === 0) {
+    alert('Cart is empty!');
+    return;
+  }
+
+  const order = {
+    id: orderId,
+    items: cart,
+    date: new Date().toISOString(),
+    total: cart.reduce((sum, item) => sum + item.price * item.quantity, 0) + 20, // + shipping
+    status: 'Processing',
+  };
+
+  // Save order to localStorage (append to existing orders)
+  const existingOrders = JSON.parse(localStorage.getItem('orders')) || [];
+  existingOrders.push(order);
+  localStorage.setItem('orders', JSON.stringify(existingOrders));
+
+  // Clear cart
+  localStorage.removeItem('cart');
+  setCartItems([]); // Also clear state
+
+  router.push('/user/orders'); 
+};
+
 
 
   return (
