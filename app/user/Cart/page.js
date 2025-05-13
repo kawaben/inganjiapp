@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import {TrashIcon,} from "@heroicons/react/24/solid";
-import Checkout from "./Checkout";
+
 
 
 export default function Cart() {
@@ -122,9 +122,11 @@ export default function Cart() {
                       <button className="flex-1 py-2 bg-[#1b1403] text-[#f8e2d2] rounded cursor-pointer">
                         Back to Shop
                       </button>
-                      <button className="flex-1 py-2 bg-[#e08325] text-[#f8e2d2] rounded cursor-pointer" onClick={() => setActiveSection("Checkout")}>
-                        Checkout
-                      </button>
+                      <Link href="/user/Checkout">
+                        <button className="flex-1 py-2 bg-[#e08325] text-[#f8e2d2] rounded cursor-pointer">
+                          Checkout
+                        </button>
+                      </Link>
                     </div>
               </div>
   

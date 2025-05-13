@@ -4,12 +4,12 @@ import { useRouter } from "next/navigation";
 import '../globals.css';
 
 import useAuth from "../hooks/useAuth";
-import Profile from "./Myprofile";
-import Cart from "./Cart";
-import Wishlist from "./Wishlist";
-import Notifications from "./Notifications";
-import Settings from "./Settings";
-import Checkout from "./Checkout";
+import Profile from "./Myprofile/page";
+import Cart from "./Cart/page";
+import Wishlist from "./Wishlist/page";
+import Notifications from "./Notifications/page";
+import Settings from "./Settings/page";
+import Checkout from "./Checkout/page";
 
 export default function UserPage() {
   const { authenticated, loading } = useAuth();
