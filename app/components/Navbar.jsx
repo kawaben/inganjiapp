@@ -10,17 +10,21 @@ import CartPanel from './CartPanel';
 import LoginPanel from './LoginPanel';
 import WishlistPanel from './WishlistPanel';
 import HumburgerPanel from './HumburgerPanel';
-
+import { useStore } from '../context/StoreContext';
 
 export default function Navbar() {
   const [activePanel, setActivePanel] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
+  const [cartItems, setCartItems] = useState([]);
+  
+  const { cart } = useStore();
+  const { wishlist } = useStore();
 
   useEffect(() => {
-    const storedLogin = localStorage.getItem('isLoggedIn');
-    if (storedLogin === 'true') setIsLoggedIn(true);
-  }, []);
+  const storedLogin = localStorage.getItem('isLoggedIn');
+  if (storedLogin === 'true') setIsLoggedIn(true);
+    }, []);
 
   useEffect(() => {
     localStorage.setItem('isLoggedIn', isLoggedIn);
@@ -57,8 +61,27 @@ export default function Navbar() {
       <div className="flex gap-4 m-8 text-[#1b1403]">
         <NavbarIcon icon={<FaSearch className="w-6 h-6 text-[#1b1403] hover:text-[#e08325]"/>} onClick={() => togglePanel('search')} />
         <NavbarIcon icon={<FaBell className="w-6 h-6 text-[#1b1403] hover:text-[#e08325]"/>} onClick={() => togglePanel('notifications')} />
-        <NavbarIcon icon={<FaHeart className="w-6 h-6 text-[#1b1403] hover:text-[#e08325]"/>} onClick={() => togglePanel('wishlist')} />
-        <NavbarIcon icon={<FaShoppingCart className="w-6 h-6 text-[#1b1403] hover:text-[#e08325]"/>} onClick={() => togglePanel('cart')} />
+        <NavbarIcon 
+                    icon={
+                      <div className="relative">
+                        <FaHeart className="w-6 h-6 text-[#1b1403] hover:text-[#e08325]"/>
+                        <span className="absolute -top-2 -right-2 bg-[#e08325] text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                          {wishlist.length}
+                        </span>
+
+                      </div>
+                          } onClick={() => togglePanel('wishlist')} />
+        <NavbarIcon
+                    icon={
+                      <div className="relative">
+                        <FaShoppingCart className="w-6 h-6 text-[#1b1403] hover:text-[#e08325]" />
+                        <span className="absolute -top-2 -right-2 bg-[#e08325] text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                          {cart.length}
+                        </span>
+                      </div>
+                    } onClick={() => togglePanel('cart')}
+                  />
+
         <NavbarIcon icon={<FaUser className="w-6 h-6 text-[#1b1403] hover:text-[#e08325]"/>} onClick={() => togglePanel('account') } />
         <button onClick={() => handleIconClick("menu")} className="md:hidden icon">
           <svg
@@ -72,6 +95,7 @@ export default function Navbar() {
           </svg>
         </button>
       </div>
+
         {/* Humburger Menu */}
         
 

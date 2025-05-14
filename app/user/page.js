@@ -10,6 +10,7 @@ import Wishlist from "./Wishlist/page";
 import Notifications from "./Notifications/page";
 import Settings from "./Settings/page";
 import Checkout from "./Checkout/page";
+import Orders from "./orders/page";
 
 export default function UserPage() {
   const { authenticated, loading } = useAuth();
@@ -115,6 +116,10 @@ export default function UserPage() {
 
               {activeSection === "Checkout" && (
                 <Checkout />
+              )}
+
+              {activeSection === "Orders" && (
+                <Orders />
               )}
 
             </main>

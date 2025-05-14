@@ -42,8 +42,8 @@ export default function AddToCartButton({ product, selectedSize, selectedColor }
   return (
     <button
       onClick={handleAddToCart}
-      className={`px-4 py-2 rounded text-white ${
-        added ? 'bg-green-600' : 'bg-black hover:bg-gray-800'
+      className={`px-4 py-2 w-full h-12 rounded text-white ${
+        added ? 'bg-[#e08325]' : 'bg-black hover:bg-gray-800'
       }`}
     >
       {added ? 'Added!' : 'Add to Cart'}

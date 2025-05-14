@@ -5,18 +5,20 @@ import Home from "./components/Body";
 import "./globals.css";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
-
+import { StoreProvider } from './context/StoreContext';
 
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <Navbar />
-      
-        {children}
+        <StoreProvider>
+          <Navbar />
         
-        <Footer/>
+          {children}
+          
+          <Footer/>
+        </StoreProvider>
       </body>
     </html>
   );

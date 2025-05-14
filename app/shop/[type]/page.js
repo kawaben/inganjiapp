@@ -1,10 +1,12 @@
 'use client'
 
 import { useParams } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from "react";
 import Pagination from '../../components/Pagination'
 import AddToCartButton from '../../components/AddToCartButton';
 import './style.css'
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
+import { useStore } from '../../context/StoreContext';
 
 const allProducts = {
   men: [
@@ -15,21 +17,21 @@ const allProducts = {
     { id: 5, name: 'Product 5',  images: { '#FFA500': '/images/m1-orange.jpg', '#008000': '/images/m1-green.jpg', '#0000FF': '/images/m1-blue.jpg', }, price: 25.99, oldPrice: 30.99, rating: 4.5, sizes: ['S', 'M', 'L'], colors: ['#FFA500', '#008000', '#0000FF'] },
   ],
   women: [
-    { id: 1, name: 'Dress', images:{ '#000':'/images/f1-black.jpg','#0000ff':'/images/f1-blue.jpg','#ff0000':'/images/f1-red.png',}, price: 40, oldPrice: 55, rating: 4.7, sizes: ['S', 'M', 'L'], colors: ['#ff0000', '#0000ff','#000'] },
-    { id: 2, name: 'Dress 2', images:{ '#0bb652':'/images/f2-green.jpg','#5c3904':'/images/f2-brown.jpg','#6d91af':'/images/f2-blue.jpg',}, price: 40, oldPrice: 55, rating: 4.7, sizes: ['S', 'M', 'L'], colors: ['#0bb652', '#5c3904','#6d91af'] },
+    { id: 6, name: 'Dress', images:{ '#000':'/images/f1-black.jpg','#0000ff':'/images/f1-blue.jpg','#ff0000':'/images/f1-red.png',}, price: 40, oldPrice: 55, rating: 4.7, sizes: ['S', 'M', 'L'], colors: ['#ff0000', '#0000ff','#000'] },
+    { id: 7, name: 'Dress 2', images:{ '#0bb652':'/images/f2-green.jpg','#5c3904':'/images/f2-brown.jpg','#6d91af':'/images/f2-blue.jpg',}, price: 40, oldPrice: 55, rating: 4.7, sizes: ['S', 'M', 'L'], colors: ['#0bb652', '#5c3904','#6d91af'] },
   ],
   kids: [
-    { id: 1, name: 'Complete', images:{ '#06c41f':'/images/k1-green.jpg','#046661':'/images/k1-blue.jpg',}, price: 40, oldPrice: 55, rating: 4.7, sizes: ['S', 'M', 'L'], colors: ['#06c41f', '#046661'] },
-    { id: 2, name: 'Dress', images:{ '#046625':'/images/k2-green.jpg','#000011':'/images/k2-black.jpg','#b3b606':'/images/k2-yellow.jpg',}, price: 40, oldPrice: 55, rating: 4.7, sizes: ['S', 'M', 'L'], colors: ['#046625', '#000011','#b3b606'] },
+    { id: 8, name: 'Complete', images:{ '#06c41f':'/images/k1-green.jpg','#046661':'/images/k1-blue.jpg',}, price: 40, oldPrice: 55, rating: 4.7, sizes: ['S', 'M', 'L'], colors: ['#06c41f', '#046661'] },
+    { id: 9, name: 'Dress', images:{ '#046625':'/images/k2-green.jpg','#000011':'/images/k2-black.jpg','#b3b606':'/images/k2-yellow.jpg',}, price: 40, oldPrice: 55, rating: 4.7, sizes: ['S', 'M', 'L'], colors: ['#046625', '#000011','#b3b606'] },
   ],
   accessories: [
-    { id: 1, name: 'Glasses', images:{ '#000':'/images/a1-black.jpg','#0000ff':'/images/a1-blue.jpg',}, price: 40, oldPrice: 55, rating: 4.7, sizes: ['S', 'M', 'L'], colors: ['#000', '#0000ff'] },
-    { id: 2, name: 'Hat', images:{ '#ffff':'/images/a2-white.jpg','#046625':'/images/a2-green.jpg',}, price: 40, oldPrice: 55, rating: 4.7, sizes: ['S', 'M', 'L'], colors: ['#ffff', '#046625'] },
-    { id: 3, name: 'Hat 2', images:{ '#000':'/images/a3-black.jpg','#ffff':'/images/a3-white.jpg',}, price: 40, oldPrice: 55, rating: 4.7, sizes: ['S', 'M', 'L'], colors: ['#000', '#ffff'] },
+    { id: 10, name: 'Glasses', images:{ '#000':'/images/a1-black.jpg','#0000ff':'/images/a1-blue.jpg',}, price: 40, oldPrice: 55, rating: 4.7, sizes: ['S', 'M', 'L'], colors: ['#000', '#0000ff'] },
+    { id: 11, name: 'Hat', images:{ '#ffff':'/images/a2-white.jpg','#046625':'/images/a2-green.jpg',}, price: 40, oldPrice: 55, rating: 4.7, sizes: ['S', 'M', 'L'], colors: ['#ffff', '#046625'] },
+    { id: 12, name: 'Hat 2', images:{ '#000':'/images/a3-black.jpg','#ffff':'/images/a3-white.jpg',}, price: 40, oldPrice: 55, rating: 4.7, sizes: ['S', 'M', 'L'], colors: ['#000', '#ffff'] },
   ],
 }
 
-export default function CategoryPage() {
+export default function CategoryPage({ product }) {
   const { type } = useParams()
   const products = allProducts[type] || []
 
@@ -39,6 +41,16 @@ export default function CategoryPage() {
   const [selectedColors, setSelectedColors] = useState({}) // Per-product color selection
   const [filterColor, setFilterColor] = useState(null) 
   
+  const { wishlist } = useStore();
+
+  const {toggleWishlist} = useStore();
+  const { addToCart } = useStore();
+  const [added, setAdded] = useState(false);
+  
+ 
+  
+  
+
   
 
   const productsPerPage = 3
@@ -119,16 +131,31 @@ export default function CategoryPage() {
               ))}
             </div>
             <h4>{product.name}</h4>
-            <p>⭐ {product.rating}</p>
+            <p className="flex items-center justify-between w-32">
+              <span className="flex items-center gap-1">
+                ⭐ {product.rating}
+              </span>
+              <button onClick={() => toggleWishlist(product)}>
+                {wishlist.some((w) => w.id === product.id) ? (
+                  <FaHeart className="text-[#e08325]" />
+                ) : (
+                  <FaRegHeart className="text-[#1b1403] hover:text-[#e08325]" />
+                )}
+              </button>
+            </p>
+
+            
             <p>
               <strong>${product.price}</strong>{' '}
               <span style={{ textDecoration: 'line-through' }}>${product.oldPrice}</span>
             </p>
-            <AddToCartButton
-              product={product}
-              selectedColor="#FFA500"
-              selectedSize="M"
-            />
+            <button onClick={() => addToCart(product)}className={`px-4 py-2 w-full h-12 rounded text-white ${
+              added ? 'bg-[#e08325]' : 'bg-black hover:bg-gray-800'
+            }`}
+          >
+            {added ? 'Added!' : 'Add to Cart'}
+                </button>
+            
           </div>
         )
       })}
