@@ -2,7 +2,7 @@
 import { useEffect, useState , useRef} from "react";
 import Link from "next/link";
 import {TrashIcon,} from "@heroicons/react/24/solid";
-
+import Image from 'next/image';
 import { useStore } from '../../context/StoreContext';
 
 export default function Cart() {
@@ -38,35 +38,72 @@ const totalPrice = subTotalPrice + 20;
                     </div>
             
                     
-                    {cart.length > 0 ? (
-                      cart.map((item) => (
-                        <div key={item.id} className="grid grid-cols-6 gap-4 items-center py-2 shadow text-sm md:text-base lg:text-lg font-medium tracking-wide">
-                          <div className="col-span-2 flex items-center gap-4">
-                            <img
-                              src={`/images/m2.jpg`} 
-                              alt="Product"
-                              className="w-16 h-16 object-cover rounded"
-                            />
-                            <div>
-                              <div className="font-medium">{item.name}</div>
-                              <div className="text-sm text-gray-400">Product ID: {item.id}</div>
+                   {cart.length > 0 ? (
+                      cart.map((item, index) => {
+                        const imageSrc =
+                          item?.images && typeof item.images === 'object'
+                            ? item.images[item.color] || item.images[Object.keys(item.images)[0]]
+                            : '/images/default.jpg';
+
+                        return (
+                          <div
+                            key={`${item.id}-${item.color}-${item.size}-${index}`}
+                            className="grid grid-cols-6 gap-4 items-center py-2 shadow text-sm md:text-base lg:text-lg font-medium tracking-wide"
+                          >
+                            {/* Product Image + Name + ID */}
+                            <div className="col-span-2 flex items-center gap-4">
+                              <Image
+                                src={imageSrc}
+                                width={80}
+                                height={80}
+                                alt={item.name}
+                                className="rounded"
+                              />
+                              <div>
+                                <div className="font-medium">{item.name}</div>
+                                <div className="text-sm text-gray-400">Product ID: {item.id}</div>
+                              </div>
+                            </div>
+
+                            {/* Size */}
+                            <div>{item.size || 'N/A'}</div>
+
+                            {/* Quantity Controls */}
+                            <div className="flex items-center gap-2">
+                              <button
+                                className="px-2 border bg-[#e08325] rounded cursor-pointer"
+                                onClick={() => decreaseQuantity(item)}
+                              >
+                                -
+                              </button>
+                              <span>{item.quantity}</span>
+                              <button
+                                className="px-2 border bg-[#e08325] rounded cursor-pointer"
+                                onClick={() => increaseQuantity(item)}
+                              >
+                                +
+                              </button>
+                            </div>
+
+                            {/* Price */}
+                            <div className="p-4 md:p-0">
+                              ${item.price?.toFixed(2) || '0.00'} each
+                            </div>
+
+                            {/* Remove Item */}
+                            <div
+                              className="text-[#e08325] cursor-pointer w-5 h-5"
+                              onClick={() => removeItemCompletely(item)}
+                            >
+                              <TrashIcon />
                             </div>
                           </div>
-                          <div>{item.size}</div>
-                          <div className="flex items-center gap-2">
-                            <button className="px-2 border bg-[#e08325] rounded cursor-pointer"  onClick={() => decreaseQuantity(item)}>-</button>
-                            <span>{item.quantity}</span>
-                            <button className="px-2 border bg-[#e08325] rounded cursor-pointer"  onClick={() => increaseQuantity(item)}>+</button>
-                          </div>
-                          <div className="p-4 md:p-0">${item.price.toFixed(2)} each</div>
-                          <div className="text-[#e08325] cursor-pointer w-5 h-5"  onClick={() => removeItemCompletely(item)}><TrashIcon/></div>
-                        </div>
-                      ))
-                    )
-                    : (
+                        );
+                      })
+                    ) : (
                       <p className="text-gray-500">Your Cart is empty.</p>
-                    )
-                    }
+                    )}
+
             
                     {/* Totals */}
                     <div className="grid grid-cols-2 mt-6 gap-6">

@@ -1,30 +1,22 @@
 'use client';
 import { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
+import { useStore } from '../../context/StoreContext';
 
 
 export default function Checkout() {
 
     const router = useRouter();
   
-    const [cartItems, setCartItems] = useState([
-            { id: 1, name: "Tshirt",size:"xxl", price: 15.0, quantity: 2 },
-            { id: 2, name: "Beanie",size:"l", price: 15.0, quantity: 3 },
-            { id: 3, name: "Glasses",size:"m", price: 15.0, quantity: 1 },
-          ]);
+    const { cart } = useStore();
+    const { clearCart } = useStore();
           
-    useEffect(() => {
-        const storedCart = localStorage.getItem('cart');
-        if (storedCart) {
-        setCartItems(JSON.parse(storedCart));
-        }
-    }, []);
+  
 
-    const subTotalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+    const subTotalPrice = cart.reduce((total, item) => total + item.price * item.quantity, 0);
     const totalPrice = (subTotalPrice + 20);
 
     const handlePlaceOrder = () => {
-  const orderId = 'TXN' + Date.now(); // Simple ID generator
   const cart = JSON.parse(localStorage.getItem('cart')) || [];
 
   if (cart.length === 0) {
@@ -32,25 +24,34 @@ export default function Checkout() {
     return;
   }
 
-  const order = {
+  const orderId = 'TXN' + Date.now(); // Simple order ID
+  const shippingCost = 20;
+
+  const totalAmount = cart.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  ) + shippingCost;
+
+  const newOrder = {
     id: orderId,
     items: cart,
     date: new Date().toISOString(),
-    total: cart.reduce((sum, item) => sum + item.price * item.quantity, 0) + 20, // + shipping
+    total: totalAmount,
     status: 'Processing',
   };
 
-  // Save order to localStorage (append to existing orders)
   const existingOrders = JSON.parse(localStorage.getItem('orders')) || [];
-  existingOrders.push(order);
+  existingOrders.push(newOrder);
   localStorage.setItem('orders', JSON.stringify(existingOrders));
 
   // Clear cart
   localStorage.removeItem('cart');
-  setCartItems([]); // Also clear state
+  clearCart(); // ✅ this was missing parentheses
 
-  router.push('/user/orders'); 
-};
+  // Redirect
+  router.push('/user/orders');
+        };
+
 
 
 
@@ -90,8 +91,8 @@ export default function Checkout() {
             {/* Order Summary */}
             <div className="border border-gray-200 p-6 rounded-lg shadow-sm">
                 <h3 className="text-xl font-semibold mb-4">Your order</h3>
-                {cartItems.length > 0 ? (
-                cartItems.map((item) => (
+                {cart.length > 0 ? (
+                cart.map((item) => (
                     <ul key={item.id} className="space-y-2">
                     <li className="flex justify-between">
                         <span>{item.name} × {item.quantity}</span>
