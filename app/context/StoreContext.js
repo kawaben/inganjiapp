@@ -7,39 +7,33 @@ const StoreContext = createContext();
 export const StoreProvider = ({ children }) => {
     const [cart, setCart] = useState([]);
     const [wishlist, setWishlist] = useState([]);
-    const [added, setAdded] = useState(false);
-    useEffect(() => {
-        const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
-        const storedWishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
-        setCart(storedCart);
-        setWishlist(storedWishlist);
-    }, []);
+   
 
-  // 🔸 Add to Cart (with quantity check)
-    const addToCart = (item) => {
-    const existsIndex = cart.findIndex(
-        (cartItem) =>
-        cartItem.id === item.id &&
-        cartItem.selectedColor === item.selectedColor &&
-        cartItem.selectedSize === item.selectedSize
+  useEffect(() => {
+    const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
+    setCart(storedCart);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('cart', JSON.stringify(cart));
+  }, [cart]);
+
+  const addToCart = (product, color, size) => {
+    const exists = cart.some(
+      item => item.id === product.id && item.color === color && item.size === size
     );
 
-    let updatedCart;
-
-    if (existsIndex !== -1) {
-        // Increase quantity
-        updatedCart = [...cart];
-        updatedCart[existsIndex].quantity += 1;
-    } else {
-        // Add new item with quantity
-        updatedCart = [...cart, { ...item, quantity: 1 }];
+    if (!exists) {
+      setCart(prev => [...prev, { ...product, color, size, quantity: 1 }]);
     }
+  };
 
-    setCart(updatedCart);
-    localStorage.setItem('cart', JSON.stringify(updatedCart));
-    setAdded(true);
-    setTimeout(() => setAdded(false), 1500);
-    };
+  const isInCart = (product, color, size) => {
+    return cart.some(
+      item => item.id === product.id && item.color === color && item.size === size
+    );
+  };
+
 
     const clearCart = () => {
     setCart([]);
@@ -150,6 +144,7 @@ const removeFromCart = (item) => {
         removeItemCompletely,
         increaseQuantity,
         decreaseQuantity,
+        isInCart
       }}
     >
       {children}

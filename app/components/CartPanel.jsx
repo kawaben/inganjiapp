@@ -31,7 +31,7 @@ export default function CartPanel() {
                   <div key={item.id} className="flex items-center justify-between bg-white p-3 rounded shadow-sm">
                   <div>
                       <p className="font-semibold">{item.name}</p>
-                      <p className="text-sm text-gray-600">${item.price.toFixed(2)} each</p>
+                      <p className="text-sm text-gray-600">${Number(item.price || 0).toFixed(2)} each</p>
                   </div>
                   <div className="flex items-center space-x-2">
                       <button onClick={() => decreaseQuantity(item)} className="bg-[#e08325] text-[#0c0805] px-2 py-1 rounded">-</button>
@@ -51,7 +51,7 @@ export default function CartPanel() {
               )
               }
               </div>
-              <h3 className="mt-6 text-lg font-bold">Total: ${totalPrice.toFixed(2)}</h3>
+              <h3 className="mt-6 text-lg font-bold">Total: ${Number(totalPrice || 0).toFixed(2)}</h3>
               {cart.length > 0 && (
               <button
                   onClick={clearCart}

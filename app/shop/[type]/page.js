@@ -149,12 +149,12 @@ export default function CategoryPage({ product }) {
               <strong>${product.price}</strong>{' '}
               <span style={{ textDecoration: 'line-through' }}>${product.oldPrice}</span>
             </p>
-            <button onClick={() => addToCart(product)}className={`px-4 py-2 w-full h-12 rounded text-white ${
-              added ? 'bg-[#e08325]' : 'bg-black hover:bg-gray-800'
-            }`}
-          >
-            {added ? 'Added!' : 'Add to Cart'}
-                </button>
+            <AddToCartButton
+              product={product}
+              selectedColor={selectedColor}
+              selectedSize={selectedSize}
+            />
+
             
           </div>
         )

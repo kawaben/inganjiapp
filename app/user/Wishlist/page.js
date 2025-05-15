@@ -11,7 +11,7 @@ import { useStore } from '../../context/StoreContext';
           
     const { clearWishlist } = useStore();
 
-    const { removeFromWishlist } = useStore();
+    const { toggleWishlist } = useStore();
 
 
   return (
@@ -38,7 +38,7 @@ import { useStore } from '../../context/StoreContext';
                         className="object-contain rounded"
                       />
                     </div>
-                    <h3 className="mt-4 text-lg font-semibold grid grid-cols-2 gap-6">{item.name} <button onClick={() => removeFromWishlist(item.id)}>
+                    <h3 className="mt-4 text-lg font-semibold grid grid-cols-2 gap-6">{item.name} <button onClick={() => toggleWishlist(item)}>
                         <FaHeart className="w-6 h-6 text-[#e08325] hover:text-[#1b1403] cursor-pointer" />
                       </button></h3>
                     <p className="text-gray-700">$ {item.price}</p>

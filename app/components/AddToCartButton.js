@@ -1,52 +1,43 @@
 'use client';
-import { useState } from 'react';
 
-export default function AddToCartButton({ product, selectedSize, selectedColor }) {
+import { useStore } from '../context/StoreContext';
+import { useState, useEffect } from 'react';
+
+const AddToCartButton = ({ product, selectedColor, selectedSize }) => {
+  const { cart, addToCart } = useStore();
   const [added, setAdded] = useState(false);
 
-  const handleAddToCart = () => {
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-
-    const image = product.images[selectedColor];
-
-    const newItem = {
-    id: product.id,
-    name: product.name,
-    price: product.price,
-    quantity: 1,
-    size: selectedSize,
-    color: selectedColor,
-    image, // <-- store specific image URL here
-  };
-
-    // Check if same item (same id, color, size) exists
-    const existingIndex = cart.findIndex(
+  useEffect(() => {
+    const exists = cart.some(
       (item) =>
-        item.id === newItem.id &&
-        item.selectedSize === newItem.selectedSize &&
-        item.selectedColor === newItem.selectedColor
-    );
+        item.id === product.id &&
+        item.color === selectedColor &&
+        item.size === selectedSize
+         );
+         
+    setAdded(exists);
+    setTimeout(() => setAdded(false), 1500);
+        }, [cart, product.id, selectedColor, selectedSize]);
 
-    if (existingIndex !== -1) {
-      cart[existingIndex].quantity += 1;
-    } else {
-      cart.push(newItem);
-      localStorage.setItem('cart', JSON.stringify(cart));
-    }
-
-    localStorage.setItem('cart', JSON.stringify(cart));
+  const handleClick = () => {
+    addToCart(product, selectedColor, selectedSize);
     setAdded(true);
+
+    // Temporarily show "Added to Cart" for 2 seconds
     setTimeout(() => setAdded(false), 1500);
   };
 
   return (
     <button
-      onClick={handleAddToCart}
-      className={`px-4 py-2 w-full h-12 rounded text-white ${
-        added ? 'bg-[#e08325]' : 'bg-black hover:bg-gray-800'
+      onClick={handleClick}
+      disabled={added}
+      className={`px-4 py-2 rounded  ${
+        added ? 'bg-green-600 text-white' : 'bg-[#1b1403] text-white hover:bg-[#e08325]'
       }`}
     >
-      {added ? 'Added!' : 'Add to Cart'}
+      {added ? 'Added to Cart' : 'Add to Cart'}
     </button>
   );
-}
+};
+
+export default AddToCartButton;

@@ -3,39 +3,22 @@ import { useEffect, useState , useRef} from "react";
 import Link from "next/link";
 import {TrashIcon,} from "@heroicons/react/24/solid";
 
-
+import { useStore } from '../../context/StoreContext';
 
 export default function Cart() {
-const [cartItems, setCartItems] = useState([]);
+
 const isFirstLoad = useRef(true);
 
-useEffect(() => {
-  const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
-  setCartItems(storedCart);
-}, []);
 
-useEffect(() => {
-  if (isFirstLoad.current) {
-    isFirstLoad.current = false;
-    return; // 🔒 Skip first run
-  }
 
-  localStorage.setItem('cart', JSON.stringify(cartItems));
-}, [cartItems]);
+const { cart } = useStore();
+const { clearCart } = useStore();
 
-const updateQuantity = (id, delta) => {
-  const updated = cartItems.map(item =>
-    item.id === id ? { ...item, quantity: Math.max(1, item.quantity + delta) } : item
-  );
-  setCartItems(updated);
-};
+const { removeItemCompletely } = useStore();
+const { increaseQuantity } = useStore();
+const { decreaseQuantity } = useStore();
 
-const removeItem = (id) => {
-  const updated = cartItems.filter(item => item.id !== id);
-  setCartItems(updated);
-};
-
-const subTotalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+const subTotalPrice = cart.reduce((total, item) => total + item.price * item.quantity, 0);
 const totalPrice = subTotalPrice + 20;
 
 
@@ -55,8 +38,8 @@ const totalPrice = subTotalPrice + 20;
                     </div>
             
                     
-                    {cartItems.length > 0 ? (
-                      cartItems.map((item) => (
+                    {cart.length > 0 ? (
+                      cart.map((item) => (
                         <div key={item.id} className="grid grid-cols-6 gap-4 items-center py-2 shadow text-sm md:text-base lg:text-lg font-medium tracking-wide">
                           <div className="col-span-2 flex items-center gap-4">
                             <img
@@ -71,16 +54,12 @@ const totalPrice = subTotalPrice + 20;
                           </div>
                           <div>{item.size}</div>
                           <div className="flex items-center gap-2">
-                            <button className="px-2 border bg-[#e08325] rounded cursor-pointer"  onClick={() => updateQuantity(item.id, -1)}>-</button>
+                            <button className="px-2 border bg-[#e08325] rounded cursor-pointer"  onClick={() => decreaseQuantity(item)}>-</button>
                             <span>{item.quantity}</span>
-                            <button className="px-2 border bg-[#e08325] rounded cursor-pointer"  onClick={() => updateQuantity(item.id, 1)}>+</button>
+                            <button className="px-2 border bg-[#e08325] rounded cursor-pointer"  onClick={() => increaseQuantity(item)}>+</button>
                           </div>
                           <div className="p-4 md:p-0">${item.price.toFixed(2)} each</div>
-                          <div className="text-[#e08325] cursor-pointer w-5 h-5"  onClick={(e) => {
-                            e.stopPropagation();
-                            e.preventDefault();
-                            removeItem(item.id);
-                          }}><TrashIcon/></div>
+                          <div className="text-[#e08325] cursor-pointer w-5 h-5"  onClick={() => removeItemCompletely(item)}><TrashIcon/></div>
                         </div>
                       ))
                     )
@@ -127,11 +106,11 @@ const totalPrice = subTotalPrice + 20;
             
                     {/* Bottom Buttons */}
                     <div className="mt-10 flex justify-between gap-4">
-                      <Link href="/" className="flex-1 py-2 bg-[#1b1403]  rounded cursor-pointer flex justify-center items-center">
-                        <button className="py-2 text-[#f8e2d2] cursor-pointer">
-                          Back to Shop
+                      <div href="/" className="flex-1 py-2 bg-[#1b1403]  rounded cursor-pointer flex justify-center items-center">
+                        <button onClick={clearCart} className="py-2 text-[#f8e2d2] cursor-pointer">
+                          Clear Cart
                         </button>
-                      </Link>
+                      </div>
                       <Link href="/user/Checkout" className="flex-1 py-2 bg-[#e08325] rounded cursor-pointer flex justify-center items-center">
                         <button className="py-2 text-[#f8e2d2] cursor-pointer">
                           Checkout
