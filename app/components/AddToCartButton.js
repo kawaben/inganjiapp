@@ -20,12 +20,10 @@ const AddToCartButton = ({ product, selectedColor, selectedSize }) => {
         }, [cart, product.id, selectedColor, selectedSize]);
 
   const handleClick = () => {
-    addToCart(product, selectedColor, selectedSize);
-    setAdded(true);
+  if (!selectedColor || !selectedSize) return; // optionally validate
+  addToCart(product, selectedColor, selectedSize);
+};
 
-    // Temporarily show "Added to Cart" for 2 seconds
-    setTimeout(() => setAdded(false), 1500);
-  };
 
   return (
     <button

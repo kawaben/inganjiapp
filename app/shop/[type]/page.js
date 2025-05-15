@@ -37,40 +37,52 @@ export default function CategoryPage({ product }) {
 
   const [currentPage, setCurrentPage] = useState(1)
   const [selectedSize, setSelectedSize] = useState(null)
-  const [selectedColorFilter, setSelectedColorFilter] = useState(null)
-  const [selectedColors, setSelectedColors] = useState({}) // Per-product color selection
-  const [filterColor, setFilterColor] = useState(null) 
-  
-  const { wishlist } = useStore();
+ const [selectedColorFilter, setSelectedColorFilter] = useState(null);
+const [selectedColors, setSelectedColors] = useState({});
+const [selectedSizes, setSelectedSizes] = useState({});
 
-  const {toggleWishlist} = useStore();
-  const { addToCart } = useStore();
-  const [added, setAdded] = useState(false);
-  
- 
-  
-  
+const [selectedImages, setSelectedImages] = useState({}); // ✅ New state to track image
 
-  
 
-  const productsPerPage = 3
+const [filterColor, setFilterColor] = useState(null);
 
-  const filteredProducts = products.filter(product => {
-    const matchSize = selectedSize ? product.sizes.includes(selectedSize) : true
-    const matchColor = selectedColorFilter ? product.colors.includes(selectedColorFilter) : true
-    return matchSize && matchColor
-  })
+const { wishlist, toggleWishlist } = useStore();
 
-  const totalPages = Math.ceil(filteredProducts.length / productsPerPage)
-  const startIdx = (currentPage - 1) * productsPerPage
-  const currentProducts = filteredProducts.slice(startIdx, startIdx + productsPerPage)
+const productsPerPage = 3;
 
-  const handleColorClick = (productId, color) => {
-    setSelectedColors(prev => ({
-      ...prev,
-      [productId]: prev[productId] === color ? null : color,
-    }))
-  }
+const filteredProducts = products.filter(product => {
+  const matchSize = selectedSize ? product.sizes.includes(selectedSize) : true;
+  const matchColor = selectedColorFilter ? product.colors.includes(selectedColorFilter) : true;
+  return matchSize && matchColor;
+});
+
+const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+const startIdx = (currentPage - 1) * productsPerPage;
+const currentProducts = filteredProducts.slice(startIdx, startIdx + productsPerPage);
+
+// ✅ Update color and image on selection
+const handleColorClick = (productId, color) => {
+  setSelectedColors(prev => ({
+    ...prev,
+    [productId]: prev[productId] === color ? null : color,
+  }));
+
+  const product = products.find(p => p.id === productId);
+  const image = product?.images?.[color] || Object.values(product?.images || {})[0] || '/images/default.jpg';
+
+  setSelectedImages(prev => ({
+    ...prev,
+    [productId]: image,
+  }));
+};
+
+const handleSizeClick = (productId, size) => {
+  setSelectedSizes(prev => ({
+    ...prev,
+    [productId]: prev[productId] === size ? null : size,
+  }));
+};
+
 
   return (
     <div className="category">
@@ -112,24 +124,34 @@ export default function CategoryPage({ product }) {
           <div key={product.id} className="product-grid-images">
             <img src={productImage} alt={product.name} />
             <div className="color-dots">
-              {product.colors.map(color => (
-                <span
-                  key={color}
-                  className={`color-dot ${selectedColors[product.id] === color ? 'active' : ''}`}
-                  style={{
-                    backgroundColor: color,
-                    width: 15,
-                    height: 15,
-                    display: 'inline-block',
-                    borderRadius: '50%',
-                    marginRight: 5,
-                    cursor: 'pointer',
-                    border: selectedColors[product.id] === color ? '2px solid black' : '2px solid transparent'
-                  }}
-                  onClick={() => handleColorClick(product.id, color)}
-                />
-              ))}
+              {product.colors.map((color, i) => (
+            <button
+              key={i}
+              onClick={() => handleColorClick(product.id, color)}
+              className={`w-6 h-6 rounded-full border-2 ${
+                selectedColors[product.id] === color ? 'border-black' : 'border-gray-300'
+              }`}
+              style={{ backgroundColor: color }}
+            ></button>
+          ))}
+
             </div>
+
+            <div className="flex gap-2 mt-2">
+                {product.sizes.map((size, i) => (
+                  <button
+                    key={i}
+                    onClick={() => handleSizeClick(product.id, size)}
+                    className={`px-2 py-1 text-sm border rounded ${
+                      selectedSizes[product.id] === size ? 'bg-black text-white' : 'bg-white text-black border-gray-300'
+                    }`}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
+
+
             <h4>{product.name}</h4>
             <p className="flex items-center justify-between w-32">
               <span className="flex items-center gap-1">
@@ -150,10 +172,13 @@ export default function CategoryPage({ product }) {
               <span style={{ textDecoration: 'line-through' }}>${product.oldPrice}</span>
             </p>
             <AddToCartButton
-              product={product}
-              selectedColor={selectedColor}
-              selectedSize={selectedSize}
-            />
+                product={product}
+                selectedColor={selectedColors[product.id]}
+                selectedSize={selectedSizes[product.id]}
+                selectedImage={product.images[selectedColors[product.id]]}
+              />
+
+
 
             
           </div>

@@ -62,7 +62,7 @@ export default function Orders() {
               {order.items?.map((item, index) => {
                 const imageSrc =
                   item?.images && typeof item.images === 'object'
-                    ? item.images[item.colors?.[0]] || item.images[Object.keys(item.images)[0]]
+                    ? item.images[item.color] || item.images[Object.keys(item.images)[0]]
                     : '/images/default.jpg';
 
                 return (
@@ -79,7 +79,7 @@ export default function Orders() {
                      <p className="text-sm text-gray-500 flex items-center">
                     <span
                         style={{
-                        backgroundColor: item.colors?.[0] || '#ccc',
+                        backgroundColor: item.color || '#ccc',
                         width: 15,
                         height: 15,
                         display: 'inline-block',
@@ -88,8 +88,8 @@ export default function Orders() {
                         border: '1px solid #999',
                         }}
                     ></span>
-                    <span className="mr-2">Size: {item.selectedSize || 'N/A'}</span>
-</p>
+                    <span className="mr-2">Size: {item.size || 'N/A'}</span>
+                    </p>
 
                       <p>
                         {item.quantity} x $ {item.price.toLocaleString('id-ID')}

@@ -18,15 +18,28 @@ export const StoreProvider = ({ children }) => {
     localStorage.setItem('cart', JSON.stringify(cart));
   }, [cart]);
 
-  const addToCart = (product, color, size) => {
+  const addToCart = (product, color, size, image) => {
     const exists = cart.some(
-      item => item.id === product.id && item.color === color && item.size === size
+      item =>
+        item.id === product.id &&
+        item.color === color &&
+        item.size === size
     );
 
     if (!exists) {
-      setCart(prev => [...prev, { ...product, color, size, quantity: 1 }]);
+      setCart(prev => [
+        ...prev,
+        {
+          ...product,
+          color,
+          size,
+          image,
+          quantity: 1,
+        },
+      ]);
     }
   };
+
 
   const isInCart = (product, color, size) => {
     return cart.some(
