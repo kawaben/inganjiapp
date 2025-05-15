@@ -55,10 +55,10 @@ export default function Orders() {
                     {step}
                 </div>
                 ))}
-                <div className="ml-auto text-sm text-gray-600">No Resi: <span className="font-mono">3du23s9y4z93y</span></div>
+                
             </div>
 
-            <div className="space-y-4">
+            <div className="grid grid-cols-6 gap-4 p-2 ">
               {order.items?.map((item, index) => {
                 const imageSrc =
                   item?.images && typeof item.images === 'object'
@@ -66,7 +66,7 @@ export default function Orders() {
                     : '/images/default.jpg';
 
                 return (
-                  <div key={index} className="flex gap-4">
+                  <div key={index} className="grid grid-rows-2 gap-2">
                     <Image
                       src={imageSrc}
                       width={80}
@@ -110,15 +110,7 @@ export default function Orders() {
                 </li>
                 <li className="flex justify-between">
                   <span>Shipping Cost</span>
-                  <span>$ 50.000</span>
-                </li>
-                <li className="flex justify-between">
-                  <span>Shipping Discount</span>
-                  <span>-$ 97.500</span>
-                </li>
-                <li className="flex justify-between">
-                  <span>Platform Fees</span>
-                  <span>-$ 64.500</span>
+                  <span>$ 20.000</span>
                 </li>
                 <hr className="my-2" />
                 <li className="flex justify-between font-bold">
