@@ -1,6 +1,6 @@
 'use client';
 
-import { Heart,Boxes,TrendingUp,Star } from "lucide-react"
+import { Heart,Boxes,TrendingUp,Star,Briefcase } from "lucide-react"
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 
 export default function Dashboard() {
@@ -15,7 +15,7 @@ export default function Dashboard() {
   return (
    <>
    
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="flex items-center justify-left p-6 bg-white rounded-2xl shadow gap-4">
                 <div className="flex items-center justify-center text-red-500">
                     <Heart size={18} />
@@ -51,9 +51,20 @@ export default function Dashboard() {
               
             </div>
 
+            <div className="flex items-center justify-left p-6 bg-white rounded-2xl shadow gap-4">
+                <div className="flex items-center justify-center text-blue-500">
+                    <Briefcase size={18} />
+                </div>
+                <div>
+                    <p className="text-sm text-gray-500">Jobs Applications</p>
+                    <h2 className="text-2xl font-semibold">10+</h2>
+                </div>
+              
+            </div>
+
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="mt-8 p-10 bg-white rounded-2xl shadow">
                 <h3 className="text-lg font-semibold mb-4">Analytics</h3>
                 <div className="h-60">
@@ -86,7 +97,7 @@ export default function Dashboard() {
 
             <div className="mt-8 p-6 bg-white rounded-2xl shadow">
                 <h3 className="text-lg font-semibold mb-4">Top Selling Products</h3>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 md:grid-cols-1 lg:grid-cols-2  gap-3">
                     <div className="flex items-center justify-left rounded-xl gap-2">
                         <div><img
                                 src="images/f1-blue.jpg"
