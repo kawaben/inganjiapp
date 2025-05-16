@@ -10,20 +10,7 @@ import Dashboard from "./dashboard/page";
 import Orders from "./orders/page";
 import User from "./users/page";
 import Products from "./products/page";
-const navItems = [
-  { href: '/admin', label: 'Dashboard', icon: <Home size={18} /> },
-  { href: '/admin/products', label: 'Products', icon: <Package size={18} /> },
-  { href: '/admin/orders', label: 'Orders', icon: <ClipboardList size={18} /> },
-  { href: '/admin/users', label: 'Users', icon: <Users size={18} /> },
-]
 
-const data = [
-  { name: 'Sales', value: 80 },
-  { name: 'Returns', value: 10 },
-  { name: 'Distribute', value: 10 },
-];
-
-const COLORS = ['#4f46e5', '#f97316', '#facc15'];
 
 export default function AdminDashboard() {
   const [activeSection, setActiveSection] = useState("Dashboard");
