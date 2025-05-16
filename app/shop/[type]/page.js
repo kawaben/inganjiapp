@@ -142,7 +142,7 @@ const handleSizeClick = (productId, size) => {
                   <button
                     key={i}
                     onClick={() => handleSizeClick(product.id, size)}
-                    className={`px-2 py-1 text-sm border rounded ${
+                    className={`flex px-2 py-1 w-6 h-6 items-center justify-center text-sm border rounded ${
                       selectedSizes[product.id] === size ? 'bg-black text-white' : 'bg-white text-black border-gray-300'
                     }`}
                   >

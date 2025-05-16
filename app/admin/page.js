@@ -1,83 +1,82 @@
 "use client";
+
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAdminAuth } from '../hooks/useAdminAuth';
+import { usePathname } from 'next/navigation'
+import { Home, Package, ClipboardList, Users, LogOut } from 'lucide-react'
+import Link from 'next/link'
+import Dashboard from "./dashboard/page";
+import Orders from "./orders/page";
+import User from "./users/page";
+import Products from "./products/page";
+const navItems = [
+  { href: '/admin', label: 'Dashboard', icon: <Home size={18} /> },
+  { href: '/admin/products', label: 'Products', icon: <Package size={18} /> },
+  { href: '/admin/orders', label: 'Orders', icon: <ClipboardList size={18} /> },
+  { href: '/admin/users', label: 'Users', icon: <Users size={18} /> },
+]
 
-export default function AdminPanel() {
-  const [messages, setMessages] = useState([]);
-  const [loading, setLoading] = useState(true);
+const data = [
+  { name: 'Sales', value: 80 },
+  { name: 'Returns', value: 10 },
+  { name: 'Distribute', value: 10 },
+];
 
-  // Fetch messages from API
-  useEffect(() => {
-    fetchMessages();
-  }, []);
+const COLORS = ['#4f46e5', '#f97316', '#facc15'];
 
-  async function fetchMessages() {
-    try {
-      const response = await fetch("/api/messages");
-      const data = await response.json();
-      setMessages(data);
-    } catch (error) {
-      console.error("Error fetching messages:", error);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  // Delete message
-  async function deleteMessage(id) {
-    if (!confirm("Are you sure you want to delete this message?")) return;
-
-    try {
-      const response = await fetch("/api/messages", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id }),
-      });
-
-      if (response.ok) {
-        setMessages(messages.filter((msg) => msg.id !== id));
-      }
-    } catch (error) {
-      console.error("Error deleting message:", error);
-    }
-  }
+export default function AdminDashboard() {
+  const [activeSection, setActiveSection] = useState("Dashboard");
+  const { user, loading } = useAdminAuth();
+  const pathname = usePathname()
+  if (loading) return <p>Loading...</p>;
 
   return (
-    <div className="p-6 min-h-screen bg-gray-900">
-      <h1 className="text-3xl text-yellow-600 font-bold mb-6 text-center">Admin Messages</h1>
+    <div className="min-h-screen  bg-[#f8e2d2] p-2">
+      <h1 className="text-2xl font-bold mb-2 pt-20">Welcome back, {user?.name ?? 'Admin'}</h1>
+      <div className="flex flex-col md:flex-row bg-[#f7eee8] border border-gray-300 rounded shadow mt-5">
+        
 
-      {loading ? (
-        <p>Loading messages...</p>
-      ) : messages.length === 0 ? (
-        <p className="text-yellow-600 text-center">No messages yet.</p>
-      ) : (
-        <table className="w-full bg-gray-800 shadow-md rounded-lg overflow-hidden">
-          <thead className="bg-gray-700 text-yellow-600">
-            <tr>
-              <th className="p-3 text-left">Name</th>
-              <th className="p-3 text-left">Email</th>
-              <th className="p-3 text-left">Message</th>
-              <th className="p-3 text-left">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {messages.map((msg) => (
-              <tr key={msg.id} className="border-b">
-                <td className="p-3 text-yellow-700">{msg.name}</td>
-                <td className="p-3 text-yellow-700">{msg.email}</td>
-                <td className="p-3 text-yellow-700">{msg.message}</td>
-                <td className="p-3 text-yellow-700">
-                  <button
-                    onClick={() => deleteMessage(msg.id)}
-                    className="bg-red-900 text-yellow-600 px-3 py-1 rounded hover:bg-red-800"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+        <aside className="w-full md:w-64 rounded p-4 pt-6 ">
+              <h2 className="text-2xl font-bold text-gray-800 mb-8">Admin</h2>
+              <div className="flex flex-col gap-4">
+                <ul className="space-y-3">
+                  <li className={`flex items-center gap-3 px-4 py-2 rounded-md transition cursor-pointer hover:bg-gray-100 ${activeSection === "Dashboard" ? "bg-[#e08325]/10 text-[#e08325]" : "text-black"}`} onClick={() => setActiveSection("Dashboard")}> <Home size={18} /> Dashboard</li>
+                  <li className={`flex items-center gap-3 px-4 py-2 rounded-md transition cursor-pointer hover:bg-gray-100 ${activeSection === "Products" ? "bg-[#e08325]/10 text-[#e08325]" : "text-black"}`} onClick={() => setActiveSection("Products")}> <Package size={18} />Products </li>
+                  <li className={`flex items-center gap-3 px-4 py-2 rounded-md transition cursor-pointer hover:bg-gray-100 ${activeSection === "User" ? "bg-[#e08325]/10 text-[#e08325]" : "text-black"}`} onClick={() => setActiveSection("User")}><Users size={18} /> Users </li>
+                   <li className={`flex items-center gap-3 px-4 py-2 rounded-md transition cursor-pointer hover:bg-gray-100 ${activeSection === "Orders" ? "bg-[#e08325]/10 text-[#e08325]" : "text-black"}`} onClick={() => setActiveSection("Orders")}><ClipboardList size={18} /> Orders </li>
+                </ul>
+              </div>
+             
+                
+              <div className="mt-auto pt-10">
+                <button className="flex items-center gap-3 px-4 py-2 rounded-md text-red-600 hover:bg-red-100 transition">
+                  <LogOut size={18} />
+                  Logout
+                </button>
+              </div>
+        </aside>
+
+        <main className="flex-1 p-4 md:p-8">
+
+          {activeSection === "Dashboard" && (
+                            <Dashboard/>
+                          )}
+          
+          {activeSection === "Orders" && (
+            <Orders />
+          )}
+
+          {activeSection === "User" && (
+            <User />
+          )}
+
+          {activeSection === "Products" && (
+            <Products />
+          )}
+
+        </main>
+      </div>
     </div>
   );
 }

@@ -2,13 +2,13 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import '../globals.css';
-
+import { Home, Package, ClipboardList,Settings, LogOut,User,ShoppingCart,Heart,Bell } from 'lucide-react'
 import useAuth from "../hooks/useAuth";
 import Profile from "./Myprofile/page";
 import Cart from "./Cart/page";
 import Wishlist from "./Wishlist/page";
 import Notifications from "./Notifications/page";
-import Settings from "./Settings/page";
+import Setting from "./Settings/page";
 import Checkout from "./Checkout/page";
 import Orders from "./orders/page";
 
@@ -25,6 +25,19 @@ export default function UserPage() {
     { id: 2, name: "Beanie",size:"l", price: 15.0, quantity: 3 },
     { id: 3, name: "Glasses",size:"m", price: 15.0, quantity: 1 },
   ]);
+
+  function promoteUserToAdmin(email) {
+  const users = JSON.parse(localStorage.getItem("users")) || [];
+
+  const updatedUsers = users.map(user => {
+    if (user.email === email) {
+      return { ...user, role: "admin" };
+    }
+    return user;
+  });
+
+  localStorage.setItem("users", JSON.stringify(updatedUsers));
+}
 
   const subTotalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
   const totalPrice = (subTotalPrice + 20);
@@ -80,16 +93,17 @@ export default function UserPage() {
             {/* Sidebar */}
             <aside className="w-full md:w-64 rounded p-4 pt-6">
                 <ul className="space-y-3">
-                <li className={`cursor-pointer ${activeSection === "My Profile" ? "text-blue-600 font-semibold" : "text-black"}`} onClick={() => setActiveSection("My Profile")}>  My Profile</li>
-                <li className={`cursor-pointer ${activeSection === "Cart" ? "text-blue-600 font-semibold" : "text-black"}`} onClick={() => setActiveSection("Cart")}> Cart </li>
-
-
-                <li className={`cursor-pointer ${activeSection === "Notifications" ? "text-blue-600 font-semibold" : "text-black"}`} onClick={() => setActiveSection("Notifications")}> Notifications </li>
-                <li className={`cursor-pointer ${activeSection === "Wishlist" ? "text-blue-600 font-semibold" : "text-black"}`} onClick={() => setActiveSection("Wishlist")}> Wishlist </li>
-                <li className={`cursor-pointer ${activeSection === "Settings" ? "text-blue-600 font-semibold" : "text-black"}`} onClick={() => setActiveSection("Settings")}> Settings </li>
-                <li className={`cursor-pointer ${activeSection === "Orders" ? "text-blue-600 font-semibold" : "text-black"}`} onClick={() => setActiveSection("Orders")}> Orders </li>
-                <li><button className="ml-auto text-sm text-[#1b1403] border border-gray-300 bg-[#e08325] rounded p-2 cursor-pointer" onClick={handleLogout}>Log Out</button></li>
-                </ul>
+                <li className={`flex items-center gap-3 px-4 py-2 rounded-md transition cursor-pointer hover:bg-gray-100 ${activeSection === "My Profile" ? "text-[#c9711a] font-semibold" : "text-black"}`} onClick={() => setActiveSection("My Profile")}> <User size={18} /> My Profile</li>
+                <li className={`flex items-center gap-3 px-4 py-2 rounded-md transition cursor-pointer hover:bg-gray-100 ${activeSection === "Cart" ? "text-[#c9711a] font-semibold" : "text-black"}`} onClick={() => setActiveSection("Cart")}> <ShoppingCart size={18} />Cart </li>
+                <li className={`flex items-center gap-3 px-4 py-2 rounded-md transition cursor-pointer hover:bg-gray-100 ${activeSection === "Notifications" ? "text-[#c9711a] font-semibold" : "text-black"}`} onClick={() => setActiveSection("Notifications")}><Bell size={18} /> Notifications </li>
+                <li className={`flex items-center gap-3 px-4 py-2 rounded-md transition cursor-pointer hover:bg-gray-100 ${activeSection === "Wishlist" ? "text-[#c9711a] font-semibold" : "text-black"}`} onClick={() => setActiveSection("Wishlist")}><Heart size={18} /> Wishlist </li>
+                <li className={`flex items-center gap-3 px-4 py-2 rounded-md transition cursor-pointer hover:bg-gray-100 ${activeSection === "Setting" ? "text-[#c9711a] font-semibold" : "text-black"}`} onClick={() => setActiveSection("Setting")}><Settings size={18} /> Settings </li>
+                <li className={`flex items-center gap-3 px-4 py-2 rounded-md transition cursor-pointer hover:bg-gray-100 ${activeSection === "Orders" ? "text-[#c9711a] font-semibold" : "text-black"}`} onClick={() => setActiveSection("Orders")}><ClipboardList size={18} /> Orders </li>
+                <li><button className="flex items-center gap-3 px-4 py-2 rounded-md text-red-600 hover:bg-red-100 transition" onClick={handleLogout}>
+                  <LogOut size={18} />
+                  Log Out
+                  </button></li>
+                                </ul>
             </aside>
 
             {/* Main Content */}
@@ -110,8 +124,8 @@ export default function UserPage() {
               {activeSection === "Notifications" && (
                 <Notifications />
               )}
-              {activeSection === "Settings" && (
-                <Settings />
+              {activeSection === "Setting" && (
+                <Setting />
               )}
 
               {activeSection === "Checkout" && (

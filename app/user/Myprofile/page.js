@@ -115,7 +115,7 @@ export default function Profile() {
   return (
     <>
     <h1 className="text-2xl font-bold mb-4">My Profile</h1>
-    <div className="border border-gray-300 rounded  p-4 flex items-center gap-4 mb-6">
+    <div className=" bg-gray-100 rounded-2xl shadow  p-4 flex items-center gap-4 mb-6">
     <img
         src={user.image}
         alt="Profile"
@@ -130,7 +130,7 @@ export default function Profile() {
     </div>
 
     {/* Personal Info */}
-    <div className="border border-gray-300 rounded  p-4 mb-6">
+    <div className=" bg-gray-100 rounded-2xl shadow  p-4 mb-6">
     <div className="flex justify-between items-center mb-4">
         <h3 className="font-semibold">Personal Information</h3>
     </div>
@@ -145,7 +145,7 @@ export default function Profile() {
     </div>
 
     {/* Address Info */}
-    <div className="border border-gray-300 rounded  p-4">
+    <div className=" bg-gray-100 rounded-2xl shadow  p-4">
     <div className="flex justify-between items-center mb-4">
         <h3 className="font-semibold">Address</h3>
     </div>
