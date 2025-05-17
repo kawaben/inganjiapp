@@ -20,13 +20,13 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen  bg-[#f8e2d2] p-2">
-      <h1 className="text-2xl font-bold mb-2 pt-20">Welcome back, {user?.name ?? 'Admin'}</h1>
+      <h1 className="text-2xl font-bold mb-2 pt-20">Hi, {user?.name ?? 'Admin'}</h1>
       <div className="flex flex-col md:flex-row bg-[#f7eee8] border border-gray-300 rounded shadow mt-5">
         
 
-        <aside className="w-full md:w-64 rounded p-4 pt-6 ">
+        <aside className="w-full  md:w-64 rounded p-4 pt-6 ">
               <h2 className="text-2xl font-bold text-gray-800 mb-8">Admin</h2>
-              <div className="flex flex-col gap-4">
+              <div className=" gap-4 ">
                 <ul className="space-y-3">
                   <li className={`flex items-center gap-3 px-4 py-2 rounded-md transition cursor-pointer hover:bg-gray-100 ${activeSection === "Dashboard" ? "bg-[#e08325]/10 text-[#e08325]" : "text-black"}`} onClick={() => setActiveSection("Dashboard")}> <Home size={18} /> Dashboard</li>
                   <li className={`flex items-center gap-3 px-4 py-2 rounded-md transition cursor-pointer hover:bg-gray-100 ${activeSection === "Products" ? "bg-[#e08325]/10 text-[#e08325]" : "text-black"}`} onClick={() => setActiveSection("Products")}> <Package size={18} />Products </li>
