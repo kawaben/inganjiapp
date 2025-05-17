@@ -19,9 +19,9 @@ useEffect(() => {
 
   
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 h-screen bg-gray-100">
+    <div className="grid grid-cols-1 md:grid-cols-3 h-screen">
       {/* User list */}
-      <div className="col-span-2 border-r border-[#c9711a] bg-white p-4 overflow-y-auto">
+      <div className="col-span-2 border-r border-[#c9711a]  p-4 overflow-y-auto">
         <div className="mb-4">
           <label className="block text-sm font-semibold text-gray-700">Select group of users:</label>
           <select className="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 ">
@@ -46,7 +46,7 @@ useEffect(() => {
       </div>
 
       {/* Selected user detail */}
-      <div className="col-span-1 p-8 bg-white">
+      <div className="col-span-1 p-8 ">
         <div className="relative flex flex-col items-center text-center p-5 overflow-hidden">
                 {/* Background Image */}
                 <div
