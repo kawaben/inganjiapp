@@ -8,80 +8,68 @@ import './style.css'
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
 import { useStore } from '../../context/StoreContext';
 
-const allProducts = {
-  men: [
-    { id: 1, name: 'Product 1',  images: { '#FFA500': '/images/m1-orange.jpg', '#008000': '/images/m1-green.jpg', '#0000FF': '/images/m1-blue.jpg', }, price: 25.99, oldPrice: 30.99, rating: 4.5, sizes: ['S', 'M', 'L'], colors: ['#FFA500', '#008000', '#0000FF'] },
-    { id: 2, name: 'Product 2',  images: { '#e24405': '/images/m2-orange.jpg', '#ffff': '/images/m2-white.jpg', '#01053f': '/images/m2-blue.jpg', }, price: 25.99, oldPrice: 30.99, rating: 4.5, sizes: ['S','L'], colors: ['#e24405', '#ffff', '#01053f'] },
-    { id: 3, name: 'Product 3',  images: { '#000': '/images/m3-black.jpg', '#ff0000': '/images/m3-red.jpg', '#ffff': '/images/m3-white.jpg', }, price: 25.99, oldPrice: 30.99, rating: 4.5, sizes: ['S', 'M', 'L'], colors: ['#000', '#ff0000', '#ffff'] },
-    { id: 4, name: 'Product 4',  images: { '#FFA500': '/images/m1-orange.jpg', '#008000': '/images/m1-green.jpg', '#0000FF': '/images/m1-blue.jpg', }, price: 25.99, oldPrice: 30.99, rating: 4.5, sizes: ['S', 'M', 'L'], colors: ['#FFA500', '#008000', '#0000FF'] },
-    { id: 5, name: 'Product 5',  images: { '#FFA500': '/images/m1-orange.jpg', '#008000': '/images/m1-green.jpg', '#0000FF': '/images/m1-blue.jpg', }, price: 25.99, oldPrice: 30.99, rating: 4.5, sizes: ['S', 'M', 'L'], colors: ['#FFA500', '#008000', '#0000FF'] },
-  ],
-  women: [
-    { id: 6, name: 'Dress', images:{ '#000':'/images/f1-black.jpg','#0000ff':'/images/f1-blue.jpg','#ff0000':'/images/f1-red.png',}, price: 40, oldPrice: 55, rating: 4.7, sizes: ['S', 'M', 'L'], colors: ['#ff0000', '#0000ff','#000'] },
-    { id: 7, name: 'Dress 2', images:{ '#0bb652':'/images/f2-green.jpg','#5c3904':'/images/f2-brown.jpg','#6d91af':'/images/f2-blue.jpg',}, price: 40, oldPrice: 55, rating: 4.7, sizes: ['S', 'M', 'L'], colors: ['#0bb652', '#5c3904','#6d91af'] },
-  ],
-  kids: [
-    { id: 8, name: 'Complete', images:{ '#06c41f':'/images/k1-green.jpg','#046661':'/images/k1-blue.jpg',}, price: 40, oldPrice: 55, rating: 4.7, sizes: ['S', 'M', 'L'], colors: ['#06c41f', '#046661'] },
-    { id: 9, name: 'Dress', images:{ '#046625':'/images/k2-green.jpg','#000011':'/images/k2-black.jpg','#b3b606':'/images/k2-yellow.jpg',}, price: 40, oldPrice: 55, rating: 4.7, sizes: ['S', 'M', 'L'], colors: ['#046625', '#000011','#b3b606'] },
-  ],
-  accessories: [
-    { id: 10, name: 'Glasses', images:{ '#000':'/images/a1-black.jpg','#0000ff':'/images/a1-blue.jpg',}, price: 40, oldPrice: 55, rating: 4.7, sizes: ['S', 'M', 'L'], colors: ['#000', '#0000ff'] },
-    { id: 11, name: 'Hat', images:{ '#ffff':'/images/a2-white.jpg','#046625':'/images/a2-green.jpg',}, price: 40, oldPrice: 55, rating: 4.7, sizes: ['S', 'M', 'L'], colors: ['#ffff', '#046625'] },
-    { id: 12, name: 'Hat 2', images:{ '#000':'/images/a3-black.jpg','#ffff':'/images/a3-white.jpg',}, price: 40, oldPrice: 55, rating: 4.7, sizes: ['S', 'M', 'L'], colors: ['#000', '#ffff'] },
-  ],
-}
+
 
 export default function CategoryPage({ product }) {
-  const { type } = useParams()
-  const products = allProducts[type] || []
+  const { type } = useParams();
 
-  const [currentPage, setCurrentPage] = useState(1)
-  const [selectedSize, setSelectedSize] = useState(null)
- const [selectedColorFilter, setSelectedColorFilter] = useState(null);
-const [selectedColors, setSelectedColors] = useState({});
-const [selectedSizes, setSelectedSizes] = useState({});
+  const [products, setProducts] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedSize, setSelectedSize] = useState(null);
+  const [selectedColorFilter, setSelectedColorFilter] = useState(null);
+  const [selectedColors, setSelectedColors] = useState({});
+  const [selectedSizes, setSelectedSizes] = useState({});
+  const [selectedImages, setSelectedImages] = useState({});
+  const [filterColor, setFilterColor] = useState(null);
 
-const [selectedImages, setSelectedImages] = useState({}); // ✅ New state to track image
+  const { wishlist, toggleWishlist } = useStore();
+  const productsPerPage = 3;
 
+  // ✅ Store products in localStorage once
+  
 
-const [filterColor, setFilterColor] = useState(null);
+  // ✅ Load from localStorage and set products by category
+  useEffect(() => {
+    const storedData = localStorage.getItem('allProducts');
+    if (storedData) {
+      const parsedData = JSON.parse(storedData);
+      const categoryProducts = parsedData[type] || [];
+      setProducts(categoryProducts);
+    }
+  }, [type]);
 
-const { wishlist, toggleWishlist } = useStore();
+  const filteredProducts = products.filter(product => {
+    const matchSize = selectedSize ? product.sizes.includes(selectedSize) : true;
+    const matchColor = selectedColorFilter ? product.colors.includes(selectedColorFilter) : true;
+    return matchSize && matchColor;
+  });
 
-const productsPerPage = 3;
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+  const startIdx = (currentPage - 1) * productsPerPage;
+  const currentProducts = filteredProducts.slice(startIdx, startIdx + productsPerPage);
 
-const filteredProducts = products.filter(product => {
-  const matchSize = selectedSize ? product.sizes.includes(selectedSize) : true;
-  const matchColor = selectedColorFilter ? product.colors.includes(selectedColorFilter) : true;
-  return matchSize && matchColor;
-});
+  const handleColorClick = (productId, color) => {
+    setSelectedColors(prev => ({
+      ...prev,
+      [productId]: prev[productId] === color ? null : color,
+    }));
 
-const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
-const startIdx = (currentPage - 1) * productsPerPage;
-const currentProducts = filteredProducts.slice(startIdx, startIdx + productsPerPage);
+    const product = products.find(p => p.id === productId);
+    const image = product?.images?.[color] || Object.values(product?.images || {})[0] || '/images/default.jpg';
 
-// ✅ Update color and image on selection
-const handleColorClick = (productId, color) => {
-  setSelectedColors(prev => ({
-    ...prev,
-    [productId]: prev[productId] === color ? null : color,
-  }));
+    setSelectedImages(prev => ({
+      ...prev,
+      [productId]: image,
+    }));
+  };
 
-  const product = products.find(p => p.id === productId);
-  const image = product?.images?.[color] || Object.values(product?.images || {})[0] || '/images/default.jpg';
+  const handleSizeClick = (productId, size) => {
+    setSelectedSizes(prev => ({
+      ...prev,
+      [productId]: prev[productId] === size ? null : size,
+    }));
+  };
 
-  setSelectedImages(prev => ({
-    ...prev,
-    [productId]: image,
-  }));
-};
-
-const handleSizeClick = (productId, size) => {
-  setSelectedSizes(prev => ({
-    ...prev,
-    [productId]: prev[productId] === size ? null : size,
-  }));
-};
 
 
   return (

@@ -1,7 +1,8 @@
-// components/ProductTable.jsx
+
 import { useState } from 'react';
 import { MoreHorizontal,ChevronDown } from 'lucide-react';
-
+import Link from 'next/link';
+import AddProductPage from '../addproduct/page';
 
 const FiltersDropdown = ({ filters, selected, onSelect }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -68,7 +69,16 @@ export default function ProductTable() {
         <h1 className="text-2xl font-semibold">Products</h1>
         <div className="flex gap-2">
           <button className="px-4 py-2 border rounded text-gray-600">Export</button>
-          <button className="px-4 py-2 bg-[#c9711a] text-white rounded">New Product</button>
+          
+          <Link href="admin/addproduct" passHref>
+            
+              <button className="px-4 py-2 bg-[#c9711a] text-white rounded">
+                New Product
+              </button>
+            
+          </Link>
+
+          
         </div>
       </div>
 
