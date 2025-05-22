@@ -7,7 +7,7 @@ export default function UserList() {
  const [users, setUsers] = useState([]);
 const [selectedUser, setSelectedUser] = useState([]);
 
-// Load users from localStorage on mount
+
 useEffect(() => {
   const stored = localStorage.getItem('users');
   const parsedUsers = stored ? JSON.parse(stored) : [];

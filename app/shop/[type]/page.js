@@ -1,16 +1,15 @@
-'use client'
+'use client';
 
-import { useParams } from 'next/navigation'
-import { useEffect, useState } from "react";
-import Pagination from '../../components/Pagination'
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import Pagination from '../../components/Pagination';
 import AddToCartButton from '../../components/AddToCartButton';
-import './style.css'
+import './style.css';
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
 import { useStore } from '../../context/StoreContext';
+import { getProductsByCategory, addProductToWishlist, removeProductFromWishlist } from '../../lib/db'; 
 
-
-
-export default function CategoryPage({ product }) {
+export default function CategoryPage() {
   const { type } = useParams();
 
   const [products, setProducts] = useState([]);
@@ -20,22 +19,15 @@ export default function CategoryPage({ product }) {
   const [selectedColors, setSelectedColors] = useState({});
   const [selectedSizes, setSelectedSizes] = useState({});
   const [selectedImages, setSelectedImages] = useState({});
-  const [filterColor, setFilterColor] = useState(null);
-
   const { wishlist, toggleWishlist } = useStore();
   const productsPerPage = 3;
 
-  // ✅ Store products in localStorage once
-  
-
-  // ✅ Load from localStorage and set products by category
   useEffect(() => {
-    const storedData = localStorage.getItem('allProducts');
-    if (storedData) {
-      const parsedData = JSON.parse(storedData);
-      const categoryProducts = parsedData[type] || [];
-      setProducts(categoryProducts);
-    }
+    const loadProducts = async () => {
+      const fetched = await getProductsByCategory(type);
+      setProducts(fetched);
+    };
+    loadProducts();
   }, [type]);
 
   const filteredProducts = products.filter(product => {
@@ -70,8 +62,6 @@ export default function CategoryPage({ product }) {
     }));
   };
 
-
-
   return (
     <div className="category">
       {/* Sidebar */}
@@ -84,103 +74,93 @@ export default function CategoryPage({ product }) {
         <h2>Filters</h2>
 
         <h3>Sizes</h3>
-    <div className="size-options">
-      {["S", "M", "L", "XL", "XXL"].map(size => (
-        <div
-          key={size}
-          className={`size-option ${selectedSize === size ? 'selected' : ''}`}
-          onClick={() => setSelectedSize(selectedSize === size ? null : size)}
-        >
-          {size}
-        </div>
-      ))}
-    </div>
-
-    
-  </div>
-
-  {/* Product Grid */}
-  <div className="grid-container">
-    <div className="product-grid">
-      {currentProducts.map(product => {
-        const selectedColor = selectedColors[product.id]
-        const productImage = selectedColor
-          ? product.images[selectedColor] || Object.values(product.images)[0]
-          : Object.values(product.images)[0]
-
-        return (
-          <div key={product.id} className="product-grid-images">
-            <img src={productImage} alt={product.name} />
-            <div className="color-dots">
-              {product.colors.map((color, i) => (
-            <button
-              key={i}
-              onClick={() => handleColorClick(product.id, color)}
-              className={`w-6 h-6 rounded-full border-2 ${
-                selectedColors[product.id] === color ? 'border-black' : 'border-gray-300'
-              }`}
-              style={{ backgroundColor: color }}
-            ></button>
-          ))}
-
+        <div className="size-options">
+          {["S", "M", "L", "XL", "XXL"].map(size => (
+            <div
+              key={size}
+              className={`size-option ${selectedSize === size ? 'selected' : ''}`}
+              onClick={() => setSelectedSize(selectedSize === size ? null : size)}
+            >
+              {size}
             </div>
+          ))}
+        </div>
+      </div>
 
-            <div className="flex gap-2 mt-2">
-                {product.sizes.map((size, i) => (
-                  <button
-                    key={i}
-                    onClick={() => handleSizeClick(product.id, size)}
-                    className={`flex px-2 py-1 w-6 h-6 items-center justify-center text-sm border rounded ${
-                      selectedSizes[product.id] === size ? 'bg-black text-white' : 'bg-white text-black border-gray-300'
-                    }`}
-                  >
-                    {size}
+      {/* Product Grid */}
+      <div className="grid-container">
+        <div className="product-grid">
+          {currentProducts.map(product => {
+            const selectedColor = selectedColors[product.id];
+            const productImage = selectedColor
+              ? product.images[selectedColor] || Object.values(product.images)[0]
+              : Object.values(product.images)[0];
+
+            return (
+              <div key={product.id} className="product-grid-images">
+                <img src={productImage} alt={product.name} />
+                <div className="color-dots">
+                  {product.colors.map((color, i) => (
+                    <button
+                      key={i}
+                      onClick={() => handleColorClick(product.id, color)}
+                      className={`w-6 h-6 rounded-full border-2 ${
+                        selectedColors[product.id] === color ? 'border-black' : 'border-gray-300'
+                      }`}
+                      style={{ backgroundColor: color }}
+                    ></button>
+                  ))}
+                </div>
+
+                <div className="flex gap-2 mt-2">
+                  {product.sizes.map((size, i) => (
+                    <button
+                      key={i}
+                      onClick={() => handleSizeClick(product.id, size)}
+                      className={`flex px-2 py-1 w-6 h-6 items-center justify-center text-sm border rounded ${
+                        selectedSizes[product.id] === size ? 'bg-black text-white' : 'bg-white text-black border-gray-300'
+                      }`}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
+
+                <h4>{product.name}</h4>
+                <p className="flex items-center justify-between w-32">
+                  <span className="flex items-center gap-1">
+                    ⭐ {product.rating}
+                  </span>
+                  <button onClick={() => toggleWishlist(product)}>
+                    {wishlist.some((w) => w.id === product.id) ? (
+                      <FaHeart className="text-[#e08325]" />
+                    ) : (
+                      <FaRegHeart className="text-[#1b1403] hover:text-[#e08325]" />
+                    )}
                   </button>
-                ))}
+                </p>
+
+                <p>
+                  <strong>${product.price}</strong>{' '}
+                  <span style={{ textDecoration: 'line-through' }}>${product.oldPrice}</span>
+                </p>
+                <AddToCartButton
+                  product={product}
+                  selectedColor={selectedColors[product.id]}
+                  selectedSize={selectedSizes[product.id]}
+                  selectedImage={product.images[selectedColors[product.id]]}
+                />
               </div>
+            );
+          })}
+        </div>
 
-
-            <h4>{product.name}</h4>
-            <p className="flex items-center justify-between w-32">
-              <span className="flex items-center gap-1">
-                ⭐ {product.rating}
-              </span>
-              <button onClick={() => toggleWishlist(product)}>
-                {wishlist.some((w) => w.id === product.id) ? (
-                  <FaHeart className="text-[#e08325]" />
-                ) : (
-                  <FaRegHeart className="text-[#1b1403] hover:text-[#e08325]" />
-                )}
-              </button>
-            </p>
-
-            
-            <p>
-              <strong>${product.price}</strong>{' '}
-              <span style={{ textDecoration: 'line-through' }}>${product.oldPrice}</span>
-            </p>
-            <AddToCartButton
-                product={product}
-                selectedColor={selectedColors[product.id]}
-                selectedSize={selectedSizes[product.id]}
-                selectedImage={product.images[selectedColors[product.id]]}
-              />
-
-
-
-            
-          </div>
-        )
-      })}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
+      </div>
     </div>
-
-    <Pagination
-      currentPage={currentPage}
-      totalPages={totalPages}
-      onPageChange={setCurrentPage}
-    />
-  </div>
-</div>
-
-  )
+  );
 }

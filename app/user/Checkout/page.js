@@ -16,7 +16,7 @@ export default function Checkout() {
     const subTotalPrice = cart.reduce((total, item) => total + item.price * item.quantity, 0);
     const totalPrice = (subTotalPrice + 20);
 
-    const handlePlaceOrder = () => {
+   const handlePlaceOrder = () => {
   const cart = JSON.parse(localStorage.getItem('cart')) || [];
 
   if (cart.length === 0) {
@@ -24,14 +24,13 @@ export default function Checkout() {
     return;
   }
 
-  const orderId = 'TXN' + Date.now(); // Simple order ID
+  const orderId = 'TXN' + Date.now();
   const shippingCost = 20;
 
-  const totalAmount = cart.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  ) + shippingCost;
+  const totalAmount =
+    cart.reduce((sum, item) => sum + item.price * item.quantity, 0) + shippingCost;
 
+  
   const newOrder = {
     id: orderId,
     items: cart,
@@ -40,17 +39,44 @@ export default function Checkout() {
     status: 'Processing',
   };
 
+  
   const existingOrders = JSON.parse(localStorage.getItem('orders')) || [];
   existingOrders.push(newOrder);
   localStorage.setItem('orders', JSON.stringify(existingOrders));
 
-  // Clear cart
-  localStorage.removeItem('cart');
-  clearCart(); // ✅ this was missing parentheses
+  
+  const allProducts = JSON.parse(localStorage.getItem('allProducts')) || {
+    men: [],
+    women: [],
+    kids: [],
+    accessories: [],
+  };
 
-  // Redirect
-  router.push('/user/orders');
+  cart.forEach(cartItem => {
+    const category = cartItem.category;
+    if (!allProducts[category]) return;
+
+    allProducts[category] = allProducts[category].map(product => {
+      if (product.id === cartItem.id) {
+        return {
+          ...product,
+          stock: Math.max(0, product.stock - cartItem.quantity),
         };
+      }
+      return product;
+    });
+  });
+
+  localStorage.setItem('allProducts', JSON.stringify(allProducts));
+
+  
+  localStorage.removeItem('cart');
+  clearCart();
+
+  
+  router.push('/user/orders');
+};
+
 
 
 

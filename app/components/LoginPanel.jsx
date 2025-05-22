@@ -3,74 +3,74 @@ import "../globals.css";
 import { useRouter } from "next/navigation";
 
 export default function LoginPanel() {
-  const users = [
-    { email: "kabagema@nuovire.com", password: "king" },
-    { email: "keza@nuovire.com", password: "tracy" },
-  ];
+  const defaultUsers = [
+  { email: "kabagema@nuovire.com", password: "king" },
+  { email: "keza@nuovire.com", password: "tracy" },
+];
 
-  const [newUsers, setNewUsers] = useState(() => {
-    // Load from localStorage on first render
-      if (typeof window !== "undefined") {
-        const stored = localStorage.getItem("users");
-        return stored ? JSON.parse(stored) : users;
-      }
-      return users;
-    });
-  
-    // Save to localStorage whenever newUsers changes
-    useEffect(() => {
-      if (typeof window !== "undefined") {
-        localStorage.setItem("users", JSON.stringify(newUsers));
-      }
-    }, [newUsers]);
-  
-  
-  // Localstorage
-    useEffect(() => {
-      const storedUsers = JSON.parse(localStorage.getItem("users"));
-      if (storedUsers) setNewUsers(storedUsers);
-    }, []);
-    
-    useEffect(() => {
-      localStorage.setItem("users", JSON.stringify(newUsers));
-    }, [newUsers]);
-  
-  
-  const router = useRouter();
-  const [email, setEmail] = useState(""); const [password, setPassword] = useState(""); 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isSignUp, setIsSignUp] = useState(false);
-  
- 
-  
+const generateToken = () => {
+  return 'token_' + Math.random().toString(36).substr(2);
+};
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    const user = newUsers.find((u) => u.email === email && u.password === password);
-    if (user) {
-      setIsLoggedIn(true);
-      localStorage.setItem("loggedInUser", JSON.stringify(user));
-      router.push("/user");
-    } else {
-      alert("Invalid credentials");
-    }
-    
-  };
+
+const [newUsers, setNewUsers] = useState(() => {
+  if (typeof window !== "undefined") {
+    const stored = localStorage.getItem("users");
+    return stored ? JSON.parse(stored) : defaultUsers;
+  }
+  return defaultUsers;
+});
+
+useEffect(() => {
+  if (typeof window !== "undefined") {
+    localStorage.setItem("users", JSON.stringify(newUsers));
+  }
+}, [newUsers]);
+
+const [email, setEmail] = useState("");
+const [password, setPassword] = useState("");
+const [isLoggedIn, setIsLoggedIn] = useState(false);
+const [isSignUp, setIsSignUp] = useState(false);
+
+const router = useRouter();
+
+
+useEffect(() => {
+  const loggedInUser = localStorage.getItem("loggedInUser");
+  if (loggedInUser) {
+    setIsLoggedIn(true);
+  }
+}, []);
+
+const handleLogin = (e) => {
+  e.preventDefault();
+  const user = newUsers.find((u) => u.email === email && u.password === password);
+  if (user) {
+    setIsLoggedIn(true);
+    localStorage.setItem("loggedInUser", JSON.stringify(user));
+    localStorage.setItem("token", generateToken());
+    router.push("/user");
+  } else {
+    alert("Invalid credentials");
+  }
+};
+
+const handleSignup = (e) => {
+  e.preventDefault();
+  const userExists = newUsers.some((u) => u.email === email);
+  if (userExists) {
+    alert("User already exists");
+  } else {
+    const newUser = { email, password };
+    setNewUsers((prev) => [...prev, newUser]);
+    setIsLoggedIn(true);
+    localStorage.setItem("loggedInUser", JSON.stringify(newUser));
+    router.push("/user");
+  }
+};
+
+
   
-  const handleSignup = (e) => {
-    e.preventDefault();
-    const userExists = newUsers.some((u) => u.email === email);
-    if (userExists) {
-      alert("User already exists");
-    } else {
-      const newUser = { email, password };
-      setNewUsers((prev) => [...prev, newUser]);
-      setIsLoggedIn(true);
-      localStorage.setItem("loggedInUser", JSON.stringify(newUser));
-      router.push("/user");
-      
-    }
-  };
 
 
     return (

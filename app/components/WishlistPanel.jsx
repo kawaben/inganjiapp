@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+
 import {
     TrashIcon,
   } from "@heroicons/react/24/solid";
 import "../globals.css";
 import { useStore } from '../context/StoreContext';
+
 
 export default function WishlistPanel() {
       

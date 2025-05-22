@@ -1,6 +1,6 @@
-// /pages/api/user/profile.js
+
 import { verify } from 'jsonwebtoken';
-import prisma from '@/lib/prisma'; // or your db connection
+import prisma from '@/lib/prisma'; 
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
@@ -19,7 +19,6 @@ export default async function handler(req, res) {
         name: true,
         avatarUrl: true,
         bio: true,
-        // add anything else you want to show
       },
     });
 

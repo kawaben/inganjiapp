@@ -1,6 +1,10 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect } from 'react';
+import {
+  initDB,
+  getWishlistProducts,
+} from '../lib/db';
 
 const StoreContext = createContext();
 
@@ -127,21 +131,51 @@ const removeFromCart = (item) => {
 };
 
 
-  // 🔸 Add / Remove Wishlist Toggle
-  const toggleWishlist = (item) => {
-    const exists = wishlist.some((w) => w.id === item.id);
-    const updatedWishlist = exists
-      ? wishlist.filter((w) => w.id !== item.id)
-      : [...wishlist, item];
 
-    setWishlist(updatedWishlist);
-    localStorage.setItem('wishlist', JSON.stringify(updatedWishlist));
+
+useEffect(() => {
+  localStorage.setItem("wishlist", JSON.stringify(wishlist));
+}, [wishlist]);
+
+  // 🔸 Add / Remove Wishlist Toggle
+   useEffect(() => {
+    const loadWishlist = async () => {
+      await initDB(); 
+      const items = await getWishlistProducts();
+      setWishlist(items);
+    };
+    loadWishlist();
+  }, []);
+
+  const toggleWishlist = async (item) => {
+    const inWishlist = wishlist.some((w) => w.id === item.id);
+
+    if (inWishlist) {
+      await fetch('/api/wishlist', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: item.id }),
+      });
+      setWishlist(wishlist.filter((w) => w.id !== item.id));
+    } else {
+      await fetch('/api/wishlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(item),
+      });
+      setWishlist([...wishlist, item]);
+    }
   };
 
-  // 🔸 Clear Wishlist
-  const clearWishlist = () => {
+  const clearWishlist = async () => {
+    for (let item of wishlist) {
+      await fetch('/api/wishlist', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: item.id }),
+      });
+    }
     setWishlist([]);
-    localStorage.removeItem('wishlist');
   };
 
   return (
@@ -149,6 +183,7 @@ const removeFromCart = (item) => {
       value={{
         cart,
         wishlist,
+        setWishlist, 
         addToCart,
         removeFromCart,
         toggleWishlist,
