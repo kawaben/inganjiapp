@@ -58,17 +58,22 @@
   
   /*  =============================  new style  ====================================  */
 
-  .category{
-    display: flex;
-    grid-template-columns: 1fr 4fr;
-    padding: 120px 40px;
-    height: auto;
+ .category {
+  display: flex;
+  padding: 120px 40px;
+  height: 100%;
+  overflow: hidden;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
-.grid-container{
-  margin-left: 260px; 
-  width: calc(100% - 260px);
+
+.grid-container {
+  flex: 1;  /* Take remaining space */
+  box-sizing: border-box;
+  overflow: hidden; /* optional: prevent overflow inside */
 }
+
 .product-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 2fr));  
@@ -108,12 +113,12 @@
 
 
   .filter-sidebar {
-    flex: 1;
-    position: absolute;
-    height: auto;
-    width: 250px;
-    overflow-y:auto;
-  }
+  flex: 0 0 250px;  /* Fixed width, stay in flow */
+  height: 100%;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
   .filter-sidebar h1 {
     font-size: 1.5rem;
     padding: 1rem;

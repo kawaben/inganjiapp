@@ -13,24 +13,44 @@ const AddToCartButton = ({ product, selectedColor, selectedSize }) => {
         item.id === product.id &&
         item.color === selectedColor &&
         item.size === selectedSize
-         );
-         
+    );
     setAdded(exists);
-    setTimeout(() => setAdded(false), 1500);
-        }, [cart, product.id, selectedColor, selectedSize]);
+  }, [cart, product.id, selectedColor, selectedSize]);
 
-  const handleClick = () => {
-  if (!selectedColor || !selectedSize) return; // optionally validate
-  addToCart(product, selectedColor, selectedSize);
+ const handleClick = async () => {
+  if (!selectedColor || !selectedSize) {
+    console.warn("Color and size must be selected.");
+    return;
+  }
+
+  // Make sure product is consistently typed
+  const safeProduct = {
+    ...product,
+    id: String(product.id),
+    price: Number(product.price),
+    name: product.name || "Unnamed product",
+  };
+
+  await addToCart(safeProduct, selectedColor, selectedSize);
+  setAdded(true);
+  console.log("Product passed into AddToCartButton:", product);
+
+
+  setTimeout(() => {
+    setAdded(false);
+  }, 1500);
 };
+
 
 
   return (
     <button
       onClick={handleClick}
       disabled={added}
-      className={`h-12 px-4 py-2 rounded  ${
-        added ? 'bg-[#1b1403] text-white' : 'bg-[#e08325] text-white hover:bg-[#b86819]'
+      className={`h-12 px-4 py-2 rounded ${
+        added
+          ? 'bg-[#1b1403] text-white'
+          : 'bg-[#e08325] text-white hover:bg-[#b86819]'
       }`}
     >
       {added ? 'Added to Cart' : 'Add to Cart'}

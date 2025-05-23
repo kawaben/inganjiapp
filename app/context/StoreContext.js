@@ -4,6 +4,7 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import {
   initDB,
   getWishlistProducts,
+   getCartItems, addCartItem, removeCartItem, clearCart,
 } from '../lib/db';
 
 const StoreContext = createContext();
@@ -14,35 +15,65 @@ export const StoreProvider = ({ children }) => {
    
 
   useEffect(() => {
-    const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
-    setCart(storedCart);
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(cart));
-  }, [cart]);
-
-  const addToCart = (product, color, size, image) => {
-    const exists = cart.some(
-      item =>
-        item.id === product.id &&
-        item.color === color &&
-        item.size === size
-    );
-
-    if (!exists) {
-      setCart(prev => [
-        ...prev,
-        {
-          ...product,
-          color,
-          size,
-          image,
-          quantity: 1,
-        },
-      ]);
-    }
+  const loadCart = async () => {
+    const db = await initDB();
+    const tx = db.transaction('cart', 'readonly');
+    const store = tx.objectStore('cart');
+    const allItems = await store.getAll();
+    setCart(allItems);
   };
+
+  loadCart();
+}, []);
+
+
+
+  
+
+  const addToCart = async (product, color, size) => {
+  if (!product?.id || !color || !size) {
+    console.error("Invalid input to addToCart:", { product, color, size });
+    return;
+  }
+
+  const newItem = {
+  id: String(product.id),
+  name: product.name || "Unnamed Product",
+  price: Number(product.price),
+  image:
+    product.images?.[color] || Object.values(product.images || {})[0] || "",
+  color,
+  size,
+  quantity: 1,
+};
+
+
+  try {
+    const res = await fetch('/api/cart', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newItem),
+    });
+
+    if (!res.ok) {
+      console.error("Failed to add to cart:", await res.json());
+      return;
+    }
+
+    const data = await res.json();
+    setCart(data.cart); // Set the entire updated cart from the server
+  } catch (err) {
+    console.error("Error adding to cart:", err);
+  }
+};
+
+
+
+
+
+
+
+
 
 
   const isInCart = (product, color, size) => {
@@ -52,10 +83,34 @@ export const StoreProvider = ({ children }) => {
   };
 
 
-    const clearCart = () => {
-    setCart([]);
-    localStorage.removeItem('cart'); // Or use setItem('cart', JSON.stringify([])) for consistency
-    };
+ 
+
+ const handleClearCart = async () => {
+  try {
+    const responses = await Promise.all(
+      cart.map(item =>
+        fetch('/api/cart', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: item.id, color: item.color, size: item.size }), // ensure unique match
+        })
+      )
+    );
+
+    const allSuccessful = responses.every(res => res.ok);
+
+    if (allSuccessful) {
+      setCart([]);
+    } else {
+      console.error('Some items failed to delete from the cart.');
+    }
+  } catch (error) {
+    console.error('Error clearing cart:', error);
+  }
+};
+
+
+
 
 
     const removeItemCompletely = (item) => {
@@ -72,63 +127,74 @@ export const StoreProvider = ({ children }) => {
         localStorage.setItem('cart', JSON.stringify(updatedCart));
         };
 
-    const increaseQuantity = (item) => {
-    const updatedCart = cart.map((cartItem) => {
-        if (
-        cartItem.id === item.id &&
-        cartItem.selectedColor === item.selectedColor &&
-        cartItem.selectedSize === item.selectedSize
-        ) {
-        return { ...cartItem, quantity: cartItem.quantity + 1 };
-        }
-        return cartItem;
-    });
+    const increaseQuantity = async (item) => {
+  const updatedCart = cart.map((cartItem) => {
+    if (
+      cartItem.id === item.id &&
+      cartItem.color === item.color &&
+      cartItem.size === item.size
+    ) {
+      return { ...cartItem, quantity: cartItem.quantity + 1 };
+    }
+    return cartItem;
+  });
 
-    setCart(updatedCart);
-    localStorage.setItem('cart', JSON.stringify(updatedCart));
-    };
-
-    const decreaseQuantity = (item) => {
-    const updatedCart = cart
-        .map((cartItem) => {
-        if (
-            cartItem.id === item.id &&
-            cartItem.selectedColor === item.selectedColor &&
-            cartItem.selectedSize === item.selectedSize
-        ) {
-            return { ...cartItem, quantity: cartItem.quantity - 1 };
-        }
-        return cartItem;
-        })
-        .filter((item) => item.quantity > 0); // remove if quantity is zero
-
-    setCart(updatedCart);
-    localStorage.setItem('cart', JSON.stringify(updatedCart));
-    };
+  await addCartItem({
+    ...item,
+    quantity: item.quantity + 1,
+  });
+  setCart(updatedCart);
+};
 
 
-
-  // 🔸 Remove one unit or whole item
-const removeFromCart = (item) => {
+    const decreaseQuantity = async (item) => {
   const updatedCart = cart
     .map((cartItem) => {
       if (
         cartItem.id === item.id &&
-        cartItem.selectedColor === item.selectedColor &&
-        cartItem.selectedSize === item.selectedSize
+        cartItem.color === item.color &&
+        cartItem.size === item.size
       ) {
-        return {
-          ...cartItem,
-          quantity: cartItem.quantity - 1,
-        };
+        return { ...cartItem, quantity: cartItem.quantity - 1 };
       }
       return cartItem;
     })
-    .filter((cartItem) => cartItem.quantity > 0); // Remove if quantity becomes 0
+    .filter((item) => item.quantity > 0);
 
+  await removeCartItem(item);
   setCart(updatedCart);
-  localStorage.setItem('cart', JSON.stringify(updatedCart));
 };
+
+
+
+
+  // 🔸 Remove one unit or whole item
+   const removeFromCart = async (item) => {
+  try {
+    const res = await fetch('/api/cart', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: item.id,
+        color: item.color,
+        size: item.size,
+      }),
+    });
+
+    if (!res.ok) {
+      console.error("Failed to remove from cart:", await res.json());
+      return;
+    }
+
+    const data = await res.json();
+    setCart(data.cart); 
+  } catch (err) {
+    console.error("Error removing from cart:", err);
+  }
+};
+
+
+
 
 
 
@@ -188,7 +254,7 @@ useEffect(() => {
         removeFromCart,
         toggleWishlist,
         clearWishlist,
-        clearCart,
+        handleClearCart,
         removeItemCompletely,
         increaseQuantity,
         decreaseQuantity,
