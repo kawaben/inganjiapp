@@ -23,7 +23,7 @@ const AddToCartButton = ({ product, selectedColor, selectedSize }) => {
     return;
   }
 
-  // Make sure product is consistently typed
+ 
   const safeProduct = {
     ...product,
     id: String(product.id),

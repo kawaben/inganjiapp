@@ -8,7 +8,7 @@ import { useStore } from '../../context/StoreContext';
 export default function Cart() {
   const isFirstLoad = useRef(true);
   
-  // ✅ Destructure everything from a single call
+  
   const {
     cart,
     handleClearCart,

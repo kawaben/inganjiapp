@@ -92,7 +92,7 @@ export const StoreProvider = ({ children }) => {
         fetch('/api/cart', {
           method: 'DELETE',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: item.id, color: item.color, size: item.size }), // ensure unique match
+          body: JSON.stringify({ id: item.id, color: item.color, size: item.size }), 
         })
       )
     );
