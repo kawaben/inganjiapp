@@ -1,16 +1,20 @@
 import { openDB } from 'idb';
 
 const DB_NAME = 'ecommerceDB';
-const DB_VERSION = 4; 
+const DB_VERSION = 5; 
 const STORE_NAMES = ['men', 'women', 'kids', 'accessories'];
 const CART_STORE = 'cart';
 const WISHLIST_STORE = 'wishlist';
 const ORDERS_STORE = 'orders';
 
+const USERS_STORE = 'users';
+
+
+
 export const initDB = async () => {
   return openDB(DB_NAME, DB_VERSION, {
     upgrade(db) {
-      const allStores = [...STORE_NAMES, CART_STORE, WISHLIST_STORE, ORDERS_STORE];
+      const allStores = [...STORE_NAMES, CART_STORE, WISHLIST_STORE, ORDERS_STORE, USERS_STORE];
 
       for (const store of allStores) {
         if (!db.objectStoreNames.contains(store)) {
@@ -18,6 +22,8 @@ export const initDB = async () => {
             db.createObjectStore(CART_STORE);
           } else if (store === ORDERS_STORE) {
             db.createObjectStore(ORDERS_STORE, { keyPath: 'id' });
+          } else if (store === USERS_STORE) {
+            db.createObjectStore(USERS_STORE, { keyPath: 'email' }); 
           } else {
             db.createObjectStore(store, { keyPath: 'id' });
           }
@@ -26,6 +32,8 @@ export const initDB = async () => {
     },
   });
 };
+
+
 
 //
 // Product Category Functions
@@ -170,4 +178,24 @@ export const updateStockForOrder = async (items) => {
 
     await tx.done;
   }
+};
+
+
+//
+// // USERS
+//
+
+export const addUser = async (user) => {
+  const db = await initDB();
+  return await db.put(USERS_STORE, user);
+};
+
+export const getUserByEmail = async (email) => {
+  const db = await initDB();
+  return await db.get(USERS_STORE, email);
+};
+
+export const getAllUsers = async () => {
+  const db = await initDB();
+  return await db.getAll(USERS_STORE);
 };

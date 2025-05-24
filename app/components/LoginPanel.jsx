@@ -1,8 +1,12 @@
 import { useState, useEffect } from "react";
 import "../globals.css";
 import { useRouter } from "next/navigation";
+import { getUserByEmail, addUser } from '../lib/db';
+
 
 export default function LoginPanel() {
+
+ 
   const defaultUsers = [
   { email: "kabagema@nuovire.com", password: "king" },
   { email: "keza@nuovire.com", password: "tracy" },
@@ -42,10 +46,12 @@ useEffect(() => {
   }
 }, []);
 
-const handleLogin = (e) => {
+const handleLogin = async (e) => {
   e.preventDefault();
-  const user = newUsers.find((u) => u.email === email && u.password === password);
-  if (user) {
+  console.log("login clicked");
+  const user = await getUserByEmail(email);
+
+  if (user && user.password === password) {
     setIsLoggedIn(true);
     localStorage.setItem("loggedInUser", JSON.stringify(user));
     localStorage.setItem("token", generateToken());
@@ -55,19 +61,23 @@ const handleLogin = (e) => {
   }
 };
 
-const handleSignup = (e) => {
+
+const handleSignup = async (e) => {
   e.preventDefault();
-  const userExists = newUsers.some((u) => u.email === email);
-  if (userExists) {
+  console.log("Signup clicked");
+  const existingUser = await getUserByEmail(email);
+
+  if (existingUser) {
     alert("User already exists");
   } else {
     const newUser = { email, password };
-    setNewUsers((prev) => [...prev, newUser]);
+    await addUser(newUser);
     setIsLoggedIn(true);
     localStorage.setItem("loggedInUser", JSON.stringify(newUser));
     router.push("/user");
   }
 };
+
 
 
   
@@ -127,7 +137,7 @@ const handleSignup = (e) => {
               </form>
             ) : (
               <div className="space-y-4">
-                <p className="text-black">Welcome back, {email}</p>
+                <p className="text-black">Welcome back, {JSON.parse(localStorage.getItem("loggedInUser"))?.email}</p>
                 <button
                   className="w-full bg-[#0c0805] text-[#f8e2d2] p-3 rounded-md"
                   onClick={() => {

@@ -76,7 +76,7 @@ export default function Profile() {
   
     // Update logged-in user
     const updatedUser = updatedUsers.find((u) => u.email === user.email);
-    localStorage.setItem("loggedInUser", JSON.stringify(updatedUser)); // ✅ Use the correct key
+    localStorage.setItem("loggedInUser", JSON.stringify(updatedUser));
     setUser(updatedUser);
   
     setIsModalOpen(false);
