@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import useAuth from "../../hooks/useAuth";
 import { useRouter } from "next/navigation";
+import { updateUser } from "../../lib/db";
 
 export default function Profile() {
   const router = useRouter();
@@ -19,7 +20,7 @@ export default function Profile() {
       if (user) setCurrentUser(user);
       
     } else {
-      router.push("/"); // Redirect to home if not logged in
+      router.push("/"); 
     }
   }, [router]);
 
@@ -64,23 +65,25 @@ export default function Profile() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = () => {
-    const storedUsers = JSON.parse(localStorage.getItem("users")) || [];
-  
-    // Update the user list
-    const updatedUsers = storedUsers.map((u) =>
-      u.email === user.email ? { ...u, ...formData } : u
-    );
-  
-    localStorage.setItem("users", JSON.stringify(updatedUsers));
-  
-    // Update logged-in user
-    const updatedUser = updatedUsers.find((u) => u.email === user.email);
-    localStorage.setItem("loggedInUser", JSON.stringify(updatedUser));
+  const handleSave = async () => {
+  if (!user) return;
+
+  const updatedUser = { ...user, ...formData };
+
+  console.log("👉 Updating user with email:", updatedUser.email);
+  console.log("🧠 Full user object:", updatedUser);
+
+  try {
+    await updateUser(updatedUser);
     setUser(updatedUser);
-  
+    localStorage.setItem("loggedInUser", JSON.stringify(updatedUser));
     setIsModalOpen(false);
-  };
+  } catch (err) {
+    console.error("❌ Error updating user in IndexedDB:", err);
+  }
+};
+
+
   
   const handleImageChange = (e) => {
       const file = e.target.files[0];

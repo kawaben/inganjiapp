@@ -199,3 +199,12 @@ export const getAllUsers = async () => {
   const db = await initDB();
   return await db.getAll(USERS_STORE);
 };
+
+export const updateUser = async (user) => {
+  const db = await initDB();
+  if (!user?.email) {
+    throw new Error("User must have a valid email to update.");
+  }
+  return await db.put(USERS_STORE, user); // email is keyPath
+};
+
