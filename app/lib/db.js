@@ -1,18 +1,23 @@
 import { openDB } from 'idb';
 
 const DB_NAME = 'ecommerceDB';
+const DB_VERSION = 4; 
 const STORE_NAMES = ['men', 'women', 'kids', 'accessories'];
 const CART_STORE = 'cart';
+const WISHLIST_STORE = 'wishlist';
+const ORDERS_STORE = 'orders';
 
 export const initDB = async () => {
-  return openDB('ecommerceDB', 3, {
+  return openDB(DB_NAME, DB_VERSION, {
     upgrade(db) {
-      const stores = ['men', 'women', 'kids', 'accessories', 'wishlist', 'cart'];
+      const allStores = [...STORE_NAMES, CART_STORE, WISHLIST_STORE, ORDERS_STORE];
 
-      for (const store of stores) {
+      for (const store of allStores) {
         if (!db.objectStoreNames.contains(store)) {
-          if (store === 'cart') {
-            db.createObjectStore("cart");
+          if (store === CART_STORE) {
+            db.createObjectStore(CART_STORE);
+          } else if (store === ORDERS_STORE) {
+            db.createObjectStore(ORDERS_STORE, { keyPath: 'id' });
           } else {
             db.createObjectStore(store, { keyPath: 'id' });
           }
@@ -22,8 +27,9 @@ export const initDB = async () => {
   });
 };
 
-
-
+//
+// Product Category Functions
+//
 
 export const addProductToCategory = async (category, product) => {
   const db = await initDB();
@@ -51,29 +57,36 @@ export const getProductsByCategory = async (category) => {
   const db = await initDB();
   const tx = db.transaction(category, 'readonly');
   const store = tx.objectStore(category);
-  const products = await store.getAll();
-  return products;
+  return await store.getAll();
 };
+
+//
+// Wishlist Functions
+//
 
 export const addProductToWishlist = async (product) => {
   const db = await initDB();
-  await db.put('wishlist', product);
+  await db.put(WISHLIST_STORE, product);
 };
 
 export const removeProductFromWishlist = async (productId) => {
   const db = await initDB();
-  await db.delete('wishlist', productId);
+  await db.delete(WISHLIST_STORE, productId);
 };
 
 export const getWishlistProducts = async () => {
   const db = await initDB();
-  return await db.getAll('wishlist');
+  return await db.getAll(WISHLIST_STORE);
 };
 
 export const clearWishlistDB = async () => {
   const db = await initDB();
-  await db.clear('wishlist');
+  await db.clear(WISHLIST_STORE);
 };
+
+//
+// Cart Functions
+//
 
 export async function getCartItems() {
   const db = await initDB();
@@ -83,47 +96,33 @@ export async function getCartItems() {
 export const addCartItem = async (item) => {
   const db = await initDB();
 
-  // Ensure id, color, size are present and strings
   if (!item?.id || !item?.color || !item?.size) {
     console.error('Invalid cart item. Must have id, color, and size:', item);
     return;
   }
 
-  
   const key = [String(item.id), String(item.color), String(item.size)];
 
-  // TODO: Debug DataError when calling store.put with compound keys
-// It doesn’t seem to break functionality, but might cause issues later.
+  try {
+    const tx = db.transaction(CART_STORE, 'readwrite');
+    const store = tx.objectStore(CART_STORE);
 
- try {
-  const tx = db.transaction('cart', 'readwrite');
-  const store = tx.objectStore('cart');
+    const existing = await store.get(key);
 
-  const key = [String(item.id), String(item.color), String(item.size)];
-  const existing = await store.get(key);
+    if (existing) {
+      existing.quantity += item.quantity || 1;
+      await store.put(existing, key);
+    } else {
+      await store.put({ ...item, quantity: item.quantity || 1 }, key);
+    }
 
-  if (existing) {
-    existing.quantity += item.quantity || 1;
-    await store.put(existing, key);
-  } else {
-    await store.put({ ...item, quantity: item.quantity || 1 }, key);
+    await tx.done;
+  } catch (error) {
+    if (error.name !== "DataError") {
+      console.error('🔥 Failed to add/update cart item:', error);
+    }
   }
-
-  await tx.done;
-} catch (error) {
-  if (error.name !== "DataError") {
-    console.error('🔥 Failed to add/update cart item:', error);
-  }
-}
-
 };
-
-
-
-
-
-
-
 
 export async function removeCartItem(key) {
   const db = await initDB();
@@ -134,3 +133,41 @@ export async function clearCart() {
   const db = await initDB();
   await db.clear(CART_STORE);
 }
+
+//
+// Order Functions
+//
+
+export const addOrder = async (order) => {
+  const db = await initDB();
+  await db.put(ORDERS_STORE, order);
+};
+
+export const getAllOrders = async () => {
+  const db = await initDB();
+  return await db.getAll(ORDERS_STORE);
+};
+
+//
+// Stock Adjustment for Orders
+//
+
+export const updateStockForOrder = async (items) => {
+  const db = await initDB();
+
+  for (const item of items) {
+    const category = item.category;
+    if (!STORE_NAMES.includes(category)) continue;
+
+    const tx = db.transaction(category, 'readwrite');
+    const store = tx.objectStore(category);
+
+    const product = await store.get(item.id);
+    if (product) {
+      product.stock = Math.max(0, (product.stock || 0) - item.quantity);
+      await store.put(product);
+    }
+
+    await tx.done;
+  }
+};

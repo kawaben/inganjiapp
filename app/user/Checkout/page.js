@@ -2,84 +2,45 @@
 import { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
 import { useStore } from '../../context/StoreContext';
+import {  addOrder, updateStockForOrder, clearCart } from '../../lib/db';
 
 
 export default function Checkout() {
 
-    const router = useRouter();
-  
-    const { cart } = useStore();
-    const { clearCart } = useStore();
-          
-  
-
-    const subTotalPrice = cart.reduce((total, item) => total + item.price * item.quantity, 0);
-    const totalPrice = (subTotalPrice + 20);
-
-   const handlePlaceOrder = () => {
-  const cart = JSON.parse(localStorage.getItem('cart')) || [];
-
-  if (cart.length === 0) {
-    alert('Cart is empty!');
-    return;
-  }
-
-  const orderId = 'TXN' + Date.now();
-  const shippingCost = 20;
-
-  const totalAmount =
-    cart.reduce((sum, item) => sum + item.price * item.quantity, 0) + shippingCost;
+  const router = useRouter();
+  const { handleClearCart,cart } = useStore();
 
   
-  const newOrder = {
-    id: orderId,
-    items: cart,
-    date: new Date().toISOString(),
-    total: totalAmount,
-    status: 'Processing',
+
+  
+ const subTotalPrice = cart.reduce((total, item) => total + item.price * item.quantity, 0);
+  const totalPrice = subTotalPrice + 20;
+
+  const handlePlaceOrder = async () => {
+    if (cart.length === 0) {
+      alert('Cart is empty!');
+      return;
+    }
+
+    const orderId = 'TXN' + Date.now();
+    const shippingCost = 20;
+    const totalAmount = subTotalPrice + shippingCost;
+
+    const newOrder = {
+      id: orderId,
+      items: cart,
+      date: new Date().toISOString(),
+      total: totalAmount,
+      status: 'Processing',
+    };
+
+    await addOrder(newOrder);
+    await updateStockForOrder(cart);
+    await clearCart();
+    handleClearCart();
+
+    router.push('/user/orders');
   };
-
-  
-  const existingOrders = JSON.parse(localStorage.getItem('orders')) || [];
-  existingOrders.push(newOrder);
-  localStorage.setItem('orders', JSON.stringify(existingOrders));
-
-  
-  const allProducts = JSON.parse(localStorage.getItem('allProducts')) || {
-    men: [],
-    women: [],
-    kids: [],
-    accessories: [],
-  };
-
-  cart.forEach(cartItem => {
-    const category = cartItem.category;
-    if (!allProducts[category]) return;
-
-    allProducts[category] = allProducts[category].map(product => {
-      if (product.id === cartItem.id) {
-        return {
-          ...product,
-          stock: Math.max(0, product.stock - cartItem.quantity),
-        };
-      }
-      return product;
-    });
-  });
-
-  localStorage.setItem('allProducts', JSON.stringify(allProducts));
-
-  
-  localStorage.removeItem('cart');
-  clearCart();
-
-  
-  router.push('/user/orders');
-};
-
-
-
-
 
   return (
    
@@ -116,68 +77,85 @@ export default function Checkout() {
 
             {/* Order Summary */}
             <div className="border border-gray-200 p-6 rounded-lg shadow-sm">
-                <h3 className="text-xl font-semibold mb-4">Your order</h3>
-                {cart.length > 0 ? (
-                cart.map((item) => (
-                    <ul key={item.id} className="space-y-2">
-                    <li className="flex justify-between">
-                        <span>{item.name} × {item.quantity}</span>
-                        <span>${item.price.toFixed(2)*item.quantity}</span>
-                    </li>
-                
-                    </ul>
+  <h3 className="text-xl font-semibold mb-4">Your Order</h3>
 
-                ))
-                )
-                : (
-                    <p className="text-gray-500">Your Cart is empty.</p>
-                )
-                }
-
-
-                <div className="border-t mt-4 pt-4 space-y-2 text-sm">
-                <div className="flex justify-between">
-                    <span>Subtotal</span>
-                    <span>${subTotalPrice.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between">
-                    <span>Shipping</span>
-                    <span>Flat rate: $20.00</span>
-                </div>
-                <div className="flex justify-between font-semibold">
-                    <span>Total</span>
-                    <span>${totalPrice}</span>
-                </div>
-                </div>
-
-                <div className="mt-6 space-y-3">
-                <div>
-                    <input type="radio" id="bank" name="payment" className="mr-2" />
-                    <label htmlFor="bank">Direct bank transfer</label>
-                </div>
-                <div>
-                    <input type="radio" id="check" name="payment" className="mr-2" />
-                    <label htmlFor="check">Check payments</label>
-                </div>
-                </div>
-
-                <div className="mt-4">
-                <input type="checkbox" id="terms" className="mr-2" />
-                <label htmlFor="terms">
-                    I have read and agree to the website <a href="#" className="text-blue-600 underline">terms and conditions</a>
-                </label>
-                </div>
-
-                <button className="w-full bg-[#e08325] cursor-pointer text-white py-3 rounded-lg mt-6 font-semibold" onClick={handlePlaceOrder}>
-                Place order
-                </button>
-
-                <div className="mt-4 flex justify-center gap-3">
-                <img src="../images/visa.svg" alt="Visa" className="h-6" />
-                <img src="../images/paypal.svg" alt="PayPal" className="h-6" />
-                <img src="../images/mastercard.svg" alt="MasterCard" className="h-6" />
-                </div>
+  {cart.length > 0 ? (
+    <ul className="divide-y divide-gray-200 mb-4">
+      {cart.map((item, index) => (
+        <li key={`${item.id}-${item.color}-${item.size}-${index}`} className="py-2 flex justify-between text-sm">
+          <div>
+            <span className="font-medium">{item.name}</span>{' '}
+            <span className="text-gray-500">× {item.quantity}</span>
+            <div className="text-gray-400 text-xs">
+              {item.color && <span>Color: {item.color}</span>}
+              {item.size && <span className="ml-2">Size: {item.size}</span>}
             </div>
+          </div>
+          <div className="font-semibold">
+            ${(item.price * item.quantity).toFixed(2)}
+          </div>
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <p className="text-gray-500">Your Cart is empty.</p>
+  )}
+
+  {/* Totals */}
+  <div className="border-t mt-4 pt-4 space-y-2 text-sm">
+    <div className="flex justify-between">
+      <span>Subtotal</span>
+      <span>${subTotalPrice.toFixed(2)}</span>
+    </div>
+    <div className="flex justify-between">
+      <span>Shipping</span>
+      <span>Flat rate: $20.00</span>
+    </div>
+    <div className="flex justify-between font-semibold text-base">
+      <span>Total</span>
+      <span>${totalPrice.toFixed(2)}</span>
+    </div>
+  </div>
+
+  {/* Payment Options */}
+  <div className="mt-6 space-y-3 text-sm">
+    <div>
+      <input type="radio" id="bank" name="payment" className="mr-2" />
+      <label htmlFor="bank">Direct bank transfer</label>
+    </div>
+    <div>
+      <input type="radio" id="check" name="payment" className="mr-2" />
+      <label htmlFor="check">Check payments</label>
+    </div>
+  </div>
+
+  {/* Terms */}
+  <div className="mt-4 text-sm">
+    <input type="checkbox" id="terms" className="mr-2" />
+    <label htmlFor="terms">
+      I have read and agree to the website{' '}
+      <a href="#" className="text-blue-600 underline">
+        terms and conditions
+      </a>
+    </label>
+  </div>
+
+  {/* Place Order Button */}
+  <button
+    className="w-full bg-[#e08325] text-white py-3 rounded-lg mt-6 font-semibold hover:bg-[#c96e1d] transition"
+    onClick={handlePlaceOrder}
+  >
+    Place order
+  </button>
+
+  {/* Payment Logos */}
+  <div className="mt-4 flex justify-center gap-3">
+    <img src="/images/visa.svg" alt="Visa" className="h-6" />
+    <img src="/images/paypal.svg" alt="PayPal" className="h-6" />
+    <img src="/images/mastercard.svg" alt="MasterCard" className="h-6" />
+  </div>
+</div>
+
         </div>
     </div>
 

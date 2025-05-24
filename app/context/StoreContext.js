@@ -4,7 +4,7 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import {
   initDB,
   getWishlistProducts,
-   getCartItems, addCartItem, removeCartItem, clearCart,
+   addCartItem, removeCartItem, clearCart,
 } from '../lib/db';
 
 const StoreContext = createContext();
