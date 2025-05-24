@@ -205,6 +205,6 @@ export const updateUser = async (user) => {
   if (!user?.email) {
     throw new Error("User must have a valid email to update.");
   }
-  return await db.put(USERS_STORE, user); // email is keyPath
+  return await db.put(USERS_STORE, user); 
 };
 

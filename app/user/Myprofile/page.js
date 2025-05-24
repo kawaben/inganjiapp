@@ -7,12 +7,11 @@ import { updateUser } from "../../lib/db";
 export default function Profile() {
   const router = useRouter();
   const { authenticated, loading } = useAuth();
-  const [user, setUser] = useState(null); // default null
+  const [user, setUser] = useState(null); 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
-    // Check login status from localStorage
     const storedUsers = JSON.parse(localStorage.getItem("users")) || [];
     const loggedIn = JSON.parse(localStorage.getItem("loggedInUser"));
     if (loggedIn) {

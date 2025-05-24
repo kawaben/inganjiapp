@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useAdminAuth } from '../hooks/useAdminAuth';
 import { usePathname } from 'next/navigation'
 import { Home, Package, ClipboardList, Users, LogOut } from 'lucide-react'
-import Link from 'next/link'
 import Dashboard from "./dashboard/page";
 import Orders from "./orders/page";
 import User from "./users/page";

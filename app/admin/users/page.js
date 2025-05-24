@@ -1,18 +1,21 @@
 'use client';
 import { useState, useEffect } from 'react';
 
+import {getAllUsers} from '../../lib/db'
 
 
 export default function UserList() {
  const [users, setUsers] = useState([]);
-const [selectedUser, setSelectedUser] = useState([]);
-
+const [selectedUser, setSelectedUser] = useState(null);
 
 useEffect(() => {
-  const stored = localStorage.getItem('users');
-  const parsedUsers = stored ? JSON.parse(stored) : [];
-  setUsers(parsedUsers);
-  setSelectedUser(parsedUsers[0] || null);
+  const fetchUsersFromDB = async () => {
+    const allUsers = await getAllUsers(); 
+    setUsers(allUsers);
+    setSelectedUser(allUsers[0] || null);
+  };
+
+  fetchUsersFromDB();
 }, []);
 
 
@@ -51,7 +54,7 @@ useEffect(() => {
                 {/* Background Image */}
                 <div
                   className="absolute inset-0 bg-cover bg-center"
-                  style={{ backgroundImage: `url('${selectedUser.image}')` }}
+                  style={{ backgroundImage: `url('${selectedUser?.image || 'images/m1-blue.jpg'}')` }}
                 />
                 
                 {/* Overlay */}
@@ -59,9 +62,9 @@ useEffect(() => {
 
                 {/* Content */}
                 <div className="flex flex-col items-center justify-center h-full z-10">
-                  <img src={selectedUser.image} alt={selectedUser.username} className="w-24 h-24 rounded-full shadow-md" />
-                  <h2 className="text-xl font-semibold mt-4">{selectedUser.firstname} {selectedUser.lastname}</h2>
-                  <p className="text-gray-800">{selectedUser.username}</p>
+                  <img src={selectedUser?.image || 'images/m1-blue.jpg'} alt={selectedUser?.username} className="w-24 h-24 rounded-full shadow-md" />
+                  <h2 className="text-xl font-semibold mt-4">{selectedUser?.firstname} {selectedUser?.lastname}</h2>
+                  <p className="text-gray-800">{selectedUser?.username}</p>
                 </div>
              
 
@@ -70,19 +73,19 @@ useEffect(() => {
         <div className="mt-6 space-y-2">
           <div>
             <h4 className="font-bold text-gray-700">Bio:</h4>
-            <p className="text-gray-600">{selectedUser.bio}</p>
+            <p className="text-gray-600">{selectedUser?.bio}</p>
           </div>
           <div>
             <h4 className="font-bold text-gray-700">Address:</h4>
-            <p className="text-gray-600">{selectedUser.location},{selectedUser.country}</p>
+            <p className="text-gray-600">{selectedUser?.location},{selectedUser?.country}</p>
           </div>
           <div>
             <h4 className="font-bold text-gray-700">Email Address:</h4>
-            <p className="text-gray-600">{selectedUser.email}</p>
+            <p className="text-gray-600">{selectedUser?.email}</p>
           </div>
           <div>
             <h4 className="font-bold text-gray-700">Phone Number:</h4>
-            <p className="text-gray-600">{selectedUser.phone}</p>
+            <p className="text-gray-600">{selectedUser?.phone}</p>
           </div>
         </div>
       </div>
