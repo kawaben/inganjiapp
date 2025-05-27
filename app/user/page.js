@@ -11,13 +11,14 @@ import Notifications from "./Notifications/page";
 import Setting from "./Settings/page";
 import Checkout from "./Checkout/page";
 import Orders from "./orders/page";
+import { useUser } from '../context/UserContext';
 
 export default function UserPage() {
   const { authenticated, loading } = useAuth();
   const [activeSection, setActiveSection] = useState("My Profile");
 
 
-  const [user, setUser] = useState(null);
+  const { user, login, logout } = useUser(); 
  
 
   const [cartItems, setCartItems] = useState([
@@ -48,7 +49,7 @@ export default function UserPage() {
     if (!loading && authenticated) {
       const storedUser = JSON.parse(localStorage.getItem("loggedInUser"));
       if (storedUser) {
-        setUser(storedUser);
+        login(storedUser);
       } else {
         router.push("/");
       }
@@ -74,17 +75,6 @@ export default function UserPage() {
     );
   }
   
-  
-
-
-  const handleLogout = () => {
-    localStorage.removeItem("loggedInUser");
-    router.push("/");
-  };
-
-  
-  
-
 
 
   return (
@@ -99,7 +89,7 @@ export default function UserPage() {
                 <li className={`flex items-center gap-3 px-4 py-2 rounded-md transition cursor-pointer hover:bg-gray-100 ${activeSection === "Wishlist" ? "text-[#c9711a] font-semibold" : "text-black"}`} onClick={() => setActiveSection("Wishlist")}><Heart size={18} /> Wishlist </li>
                 <li className={`flex items-center gap-3 px-4 py-2 rounded-md transition cursor-pointer hover:bg-gray-100 ${activeSection === "Setting" ? "text-[#c9711a] font-semibold" : "text-black"}`} onClick={() => setActiveSection("Setting")}><Settings size={18} /> Settings </li>
                 <li className={`flex items-center gap-3 px-4 py-2 rounded-md transition cursor-pointer hover:bg-gray-100 ${activeSection === "Orders" ? "text-[#c9711a] font-semibold" : "text-black"}`} onClick={() => setActiveSection("Orders")}><ClipboardList size={18} /> Orders </li>
-                <li><button className="flex items-center gap-3 px-4 py-2 rounded-md text-red-600 hover:bg-red-100 transition" onClick={handleLogout}>
+                <li><button className="flex items-center gap-3 px-4 py-2 rounded-md text-red-600 hover:bg-red-100 transition" onClick={logout}>
                   <LogOut size={18} />
                   Log Out
                   </button></li>

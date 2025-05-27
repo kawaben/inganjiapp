@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import "../globals.css";
 import { useRouter } from "next/navigation";
 import { getUserByEmail, addUser } from '../lib/db';
+import { useUser } from '../context/UserContext';
 
 
 export default function LoginPanel() {
@@ -46,14 +47,14 @@ useEffect(() => {
   }
 }, []);
 
+const { login, logout } = useUser(); 
+
 const handleLogin = async (e) => {
   e.preventDefault();
-  console.log("login clicked");
   const user = await getUserByEmail(email);
 
   if (user && user.password === password) {
-    setIsLoggedIn(true);
-    localStorage.setItem("loggedInUser", JSON.stringify(user));
+    login(user); 
     localStorage.setItem("token", generateToken());
     router.push("/user");
   } else {
@@ -62,9 +63,9 @@ const handleLogin = async (e) => {
 };
 
 
+
 const handleSignup = async (e) => {
   e.preventDefault();
-  console.log("Signup clicked");
   const existingUser = await getUserByEmail(email);
 
   if (existingUser) {
@@ -72,11 +73,11 @@ const handleSignup = async (e) => {
   } else {
     const newUser = { email, password };
     await addUser(newUser);
-    setIsLoggedIn(true);
-    localStorage.setItem("loggedInUser", JSON.stringify(newUser));
+    login(newUser); 
     router.push("/user");
   }
 };
+
 
 
 
@@ -141,9 +142,7 @@ const handleSignup = async (e) => {
                 <button
                   className="w-full bg-[#0c0805] text-[#f8e2d2] p-3 rounded-md"
                   onClick={() => {
-                    setIsLoggedIn(false);
-                    setEmail("");
-                    setPassword("");
+                    logout
                   }}
                 >
                   Log Out
