@@ -19,7 +19,7 @@ export const initDB = async () => {
       for (const store of allStores) {
         if (!db.objectStoreNames.contains(store)) {
           if (store === CART_STORE) {
-            db.createObjectStore(CART_STORE);
+            db.createObjectStore(CART_STORE, { keyPath: null });
           } else if (store === ORDERS_STORE) {
             db.createObjectStore(ORDERS_STORE, { keyPath: 'id' });
           } else if (store === USERS_STORE) {
@@ -96,20 +96,41 @@ export const clearWishlistDB = async () => {
 // Cart Functions
 //
 
-export async function getCartItems() {
+// 🛒 Get items for one user
+export async function getCartItems(userEmail) {
   const db = await initDB();
-  return (await db.getAll(CART_STORE)) || [];
+  const tx = db.transaction(CART_STORE, 'readonly');
+  const store = tx.objectStore(CART_STORE);
+
+  const items = [];
+
+  let cursor = await store.openCursor();
+  while (cursor) {
+    if (cursor.value.userEmail === userEmail) {
+      items.push({ ...cursor.value, key: cursor.key });
+    }
+    cursor = await cursor.continue();
+  }
+
+  await tx.done;
+  return items;
 }
 
+// ➕ Add or update a cart item for the user
 export const addCartItem = async (item) => {
   const db = await initDB();
 
-  if (!item?.id || !item?.color || !item?.size) {
-    console.error('Invalid cart item. Must have id, color, and size:', item);
+  if (!item?.id || !item?.color || !item?.size || !item?.userEmail) {
+    console.error('Invalid cart item. Must have id, color, size, and userEmail:', item);
     return;
   }
 
-  const key = [String(item.id), String(item.color), String(item.size)];
+  const key = [
+    String(item.id),
+    String(item.color),
+    String(item.size),
+    String(item.userEmail),
+  ];
 
   try {
     const tx = db.transaction(CART_STORE, 'readwrite');
@@ -126,11 +147,12 @@ export const addCartItem = async (item) => {
 
     await tx.done;
   } catch (error) {
-    if (error.name !== "DataError") {
+    if (error.name !== 'DataError') {
       console.error('🔥 Failed to add/update cart item:', error);
     }
   }
 };
+
 
 export async function removeCartItem(key) {
   const db = await initDB();

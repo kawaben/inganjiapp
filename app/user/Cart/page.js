@@ -48,7 +48,7 @@ export default function Cart() {
 
     return (
       <div
-        key={`${item.id}-${item.color}-${item.size}-${index}`}
+        key={`${item.id}-${item.color}-${item.size}-${index}-${item.userEmail}`}
         className="grid grid-cols-6 gap-4 items-center py-2 shadow text-sm md:text-base lg:text-lg font-medium tracking-wide"
       >
         {/* Image & Details */}

@@ -1,11 +1,13 @@
 'use client';
 
 import { useStore } from '../context/StoreContext';
+import { useUser } from '../context/UserContext';
 import { useState, useEffect } from 'react';
 
 const AddToCartButton = ({ product, selectedColor, selectedSize }) => {
   const { cart, addToCart } = useStore();
   const [added, setAdded] = useState(false);
+  const { user } = useUser(); 
 
   useEffect(() => {
     const exists = cart.some(
@@ -29,11 +31,12 @@ const AddToCartButton = ({ product, selectedColor, selectedSize }) => {
     id: String(product.id),
     price: Number(product.price),
     name: product.name || "Unnamed product",
+    userEmail: user?.email,
   };
 
   await addToCart(safeProduct, selectedColor, selectedSize);
   setAdded(true);
-  console.log("Product passed into AddToCartButton:", product);
+  console.log("Product passed into AddToCartButton:", safeProduct);
 
 
   setTimeout(() => {

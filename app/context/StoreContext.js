@@ -4,23 +4,28 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import {
   initDB,
   getWishlistProducts,
-   addCartItem, removeCartItem, clearCart,
+   addCartItem, removeCartItem, clearCart,getCartItems
 } from '../lib/db';
+
+import { useUser } from './UserContext';
 
 const StoreContext = createContext();
 
 export const StoreProvider = ({ children }) => {
     const [cart, setCart] = useState([]);
     const [wishlist, setWishlist] = useState([]);
-   
+   const { user } = useUser();
+const userEmail = user?.email;
 
-  useEffect(() => {
+
+ useEffect(() => {
   const loadCart = async () => {
-    const db = await initDB();
-    const tx = db.transaction('cart', 'readonly');
-    const store = tx.objectStore('cart');
-    const allItems = await store.getAll();
-    setCart(allItems);
+    
+
+    if (userEmail) {
+      const userCart = await getCartItems(userEmail);
+      setCart(userCart);
+    }
   };
 
   loadCart();
@@ -28,53 +33,47 @@ export const StoreProvider = ({ children }) => {
 
 
 
+
   
 
-  const addToCart = async (product, color, size) => {
-  if (!product?.id || !color || !size) {
+ const addToCart = async (product, color, size) => {
+  if (!product?.id || !color || !size || !product.userEmail) {
     console.error("Invalid input to addToCart:", { product, color, size });
     return;
   }
 
   const newItem = {
-  id: String(product.id),
-  name: product.name || "Unnamed Product",
-  price: Number(product.price),
-  image:
-    product.images?.[color] || Object.values(product.images || {})[0] || "",
-  color,
-  size,
-  quantity: 1,
-};
-
+    id: String(product.id),
+    name: product.name || "Unnamed Product",
+    price: Number(product.price),
+    image:
+      product.images?.[color] || Object.values(product.images || {})[0] || "",
+    color,
+    size,
+    quantity: 1,
+    userEmail: product.userEmail,
+  };
 
   try {
-    const res = await fetch('/api/cart', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const res = await fetch("/api/cart", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newItem),
     });
 
     if (!res.ok) {
-      console.error("Failed to add to cart:", await res.json());
+      const error = await res.json();
+      console.error("Failed to add to cart:", error);
       return;
     }
 
-    const data = await res.json();
-    setCart(data.cart); // Set the entire updated cart from the server
+    // Ideally, your API returns the updated cart for that user
+    const { cart } = await res.json();
+    setCart(cart); // Updates context state
   } catch (err) {
     console.error("Error adding to cart:", err);
   }
 };
-
-
-
-
-
-
-
-
-
 
   const isInCart = (product, color, size) => {
     return cart.some(
@@ -82,17 +81,24 @@ export const StoreProvider = ({ children }) => {
     );
   };
 
-
- 
-
  const handleClearCart = async () => {
+  if (!cart.length || !cart[0]?.userEmail) {
+    console.warn("Cart is empty or missing userEmail.");
+    return;
+  }
+
   try {
     const responses = await Promise.all(
       cart.map(item =>
         fetch('/api/cart', {
           method: 'DELETE',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: item.id, color: item.color, size: item.size }), 
+          body: JSON.stringify({
+            id: item.id,
+            color: item.color,
+            size: item.size,
+            userEmail: item.userEmail, // 👈 IMPORTANT
+          }),
         })
       )
     );
@@ -108,6 +114,24 @@ export const StoreProvider = ({ children }) => {
     console.error('Error clearing cart:', error);
   }
 };
+
+const fetchCartByUser = async (userEmail) => {
+  if (!userEmail) return;
+
+  try {
+    const res = await fetch(`/api/cart?userEmail=${userEmail}`);
+    const data = await res.json();
+
+    if (res.ok) {
+      setCart(data);
+    } else {
+      console.error("Failed to fetch cart:", data.error);
+    }
+  } catch (error) {
+    console.error("Error fetching cart:", error);
+  }
+};
+
 
 
 
@@ -141,7 +165,7 @@ export const StoreProvider = ({ children }) => {
 
   await addCartItem({
     ...item,
-    quantity: item.quantity + 1,
+    quantity: item.quantity + 1,userEmail,
   });
   setCart(updatedCart);
 };
@@ -258,7 +282,8 @@ useEffect(() => {
         removeItemCompletely,
         increaseQuantity,
         decreaseQuantity,
-        isInCart
+        isInCart,
+        fetchCartByUser
       }}
     >
       {children}

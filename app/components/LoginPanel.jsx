@@ -40,6 +40,7 @@ const [isSignUp, setIsSignUp] = useState(false);
 const router = useRouter();
 
 
+
 useEffect(() => {
   const loggedInUser = localStorage.getItem("loggedInUser");
   if (loggedInUser) {
