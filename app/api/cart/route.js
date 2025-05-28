@@ -1,4 +1,4 @@
-// A simple in-memory object to store carts by userEmail
+
 let userCarts = {};
 
 export async function GET(req) {
