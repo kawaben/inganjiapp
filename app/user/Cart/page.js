@@ -5,8 +5,8 @@ import Image from 'next/image';
 import { TrashIcon } from "@heroicons/react/24/solid";
 import { useStore } from '../../context/StoreContext';
 
+
 export default function Cart() {
-  const isFirstLoad = useRef(true);
   
   
   const {
@@ -14,9 +14,8 @@ export default function Cart() {
     handleClearCart,
     removeFromCart,
     increaseQuantity,
-    decreaseQuantity
+    decreaseQuantity,
   } = useStore();
-
 
 
 

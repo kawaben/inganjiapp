@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useState } from "react";
 import { TrashIcon } from "@heroicons/react/24/solid";
 import { useStore } from '../context/StoreContext';
 import "../globals.css";
 
 export default function CartPanel() {
+
   const {
     cart,
     handleClearCart,
@@ -13,6 +13,8 @@ export default function CartPanel() {
     increaseQuantity,
     decreaseQuantity,
   } = useStore();
+
+  
 
   const totalPrice = cart.reduce((total, item) => total + item.price * item.quantity, 0);
 
@@ -23,11 +25,14 @@ export default function CartPanel() {
         <div className="space-y-4">
           {cart.length > 0 ? (
             cart.map((item) => (
-              <div key={`${item.id}-${item.color}-${item.size}-${item.userEmail}`} className="flex items-center justify-between bg-white p-3 rounded shadow-sm">
+              <div
+                key={`${item.id}-${item.color}-${item.size}-${item.userEmail}`}
+                className="flex items-center justify-between bg-white p-3 rounded shadow-sm"
+              >
                 <div>
                   <p className="font-semibold">{item.name}</p>
                   <p className="text-sm text-gray-600">${Number(item.price || 0).toFixed(2)} each</p>
-                  <p className="text-xs text-gray-500 capitalize">Color: {item.color}, Size: {item.size},email:{item.userEmail}</p>
+                  <p className="text-xs text-gray-500 capitalize">Color: {item.color}, Size: {item.size}</p>
                 </div>
                 <div className="flex items-center space-x-2">
                   <button onClick={() => decreaseQuantity(item)} className="bg-[#e08325] text-[#0c0805] px-2 py-1 rounded">-</button>

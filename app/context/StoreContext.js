@@ -18,18 +18,22 @@ export const StoreProvider = ({ children }) => {
 const userEmail = user?.email;
 
 
- useEffect(() => {
-  const loadCart = async () => {
-    
+ const loadCart = async (userEmail) => {
+  if (!userEmail) return;
 
-    if (userEmail) {
-      const userCart = await getCartItems(userEmail);
-      setCart(userCart);
+  try {
+    const res = await fetch(`/api/cart?userEmail=${userEmail}`);
+    const data = await res.json();
+
+    if (res.ok) {
+      setCart(data); 
+    } else {
+      console.error("Failed to load cart:", data.error);
     }
-  };
-
-  loadCart();
-}, []);
+  } catch (err) {
+    console.error("Error loading cart:", err);
+  }
+};
 
 
 
@@ -272,6 +276,7 @@ useEffect(() => {
     <StoreContext.Provider
       value={{
         cart,
+        loadCart,
         wishlist,
         setWishlist, 
         addToCart,

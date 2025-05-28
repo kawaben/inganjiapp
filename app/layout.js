@@ -5,6 +5,7 @@ import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import { StoreProvider } from './context/StoreContext';
 import { UserProvider } from './context/UserContext';
+import CartLoader from './components/CartLoader'; // ✅ Add this import
 
 export default function RootLayout({ children }) {
   return (
@@ -13,10 +14,13 @@ export default function RootLayout({ children }) {
         <UserProvider>
           <StoreProvider>
             <Navbar />
-          
-            {children}
+
             
-            <Footer/>
+            <CartLoader /> 
+
+            {children}
+
+            <Footer />
           </StoreProvider>
         </UserProvider>
       </body>
