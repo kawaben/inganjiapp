@@ -227,9 +227,7 @@ const fetchCartByUser = async (userEmail) => {
 
 
 
-useEffect(() => {
-  localStorage.setItem("wishlist", JSON.stringify(wishlist));
-}, [wishlist]);
+
 
   // 🔸 Add / Remove Wishlist Toggle
    useEffect(() => {
