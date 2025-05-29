@@ -52,12 +52,12 @@ export default function WishlistButton({ product,selectedColor, selectedSize }) 
   };
 
   return (
-     <button onClick={() => toggleWishlist(product)}>
-                    {wishlist.some((w) => w.id === product.id) ? (
-                      <FaHeart className="text-[#e08325]" />
-                    ) : (
-                      <FaRegHeart className="text-[#1b1403] hover:text-[#e08325]" />
-                    )}
-                  </button>
+    <button onClick={toggleWishlist}>
+      {isInWishlist ? (
+        <FaHeart className="text-[#e08325]" />
+      ) : (
+        <FaRegHeart className="text-[#1b1403] hover:text-[#e08325]" />
+      )}
+    </button>
   );
 }

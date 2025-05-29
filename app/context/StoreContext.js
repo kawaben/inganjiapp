@@ -71,9 +71,9 @@ const userEmail = user?.email;
       return;
     }
 
-    // Ideally, your API returns the updated cart for that user
+    
     const { cart } = await res.json();
-    setCart(cart); // Updates context state
+    setCart(cart); 
   } catch (err) {
     console.error("Error adding to cart:", err);
   }
@@ -193,10 +193,6 @@ const fetchCartByUser = async (userEmail) => {
   setCart(updatedCart);
 };
 
-
-
-
-  // 🔸 Remove one unit or whole item
    const removeFromCart = async (item) => {
   try {
     const res = await fetch('/api/cart', {
@@ -229,46 +225,71 @@ const fetchCartByUser = async (userEmail) => {
 
 
 
-  // 🔸 Add / Remove Wishlist Toggle
-   useEffect(() => {
-    const loadWishlist = async () => {
-      await initDB(); 
-      const items = await getWishlistProducts();
-      setWishlist(items);
+  // Wishlist Toggle
+  useEffect(() => {
+  const loadWishlist = async () => {
+    await initDB();
+    const items = await getWishlistProducts(); 
+    setWishlist(items);
+  };
+  loadWishlist();
+}, []);
+
+const toggleWishlist = async (item) => {
+  const userEmail = item.email; 
+  const key = { id: item.id, color: item.color, size: item.size, email: userEmail };
+
+  const inWishlist = wishlist.some(
+    (w) =>
+      w.id === item.id &&
+      w.color === item.color &&
+      w.size === item.size &&
+      w.email === userEmail
+  );
+
+  if (inWishlist) {
+    await fetch('/api/wishlist', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(key),
+    });
+    setWishlist(
+      wishlist.filter(
+        (w) =>
+          !(
+            w.id === item.id &&
+            w.color === item.color &&
+            w.size === item.size &&
+            w.email === userEmail
+          )
+      )
+    );
+  } else {
+    await fetch('/api/wishlist', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(item),
+    });
+    setWishlist([...wishlist, item]);
+  }
+};
+
+const clearWishlist = async () => {
+  for (let item of wishlist) {
+    const key = {
+      id: item.id,
+      color: item.color,
+      size: item.size,
+      email: item.email,
     };
-    loadWishlist();
-  }, []);
-
-  const toggleWishlist = async (item) => {
-    const inWishlist = wishlist.some((w) => w.id === item.id);
-
-    if (inWishlist) {
-      await fetch('/api/wishlist', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: item.id }),
-      });
-      setWishlist(wishlist.filter((w) => w.id !== item.id));
-    } else {
-      await fetch('/api/wishlist', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(item),
-      });
-      setWishlist([...wishlist, item]);
-    }
-  };
-
-  const clearWishlist = async () => {
-    for (let item of wishlist) {
-      await fetch('/api/wishlist', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: item.id }),
-      });
-    }
-    setWishlist([]);
-  };
+    await fetch('/api/wishlist', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(key),
+    });
+  }
+  setWishlist([]);
+};
 
   return (
     <StoreContext.Provider

@@ -3,21 +3,28 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { getAllOrders } from '../../lib/db'; 
+import { useUser } from '../../context/UserContext';
 
 export default function Orders() {
-  const [orders, setOrders] = useState([]);
+ const [orders, setOrders] = useState([]);
+  const { user } = useUser(); 
 
   useEffect(() => {
     const fetchOrders = async () => {
-      const storedOrders = await getAllOrders();
-      setOrders(storedOrders || []);
+      const allOrders = await getAllOrders();
+      const userOrders = allOrders?.filter(order => order.userEmail === user?.email);
+      setOrders(userOrders || []);
     };
 
-    fetchOrders();
-  }, []);
+    if (user?.email) {
+      fetchOrders();
+    }
+  }, [user?.email]);
+
+
 
   return (
-    <div className="max-w-3xl mx-auto p-4 space-y-6">
+    <div className="max-w-3xl mx-auto pt-25 space-y-6">
       <h1 className="text-2xl font-bold mb-4">Your Orders</h1>
 
       {/* Header */}

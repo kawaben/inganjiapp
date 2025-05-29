@@ -22,7 +22,7 @@ export default function WishlistPanel() {
                   {wishlist.length > 0 ? (
                     wishlist.map((item) => (
                       <li key={item.id} className="p-3 bg-white rounded shadow-sm flex justify-between">
-                        {item.name}
+                        {item.name} {item.color}
                         <button onClick={() => toggleWishlist(item)} className="text-[#e08325]">
                           <TrashIcon className="w-5 h-5" />
                         </button>

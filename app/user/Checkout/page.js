@@ -1,46 +1,48 @@
 'use client';
-import { useEffect, useState } from "react";
+
 import { useRouter } from 'next/navigation';
 import { useStore } from '../../context/StoreContext';
 import {  addOrder, updateStockForOrder, clearCart } from '../../lib/db';
-
+import { useUser } from '../../context/UserContext';
 
 export default function Checkout() {
 
   const router = useRouter();
   const { handleClearCart,cart } = useStore();
 
-  
+  const { user } = useUser();
 
   
  const subTotalPrice = cart.reduce((total, item) => total + item.price * item.quantity, 0);
   const totalPrice = subTotalPrice + 20;
 
-  const handlePlaceOrder = async () => {
-    if (cart.length === 0) {
-      alert('Cart is empty!');
-      return;
-    }
+ const handlePlaceOrder = async () => {
+  if (cart.length === 0) {
+    alert('Cart is empty!');
+    return;
+  }
 
-    const orderId = 'TXN' + Date.now();
-    const shippingCost = 20;
-    const totalAmount = subTotalPrice + shippingCost;
+  const orderId = 'TXN' + Date.now();
+  const shippingCost = 20;
+  const totalAmount = subTotalPrice + shippingCost;
 
-    const newOrder = {
-      id: orderId,
-      items: cart,
-      date: new Date().toISOString(),
-      total: totalAmount,
-      status: 'Processing',
-    };
-
-    await addOrder(newOrder);
-    await updateStockForOrder(cart);
-    await clearCart();
-    handleClearCart();
-
-    router.push('/user/orders');
+  const newOrder = {
+    id: orderId,
+    items: cart,
+    date: new Date().toISOString(),
+    total: totalAmount,
+    status: 'Processing',
+    userEmail: user?.email || 'guest',
   };
+
+  await addOrder(newOrder);
+  await updateStockForOrder(cart);
+  await clearCart();
+  handleClearCart();
+
+  router.push('/user/orders');
+};
+
 
   return (
    

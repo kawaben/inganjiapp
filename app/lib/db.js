@@ -23,7 +23,10 @@ export const initDB = async () => {
           } else if (store === ORDERS_STORE) {
             db.createObjectStore(ORDERS_STORE, { keyPath: 'id' });
           } else if (store === USERS_STORE) {
-            db.createObjectStore(USERS_STORE, { keyPath: 'email' }); 
+            db.createObjectStore(USERS_STORE, { keyPath: 'email' });
+          } else if (store === WISHLIST_STORE) {
+           
+            db.createObjectStore(WISHLIST_STORE, { keyPath: null});
           } else {
             db.createObjectStore(store, { keyPath: 'id' });
           }
@@ -32,6 +35,7 @@ export const initDB = async () => {
     },
   });
 };
+
 
 
 
