@@ -22,6 +22,7 @@ const AddToCartButton = ({ product, selectedColor, selectedSize }) => {
  const handleClick = async () => {
   if (!selectedColor || !selectedSize) {
     console.warn("Color and size must be selected.");
+    alert('Color and size must be selected.')
     return;
   }
 

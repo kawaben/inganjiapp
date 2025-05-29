@@ -4,10 +4,9 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Pagination from '../../components/Pagination';
 import AddToCartButton from '../../components/AddToCartButton';
+import WishlistButton from '../../components/WishlistButton';
 import './style.css';
-import { FaHeart, FaRegHeart } from 'react-icons/fa';
-import { useStore } from '../../context/StoreContext';
-import { getProductsByCategory, addProductToWishlist, removeProductFromWishlist } from '../../lib/db'; 
+import { getProductsByCategory} from '../../lib/db'; 
 
 export default function CategoryPage() {
   const { type } = useParams();
@@ -19,7 +18,6 @@ export default function CategoryPage() {
   const [selectedColors, setSelectedColors] = useState({});
   const [selectedSizes, setSelectedSizes] = useState({});
   const [selectedImages, setSelectedImages] = useState({});
-  const { wishlist, toggleWishlist } = useStore();
   const productsPerPage = 3;
 
   useEffect(() => {
@@ -131,13 +129,7 @@ export default function CategoryPage() {
                   <span className="flex items-center gap-1">
                     ⭐ {product.rating}
                   </span>
-                  <button onClick={() => toggleWishlist(product)}>
-                    {wishlist.some((w) => w.id === product.id) ? (
-                      <FaHeart className="text-[#e08325]" />
-                    ) : (
-                      <FaRegHeart className="text-[#1b1403] hover:text-[#e08325]" />
-                    )}
-                  </button>
+                 <WishlistButton product={product} />
                 </p>
 
                 <p>
