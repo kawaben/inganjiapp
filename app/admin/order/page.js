@@ -1,12 +1,34 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { QRCodeSVG } from "qrcode.react"; 
 import { MoreHorizontal,Download,Share2,Truck,CheckCircle,ShoppingBag,Package } from 'lucide-react';
 
 export default function OrderPopupCard() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+
+ const handleDownload = async () => {
+    setIsDownloading(true);
+    try {
+      const res = await fetch('/api/download-order');
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'order-summary.pdf';
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('PDF download failed:', err);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+
+
 
   return (
     <div className="p-6">
@@ -38,7 +60,11 @@ export default function OrderPopupCard() {
                     </div>
                     {/* Icons */}
                     <div className="flex flex-row items-center justify-center gap-3 ">
-                        <p><Download className="w-5 h-5 cursor-pointer text-white"/></p>
+
+                        <button onClick={handleDownload} disabled={isDownloading}>
+                            <Download className="w-5 h-5 cursor-pointer text-white"/>
+                             
+                        </button>
                         <p><Share2 className="w-5 h-5 cursor-pointer text-blue-400"/></p>
                     </div>
                 </div>
