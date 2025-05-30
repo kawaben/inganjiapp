@@ -1,51 +1,36 @@
 'use client';
-import React, { useState } from 'react';
-import { CheckCircle,AlertCircle,TrendingUp,Hourglass,MoreHorizontal } from 'lucide-react';
-import OrderPopupCard from '../order/page'
-
-const ordersData = [
-  {
-    id: '121091',
-    date: 'Aug 1, 2019',
-    customer: 'Harriet Santiago',
-    fulfillment: 'Unfulfilled',
-    total: 604.5,
-    profit: 182.5,
-    status: 'Authorized',
-    updated: 'Today',
-    avatar: 'https://randomuser.me/api/portraits/women/1.jpg',
-  },
-  {
-    id: '121090',
-    date: 'Jul 21, 2019',
-    customer: 'Sara Graham',
-    fulfillment: 'Pending Receipt',
-    total: 1175.5,
-    profit: 524.25,
-    status: 'Paid',
-    updated: 'Today',
-    avatar: 'https://randomuser.me/api/portraits/women/2.jpg',
-  },
-  {
-    id: '121058',
-    date: 'Jul 16, 2019',
-    customer: 'Elmer McGee',
-    fulfillment: 'Fulfilled',
-    total: 175.5,
-    profit: 78,
-    status: 'Authorized',
-    updated: 'Yesterday',
-    avatar: 'https://randomuser.me/api/portraits/men/13.jpg',
-  },
- 
-];
+import React, { useState, useEffect } from 'react';
+import {
+  CheckCircle,
+  AlertCircle,
+  TrendingUp,
+  Hourglass,
+} from 'lucide-react';
+import OrderPopupCard from '../order/page';
+import { getAllOrders } from '../../lib/db';
+import { useUser } from '../../context/UserContext';
 
 const filters = ['All Orders', 'Fulfilled', 'Unpaid', 'Unfulfilled'];
 
 export default function OrdersPage() {
   const [activeFilter, setActiveFilter] = useState('All Orders');
+  const [orders, setOrders] = useState([]);
+  const { user } = useUser();
 
-  const filteredOrders = ordersData.filter((order) => {
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const allOrders = await getAllOrders();
+        setOrders(allOrders);
+      } catch (error) {
+        console.error('Error fetching orders:', error);
+      }
+    };
+
+    fetchOrders();
+  }, []);
+
+  const filteredOrders = orders.filter((order) => {
     if (activeFilter === 'All Orders') return true;
     if (activeFilter === 'Fulfilled') return order.fulfillment === 'Fulfilled';
     if (activeFilter === 'Unpaid') return order.status !== 'Paid';
@@ -55,12 +40,33 @@ export default function OrdersPage() {
 
   return (
     <div className="p-6">
+      {/* Stat Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-6">
-        {[ 
-          { title: 'Active Orders', value: '1,046', color: 'text-blue-600', chart: <TrendingUp size={20} /> },
-          { title: 'Unfulfilled', value: '159', color: 'text-yellow-500', chart: <AlertCircle size={20} /> },
-          { title: 'Pending Receipt', value: '624', color: 'text-purple-500', chart: <Hourglass size={20} />},
-          { title: 'Fulfilled', value: '263', color: 'text-green-500', chart: <CheckCircle size={20} />},
+        {[
+          {
+            title: 'Active Orders',
+            value: '1,046',
+            color: 'text-blue-600',
+            chart: <TrendingUp size={20} />,
+          },
+          {
+            title: 'Unfulfilled',
+            value: '159',
+            color: 'text-yellow-500',
+            chart: <AlertCircle size={20} />,
+          },
+          {
+            title: 'Pending Receipt',
+            value: '624',
+            color: 'text-purple-500',
+            chart: <Hourglass size={20} />,
+          },
+          {
+            title: 'Fulfilled',
+            value: '263',
+            color: 'text-green-500',
+            chart: <CheckCircle size={20} />,
+          },
         ].map((stat, i) => (
           <div key={i} className="bg-white p-4 rounded-xl shadow">
             <p className="text-sm text-gray-500">{stat.title}</p>
@@ -110,40 +116,40 @@ export default function OrdersPage() {
               <tr key={order.id} className="hover:bg-gray-100">
                 <td className="px-6 py-4"><input type="checkbox" /></td>
                 <td className="px-4 py-3 text-blue-600 font-medium">{order.id}</td>
-                <td className="px-4 py-3">{order.date}</td>
+                <td className="px-4 py-3">{new Date(order.date).toLocaleString()}</td>
                 <td className="px-6 py-4 flex items-center gap-2">
-                  <img src={order.avatar} alt="" className="w-6 h-6 rounded-full" />
-                  {order.customer}
+                  <img src={order.image} alt="" className="w-6 h-6 rounded-full" />
+                  {order.name}
                 </td>
                 <td className="px-4 py-3">
                   <span
-                    className={`px-2 py-2 rounded-l text-xs font-medium ${
+                    className={`px-2 py-2 rounded text-xs font-medium ${
                       order.fulfillment === 'Fulfilled'
-                        ? 'bg-green-400 text-white-700'
+                        ? 'bg-green-400 text-white'
                         : order.fulfillment === 'Pending Receipt'
-                        ? 'bg-purple-500 text-white-100'
-                        : 'bg-yellow-500 text-white-700'
+                        ? 'bg-purple-500 text-white'
+                        : 'bg-yellow-500 text-white'
                     }`}
                   >
                     {order.fulfillment}
                   </span>
                 </td>
                 <td className="px-4 py-3">${order.total.toFixed(2)}</td>
-                <td className="px-4 py-3">${order.profit.toFixed(2)}</td>
+                <td className="px-4 py-3">$100</td>
                 <td className="px-4 py-3">
                   <span
-                    className={`px-2 py-2 rounded-l text-xs font-medium ${
+                    className={`px-2 py-2 rounded text-xs font-medium ${
                       order.status === 'Paid'
-                        ? 'bg-green-500 text-white-100'
-                        : 'bg-orange-500 text-white-100'
+                        ? 'bg-green-500 text-white'
+                        : 'bg-orange-500 text-white'
                     }`}
                   >
                     {order.status}
                   </span>
                 </td>
-                <td >
-                    <OrderPopupCard/>
-                  </td>
+                <td className="px-4 py-3">
+                  <OrderPopupCard order={order}/>
+                </td>
               </tr>
             ))}
           </tbody>

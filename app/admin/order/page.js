@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { QRCodeSVG } from "qrcode.react"; 
+import Image from 'next/image';
 import { MoreHorizontal,Download,Share2,Truck,CheckCircle,ShoppingBag,Package } from 'lucide-react';
 
-export default function OrderPopupCard() {
+export default function OrderPopupCard({ order }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
 
@@ -55,8 +56,8 @@ export default function OrderPopupCard() {
             <div className="flex-1">
                 <div className="flex flex-row bg-yellow-600 rounded-md shadow-inner p-4 mb-6">
                     <div className="flex-1 text-white">
-                        <h2 className="text-xl font-bold">Order #09746</h2>
-                        <p className="text-sm mb-4">July 27, 2022 at 09:44 AM</p>
+                        <h2 className="text-xl font-bold">Order #{order.id}</h2>
+                        <p className="text-sm mb-4">{new Date(order.date).toLocaleString()}</p>
                     </div>
                     {/* Icons */}
                     <div className="flex flex-row items-center justify-center gap-3 ">
@@ -79,66 +80,56 @@ export default function OrderPopupCard() {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className="border-b border-gray-100">
-                    <td className="py-2">
-                      <strong>Venus Dashboard Builder PRO</strong><br />
-                      <span className="text-gray-500 text-xs">SKU: 94321870</span>
+                    {order.items?.map((item, index) => (
+                  <tr key={index} className="border-b border-gray-100">
+                    <td className="py-2 flex flex-row gap-2 items-center">
+                        <Image
+                            src={item.image || '/logo.svg'}
+                            width={80}
+                            height={80}
+                            alt={item.name}
+                            className="rounded"
+                        />
+                      <strong>{item.name}</strong><br />
                     </td>
-                    <td>1</td>
-                    <td>$150.00</td>
-                    <td>$150.00</td>
+                    <td>{item.quantity}</td>
+                    <td>${item.price.toLocaleString('en-US')}</td>
+                    <td>${(item.quantity * item.price).toLocaleString('en-US')}</td>
                   </tr>
-                  <tr className="border-b border-gray-100">
-                    <td className="py-2">
-                      <strong>Horizon UI – Dashboard PRO</strong><br />
-                      <span className="text-gray-500 text-xs">SKU: 04756323</span>
-                    </td>
-                    <td>3</td>
-                    <td>$99.00</td>
-                    <td>$297.00</td>
-                  </tr>
-                  <tr className="border-b border-gray-100">
-                    <td className="py-2">
-                      <strong>Parts for Service</strong><br />
-                      <span className="text-gray-500 text-xs">SKU: 39403827</span>
-                    </td>
-                    <td>1</td>
-                    <td>$89.00</td>
-                    <td>$89.00</td>
-                  </tr>
+                  ))}
                 </tbody>
               </table>
                 <div className="mb-4 flex flex-col-reverse md:flex-row">
                   
                     
                     {/* Note */}
-                    <div className="mr-4">
+                    <div className="flex-3 mr-4">
                         <h2 className="font-bold">Note:</h2>
                         <p className="text-xs text-gray-500">
-                            Ship all the ordered items together by Friday and I send you an email, please check. Thanks!
+                           {order.note}
                         </p>
                     </div>
                     
                       {/* Totals */}
                     <div className="flex-1  space-y-1 mb-4 ">
-                        <p><span className="font-medium">Total:</span> $395.00</p>
-                        <p><span className="font-medium">Shipping:</span> $10.00</p>
-                        <p className="text-lg font-bold">Order Total: $405.00</p>
+                        <p><span className="font-medium">Total:</span> ${(order.total - 20).toLocaleString('en-US')}</p>
+                        <p><span className="font-medium">Shipping:</span> $20.00</p>
+                        <p className="text-lg font-bold">Order Total: ${order.total.toLocaleString('en-US')}</p>
                     </div>
                 </div>
                 <div className="bg-gray-50 flex flex-row rounded-md shadow-inner">
                     <div className="flex-1 flex flex-col md:flex-row text-gray-400 text-s p-4">
                         <div className="mr-7">
                             <p>Customer Details:</p>
-                            <p className="font-bold text-orange-400">ANTONY Peterson</p>
-                            <p>37 Avenue,Eggtown</p>
-                            <p>Indiana,United State</p>
+                            <p className="font-bold text-orange-400">{order.name}</p>
+                            <p>{order.shipingAddress}</p>
+                            <p>{order.country}</p>
                         </div>
                         <div>
-                            <p>+25089858599494</p>
-                            <p className="text-orange-400">kabagema@nuovire.com</p>
-                            <p>By Credit Card</p>
-                            <p>July,27 2022 At 09:44</p>
+                            <p>{order.phone}</p>
+                            <p className="text-orange-400">{order.userEmail}</p>
+                            <p>By {order.payment}</p>
+                            <p>{new Date(order.date).toLocaleString()}</p>
                         </div>
                     </div>
 
@@ -156,7 +147,7 @@ export default function OrderPopupCard() {
               <h3 className="font-semibold text-gray-700 mb-4">Order Status</h3>
               <div className="space-y-4 text-sm">
                 {[
-                  { label: "Order Placed", date: "27 Jul 2022", done: true , icon: <CheckCircle size={20} />},
+                  { label: "Order Placed", date: `${new Date(order.date).toLocaleString()}`, done: true , icon: <CheckCircle size={20} />},
                   { label: "Products Picked", date: "27 Jul 2022", done: true,icon: <ShoppingBag size={20} /> },
                   { label: "Order Packed", date: "28 Jul 2022", done: true,icon: <Package size={20} /> },
                   { label: "Shipped", date: "28 Jul 2022", done: true,icon: <Truck size={20} /> },
