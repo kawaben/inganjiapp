@@ -108,7 +108,7 @@ export default function OrderPopupCard() {
                   </tr>
                 </tbody>
               </table>
-                <div className="mb-4 flex flex-row">
+                <div className="mb-4 flex flex-col-reverse md:flex-row">
                   
                     
                     {/* Note */}
@@ -127,7 +127,7 @@ export default function OrderPopupCard() {
                     </div>
                 </div>
                 <div className="bg-gray-50 flex flex-row rounded-md shadow-inner">
-                    <div className="flex-1 flex flex-row text-gray-400 text-s p-4">
+                    <div className="flex-1 flex flex-col md:flex-row text-gray-400 text-s p-4">
                         <div className="mr-7">
                             <p>Customer Details:</p>
                             <p className="font-bold text-orange-400">ANTONY Peterson</p>
