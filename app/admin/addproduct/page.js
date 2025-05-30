@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { addProductToCategory } from '../../lib/db';
+import Link from "next/link";
 
 const categories = ['men', 'women', 'kids', 'accessories'];
 
@@ -69,6 +70,9 @@ export default function AddProductPage() {
 
   return (
     <div className='p-25'>
+      <button  type="button">
+        <Link className="flex items-center gap-3 px-4 py-2 rounded-md text-white bg-[#e08325] hover:bg-black cursor-pointer m-5 transition" href="/admin">GO BACK</Link>
+      </button>
       <h2>Add New Product</h2>
       <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '1rem', maxWidth: '600px' }}>
         <input

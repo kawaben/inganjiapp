@@ -1,6 +1,7 @@
 'use client';
 import React, { useState } from 'react';
-import { CheckCircle,AlertCircle,TrendingUp,Hourglass } from 'lucide-react';
+import { CheckCircle,AlertCircle,TrendingUp,Hourglass,MoreHorizontal } from 'lucide-react';
+import OrderPopupCard from '../order/page'
 
 const ordersData = [
   {
@@ -101,7 +102,7 @@ export default function OrdersPage() {
               <th className="px-4 py-3">Total</th>
               <th className="px-4 py-3">Profit</th>
               <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3">Updated</th>
+              <th className="px-4 py-3">More</th>
             </tr>
           </thead>
           <tbody>
@@ -140,7 +141,9 @@ export default function OrdersPage() {
                     {order.status}
                   </span>
                 </td>
-                <td className="px-4 py-3">{order.updated}</td>
+                <td >
+                    <OrderPopupCard/>
+                  </td>
               </tr>
             ))}
           </tbody>

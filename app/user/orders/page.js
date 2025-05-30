@@ -24,7 +24,7 @@ export default function Orders() {
 
 
   return (
-    <div className="max-w-3xl mx-auto pt-25 space-y-6">
+    <div className="max-w-3xl mx-auto p-5 space-y-6">
       <h1 className="text-2xl font-bold mb-4">Your Orders</h1>
 
       {/* Header */}
