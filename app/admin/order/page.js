@@ -1,32 +1,123 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from 'react';
 import { QRCodeSVG } from "qrcode.react"; 
 import Image from 'next/image';
 import { MoreHorizontal,Download,Share2,Truck,CheckCircle,ShoppingBag,Package } from 'lucide-react';
+import { jsPDF } from 'jspdf';
 
 export default function OrderPopupCard({ order }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [isDownloading, setIsDownloading] = useState(false);
-
- const handleDownload = async () => {
-    setIsDownloading(true);
-    try {
-      const res = await fetch('/api/download-order');
-      const blob = await res.blob();
-      const url = window.URL.createObjectURL(blob);
-
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'order-summary.pdf';
-      a.click();
-      window.URL.revokeObjectURL(url);
-    } catch (err) {
-      console.error('PDF download failed:', err);
-    } finally {
-      setIsDownloading(false);
-    }
+  const [imageData, setImageData] = useState(null)
+  
+  useEffect(() => {
+    fetch('/logo.png')
+      .then(res => res.blob())
+      .then(blob => {
+        const reader = new FileReader();
+        reader.onloadend = () => setImageData(reader.result);
+        reader.readAsDataURL(blob);
+      });
+  }, []);
+  const getImageDataURL = async (url) => {
+    const res = await fetch(url);
+    const blob = await res.blob();
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.readAsDataURL(blob);
+    });
   };
+
+  const handleDownload = async () => {
+    const doc = new jsPDF();
+  
+    if (imageData) {
+      doc.addImage(imageData, 'PNG', 20, 20, 50, 30);
+    }
+    let y = 70;
+
+    // Title
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`Order #${order.id}`, 115, 25, { align: 'center' });
+
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Date: ${new Date(order.date).toLocaleString()}`, 115, 33, { align: 'center' });
+
+    
+
+    
+
+    // Customer Info
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.text("Customer Information:", 20, y);
+    doc.setFont('helvetica', 'normal');
+    y += 6;
+    doc.text(`Name: ${order.name}`, 20, y);
+    y += 6;
+    doc.text(`Address: ${order.shipingAddress}, ${order.country}`, 20, y);
+    y += 6;
+    doc.text(`Phone: ${order.phone}`, 20, y);
+    y += 6;
+    doc.text(`Email: ${order.userEmail}`, 20, y);
+
+    // Items
+    y += 12;
+    doc.setFont('helvetica', 'bold');
+    doc.text("Items Ordered:", 20, y);
+    y += 6;
+
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+
+    for (const item of order.items) {
+      if (y > 240) {
+        doc.addPage();
+        y = 20;
+      }
+
+      // Load item image
+      const imageBase64 = await getImageDataURL(item.image);
+
+      // Add image
+      doc.addImage(imageBase64, 'JPEG', 20, y, 20, 20); // X, Y, width, height
+
+      // Add item text
+      doc.text(`${item.name}`, 45, y + 5);
+      doc.text(`Qty: ${item.quantity}`, 45, y + 10);
+      doc.text(`Price: $${item.price.toLocaleString()}`, 45, y + 15);
+      doc.text(`Total: $${(item.quantity * item.price).toLocaleString()}`, 45, y + 20);
+
+      y += 30; // Leave space between items
+    }
+
+    // Total Summary
+    doc.setFont('helvetica', 'bold');
+    doc.text(`Subtotal: $${(order.total - 20).toLocaleString()}`, 20, y);
+    y += 6;
+    doc.text(`Shipping: $20.00`, 20, y);
+    y += 6;
+    doc.text(`Total: $${order.total.toLocaleString()}`, 20, y);
+    y += 6;
+    doc.text(`Paid By: ${order.payment}`, 20, y);
+
+    // Optional Note
+    if (order.note) {
+      y += 10;
+      doc.setFont('helvetica', 'bold');
+      doc.text("Note:", 20, y);
+      y += 6;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      doc.text(order.note, 20, y);
+    }
+
+    doc.save(`order-${order.id}.pdf`);
+  };
+
 
 
 
@@ -62,7 +153,7 @@ export default function OrderPopupCard({ order }) {
                     {/* Icons */}
                     <div className="flex flex-row items-center justify-center gap-3 ">
 
-                        <button onClick={handleDownload} disabled={isDownloading}>
+                        <button onClick={handleDownload}>
                             <Download className="w-5 h-5 cursor-pointer text-white"/>
                              
                         </button>
