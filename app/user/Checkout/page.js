@@ -37,6 +37,18 @@ export default function Checkout() {
     return;
   }
 
+  if (!formData.firstname.trim() ||
+       !formData.lastname.trim() || 
+       !formData.shipingAddress.trim() || 
+       !formData.location.trim() || 
+       !formData.country.trim() || 
+       !formData.phone.trim() || 
+       !formData.email.trim() || 
+       !formData.payment.trim()) {
+      alert('Please fill in all required fields.');
+      return;
+    }
+
   const orderId = 'TXN' + Date.now();
   const shippingCost = 20;
   const totalAmount = subTotalPrice + shippingCost;
@@ -121,7 +133,7 @@ export default function Checkout() {
                         onChange={e => setFormData({ ...formData, location: e.target.value })}
                         required className="input" />
 
-                    <input type="text" placeholder="State" value={formData.country}
+                    <input type="text" placeholder="Country / State" value={formData.country}
                         onChange={e => setFormData({ ...formData, country: e.target.value })}
                         required className="input" />
 
