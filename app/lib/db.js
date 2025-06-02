@@ -72,6 +72,27 @@ export const getProductsByCategory = async (category) => {
   return await store.getAll();
 };
 
+export const getProductById = async (category, id) => {
+  const db = await initDB();
+  const tx = db.transaction(category, 'readonly');
+  const store = tx.objectStore(category);
+  return await store.get(id);
+};
+
+export const getProductByIdAcrossStores = async (id) => {
+  const db = await initDB();
+
+  for (const store of STORE_NAMES) {
+    const tx = db.transaction(store, 'readonly');
+    const objStore = tx.objectStore(store);
+    const result = await objStore.get(id);
+    if (result) return result;
+  }
+
+  return null; 
+};
+
+
 //
 // Wishlist Functions
 //

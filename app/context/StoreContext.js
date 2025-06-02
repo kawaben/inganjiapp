@@ -51,7 +51,7 @@ const userEmail = user?.email;
     name: product.name || "Unnamed Product",
     price: Number(product.price),
     image:
-      product.images?.[color] || Object.values(product.images || {})[0] || "",
+    product.images?.[color] || Object.values(product.images || {})[0] || "",
     color,
     size,
     quantity: 1,

@@ -8,15 +8,16 @@ const products = [
   { id: 2, name: "King of Clubs", price: 15, image: "/images/product2.jpg", bg: "bg-teal-600" },
   { id: 3, name: "Queen of Clubs", price: 15, image: "/images/product3.jpg", bg: "bg-blue-600" },
   { id: 4, name: "I am King", price: 15, image: "/images/product4.jpg", bg: "bg-orange-600" },
-  { id: 5, name: "Gta PK", price: 15, image: "/images/product5.jpg", bg: "bg-green-600" },
+  { id: 5, name: "Gta PK", price: 15, image: "/images/product5.jpg", bg: "bg-green-600" }, 
 ];
 
 export default function Products() {
-  const router = useRouter(); // Use Next.js router
+  const router = useRouter(); 
 
   const handleRedirect = (id) => {
-    router.push(`/products/${id}`); // Redirect to the product page
-  };
+  router.push(`/products/${id}`);
+};
+
 
   return (
     <div className="p-6">

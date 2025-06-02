@@ -1,6 +1,7 @@
 'use client';
 
 import { useParams } from 'next/navigation';
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from 'react';
 import Pagination from '../../components/Pagination';
 import AddToCartButton from '../../components/AddToCartButton';
@@ -10,7 +11,7 @@ import { getProductsByCategory} from '../../lib/db';
 
 export default function CategoryPage() {
   const { type } = useParams();
-
+  const router = useRouter(); 
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedSize, setSelectedSize] = useState(null);
@@ -45,7 +46,7 @@ export default function CategoryPage() {
     }));
 
     const product = products.find(p => p.id === productId);
-    const image = product?.images?.[color] || Object.values(product?.images || {})[0] || '/images/default.jpg';
+    const image = product?.images?.[color] || Object.values(product?.images || {})[0] || '/logo.svg';
 
     setSelectedImages(prev => ({
       ...prev,
@@ -59,6 +60,9 @@ export default function CategoryPage() {
       [productId]: prev[productId] === size ? null : size,
     }));
   };
+  const handleRedirect = (id) => {
+  router.push(`/products/${id}`);
+};
 
   return (
     <div className="category">
@@ -95,8 +99,8 @@ export default function CategoryPage() {
               : Object.values(product.images)[0];
 
             return (
-              <div key={product.id} className="product-grid-images">
-                <img src={productImage} alt={product.name} />
+              <div key={product.id} className="product-grid-images cursor-pointer" >
+                <img src={productImage} alt={product.name} onClick={() => handleRedirect(product.id)} />
                 <div className="color-dots">
                   {product.colors.map((color, i) => (
                     <button

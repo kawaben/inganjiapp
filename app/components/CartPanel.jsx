@@ -24,16 +24,22 @@ export default function CartPanel() {
         <h2 className="text-lg font-bold uppercase text-black mb-4">Your Cart</h2>
         <div className="space-y-4">
           {cart.length > 0 ? (
-            cart.map((item) => (
-              <div
-                key={`${item.id}-${item.color}-${item.size}-${item.userEmail}`}
-                className="flex items-center justify-between bg-white p-3 rounded shadow-sm"
-              >
-                <div>
-                  <p className="font-semibold">{item.name}</p>
-                  <p className="text-sm text-gray-600">${Number(item.price || 0).toFixed(2)} each</p>
-                  <p className="text-xs text-gray-500 capitalize">Color: {item.color}, Size: {item.size}</p>
-                </div>
+            cart.map((item) => {
+  const colorHex = typeof item.color === "object" ? Object.keys(item.color)[0] : item.color;
+
+  return (
+    <div
+      key={`${item.id}-${colorHex}-${item.size}-${item.userEmail}`}
+      className="flex items-center justify-between bg-white p-3 rounded shadow-sm"
+    >
+      <div>
+        <p className="font-semibold">{item.name}</p>
+        <p className="text-sm text-gray-600">${Number(item.price || 0).toFixed(2)} each</p>
+        <p className="text-xs text-gray-500 capitalize">
+          Color: {colorHex}, Size: {item.size}
+        </p>
+      </div>
+
                 <div className="flex items-center space-x-2">
                   <button onClick={() => decreaseQuantity(item)} className="bg-[#e08325] text-[#0c0805] px-2 py-1 rounded">-</button>
                   <span className="px-3">{item.quantity}</span>
@@ -43,7 +49,7 @@ export default function CartPanel() {
                   </button>
                 </div>
               </div>
-            ))
+            );})
           ) : (
             <p className="text-gray-500">Your Cart is empty.</p>
           )}
