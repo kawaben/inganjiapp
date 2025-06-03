@@ -43,15 +43,34 @@ export default function SearchPanel() {
     const userTx = db.transaction(USERS_STORE, "readonly");
     const userStore = userTx.objectStore(USERS_STORE);
     const users = await userStore.getAll();
+    const queryLower = query.toLowerCase();
 
-    allResults.push(
-      ...users.map((user) => ({
-        label: user.name || user.email,
-        type: "user",
-        id: user.email, 
-        image: user.image || "/logo.svg" || "",
-      }))
-    );
+    const matchingUsers = users
+  .filter((user) =>
+    (user.email && user.email.toLowerCase().includes(queryLower)) ||
+    (user.firstname && user.firstname.toLowerCase().includes(queryLower)) ||
+    (user.lastname && user.lastname.toLowerCase().includes(queryLower))
+  )
+  .map((user) => {
+    let label = user.email; 
+    if (user.lastname?.toLowerCase().includes(queryLower)) {
+      label = user.lastname;
+    } else if (user.email?.toLowerCase().includes(queryLower)) {
+      label = user.email;
+    } else if (user.firstname?.toLowerCase().includes(queryLower)) {
+      label = user.firstname;
+    }
+
+    return {
+      label,
+      type: "user",
+      email: user.email,
+      id:user.email,
+      image: user.image || "/logo.svg",
+    };
+  });
+
+allResults.push(...matchingUsers);
 
     const filtered = allResults.filter((entry) =>
       entry.label?.toLowerCase().includes(query.toLowerCase())
@@ -65,14 +84,19 @@ export default function SearchPanel() {
 };
 
 
- const handleSuggestionClick = (suggestion, id, type) => {
-  setSearchQuery(suggestion);
+const handleSuggestionClick = (suggestion) => {
+  setSearchQuery(suggestion.label);
   setFilteredSuggestions([]);
 
-  if (type === "product") {
-    router.push(`/products/${id}`);
+  if (suggestion.type === "product") {
+    router.push(`/products/${suggestion.id}`);
+  } else if (suggestion.type === "user") {
+    router.push(`/users/${encodeURIComponent(suggestion.id)}`);
   }
 };
+
+
+
 
 
 
@@ -92,7 +116,8 @@ export default function SearchPanel() {
           {filteredSuggestions.map((item, index) => (
             <li
               key={index}
-              onClick={() => handleSuggestionClick(item.label, item.id, item.type)}
+              onClick={() => handleSuggestionClick(item)}
+
               style={{
                 display: "flex",
                 alignItems: "center",
