@@ -155,68 +155,75 @@ const fetchCartByUser = async (userEmail) => {
         localStorage.setItem('cart', JSON.stringify(updatedCart));
         };
 
-    const increaseQuantity = async (item) => {
-  const updatedCart = cart.map((cartItem) => {
-    if (
-      cartItem.id === item.id &&
-      cartItem.color === item.color &&
-      cartItem.size === item.size
-    ) {
-      return { ...cartItem, quantity: cartItem.quantity + 1 };
-    }
-    return cartItem;
-  });
+    const removeFromCart = async (item) => {
+      try {
+        const response = await fetch('/api/cart', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            id: item.id,
+            color: item.color,
+            size: item.size,
+            userEmail: item.userEmail,
+          }),
+        });
 
-  await addCartItem({
-    ...item,
-    quantity: item.quantity + 1,userEmail,
-  });
-  setCart(updatedCart);
-};
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error('Failed to remove from cart:', errorData);
+          return;
+        }
+
+        const { cart } = await response.json();
+        setCart(cart);
+      } catch (error) {
+        console.error('Error removing from cart:', error);
+      }
+    };
+
+
+
+    const increaseQuantity = async (item) => {
+      const updatedCart = cart.map((cartItem) => {
+        if (
+              cartItem.id === item.id &&
+              cartItem.color === item.color &&
+              cartItem.size === item.size
+            ) {
+              return { ...cartItem, quantity: cartItem.quantity + 1 };
+            }
+            return cartItem;
+          });
+
+          await addCartItem({
+            ...item,
+            quantity: item.quantity + 1,userEmail,
+          });
+          setCart(updatedCart);
+        };
 
 
     const decreaseQuantity = async (item) => {
-  const updatedCart = cart
-    .map((cartItem) => {
-      if (
-        cartItem.id === item.id &&
-        cartItem.color === item.color &&
-        cartItem.size === item.size
-      ) {
-        return { ...cartItem, quantity: cartItem.quantity - 1 };
-      }
-      return cartItem;
-    })
-    .filter((item) => item.quantity > 0);
+      const updatedCart = cart
+        .map((cartItem) => {
+          if (
+            cartItem.id === item.id &&
+            cartItem.color === item.color &&
+            cartItem.size === item.size
+          ) {
+            return { ...cartItem, quantity: cartItem.quantity - 1 };
+          }
+          return cartItem;
+        })
+        .filter((item) => item.quantity > 0);
 
-  await removeCartItem(item);
-  setCart(updatedCart);
-};
+      await removeFromCart(item);
+      setCart(updatedCart);
+    };
 
-   const removeFromCart = async (item) => {
-  try {
-    const res = await fetch('/api/cart', {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        id: item.id,
-        color: item.color,
-        size: item.size,
-      }),
-    });
-
-    if (!res.ok) {
-      console.error("Failed to remove from cart:", await res.json());
-      return;
-    }
-
-    const data = await res.json();
-    setCart(data.cart); 
-  } catch (err) {
-    console.error("Error removing from cart:", err);
-  }
-};
-
+   
 
 
 
