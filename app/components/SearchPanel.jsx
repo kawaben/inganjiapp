@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import "../globals.css";
+import { useRouter } from "next/navigation";
 import { initDB,STORE_NAMES,USERS_STORE } from "../lib/db"; 
 
 
 export default function SearchPanel() {
-
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
 
@@ -64,10 +65,15 @@ export default function SearchPanel() {
 };
 
 
-  const handleSuggestionClick = (suggestion) => {
-    setSearchQuery(suggestion);
-    setFilteredSuggestions([]);
-  };
+ const handleSuggestionClick = (suggestion, id, type) => {
+  setSearchQuery(suggestion);
+  setFilteredSuggestions([]);
+
+  if (type === "product") {
+    router.push(`/products/${id}`);
+  }
+};
+
 
 
 
@@ -83,33 +89,34 @@ export default function SearchPanel() {
         />
         {filteredSuggestions.length > 0 && (
          <ul>
-            {filteredSuggestions.map((item, index) => (
-              <li
-                key={index}
-                onClick={(e) => handleSuggestionClick(item.label, e)}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "12px",
-                  padding: "8px",
-                  cursor: "pointer",
-                  borderBottom: "1px solid #ddd",
-                }}
-              >
-                <img
-                  src={item.image || "/logo.svg"} 
-                  alt={item.label}
-                  style={{ width: 40, height: 40, objectFit: "cover", borderRadius: "6px" }}
-                />
-                <div>
-                  <strong>{item.label}</strong>
-                  <div style={{ fontSize: "12px", color: "gray" }}>
-                    {item.type === "user" ? "User" : `in ${item.source}`}
-                  </div>
+          {filteredSuggestions.map((item, index) => (
+            <li
+              key={index}
+              onClick={() => handleSuggestionClick(item.label, item.id, item.type)}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "12px",
+                padding: "8px",
+                cursor: "pointer",
+                borderBottom: "1px solid #ddd",
+              }}
+            >
+              <img
+                src={item.image}
+                alt={item.label}
+                style={{ width: 40, height: 40, objectFit: "cover", borderRadius: "6px" }}
+              />
+              <div>
+                <strong>{item.label}</strong>
+                <div style={{ fontSize: "12px", color: "gray" }}>
+                  {item.type === "user" ? "User" : `in ${item.source}`}
                 </div>
-              </li>
-            ))}
-          </ul>
+              </div>
+            </li>
+          ))}
+        </ul>
+
 
         )}
         {searchQuery && (
