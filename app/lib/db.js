@@ -2,12 +2,12 @@ import { openDB } from 'idb';
 
 const DB_NAME = 'ecommerceDB';
 const DB_VERSION = 5; 
-const STORE_NAMES = ['men', 'women', 'kids', 'accessories'];
+export const STORE_NAMES = ['men', 'women', 'kids', 'accessories'];
 const CART_STORE = 'cart';
 const WISHLIST_STORE = 'wishlist';
 const ORDERS_STORE = 'orders';
 
-const USERS_STORE = 'users';
+export const USERS_STORE = 'users';
 
 
 
