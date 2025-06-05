@@ -16,47 +16,47 @@ export default function Dashboard() {
    <>
    
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="flex items-center justify-left p-6 bg-white rounded-2xl shadow gap-4">
+            <div className="flex items-center justify-left p-6 bg-[var(--background)] rounded-2xl shadow gap-4">
                 <div className="flex items-center justify-center text-red-500">
                     <Heart size={18} />
                 </div>
                 
                 <div>
-                    <p className="text-sm text-gray-500"> Saved Products</p>
+                    <p className="text-sm text-[var(--secondary)]"> Saved Products</p>
                     <h2 className="text-2xl font-semibold">178+</h2>
                 </div>
               
             </div>
 
-            <div className="flex items-center justify-left p-6 bg-white rounded-2xl shadow gap-4">
+            <div className="flex items-center justify-left p-6 bg-[var(--background)] rounded-2xl shadow gap-4">
                 <div className="flex items-center justify-center text-yellow-500">
                     <Boxes size={18} />
                 </div>
                 
                 <div>
-                    <p className="text-sm text-gray-500">Stock Products</p>
+                    <p className="text-sm text-[var(--secondary)]">Stock Products</p>
                     <h2 className="text-2xl font-semibold">20+</h2>
                 </div>
               
             </div>
 
-            <div className="flex items-center justify-left p-6 bg-white rounded-2xl shadow gap-4">
+            <div className="flex items-center justify-left p-6 bg-[var(--background)] rounded-2xl shadow gap-4">
                 <div className="flex items-center justify-center text-green-500">
                     <TrendingUp size={18} />
                 </div>
                 <div>
-                    <p className="text-sm text-gray-500">Sales Products</p>
+                    <p className="text-sm text-[var(--secondary)]">Sales Products</p>
                     <h2 className="text-2xl font-semibold">190+</h2>
                 </div>
               
             </div>
 
-            <div className="flex items-center justify-left p-6 bg-white rounded-2xl shadow gap-4">
+            <div className="flex items-center justify-left p-6 bg-[var(--background)] rounded-2xl shadow gap-4">
                 <div className="flex items-center justify-center text-blue-500">
                     <Briefcase size={18} />
                 </div>
                 <div>
-                    <p className="text-sm text-gray-500">Jobs Applications</p>
+                    <p className="text-sm text-[var(--secondary)]">Jobs Applications</p>
                     <h2 className="text-2xl font-semibold">10+</h2>
                 </div>
               
@@ -65,7 +65,7 @@ export default function Dashboard() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="mt-8 p-10 bg-white rounded-2xl shadow">
+            <div className="mt-8 p-10 bg-[var(--background)] rounded-2xl shadow">
                 <h3 className="text-lg font-semibold mb-4">Analytics</h3>
                 <div className="h-60">
                 <ResponsiveContainer width="100%" height="100%">
@@ -95,7 +95,7 @@ export default function Dashboard() {
                 </div>
             </div>
 
-            <div className="mt-8 p-6 bg-white rounded-2xl shadow">
+            <div className="mt-8 p-6 bg-[var(--background)] rounded-2xl shadow">
                 <h3 className="text-lg font-semibold mb-4">Top Selling Products</h3>
                 <div className="grid grid-cols-2 md:grid-cols-1 lg:grid-cols-2  gap-3">
                     <div className="flex items-center justify-left rounded-xl gap-2">
@@ -106,7 +106,7 @@ export default function Dashboard() {
                                 />  
                         </div>
                         <div>
-                            <p className="text-gray-700">Queen of Ace</p>
+                            <p className="text-[var(--secondary)]">Queen of Ace</p>
                             <p className="grid grid-cols-5 text-yellow-500"><Star size={15} /><Star size={15} /><Star size={15} /><Star size={15} /></p>
                             <p className="font-semibold">$30</p>
                         </div>
@@ -120,7 +120,7 @@ export default function Dashboard() {
                                 />  
                         </div>
                         <div>
-                            <p className="text-gray-700">Pen On Tee</p>
+                            <p className="text-[var(--secondary)]">Pen On Tee</p>
                             <p className="grid grid-cols-5 text-yellow-500"><Star size={15} /><Star size={15} /><Star size={15} /><Star size={15} /></p>
                             <p className="font-semibold">$30</p>
                         </div>
@@ -134,7 +134,7 @@ export default function Dashboard() {
                                 />  
                         </div>
                         <div>
-                            <p className="text-gray-700">I am King</p>
+                            <p className="text-[var(--secondary)]">I am King</p>
                             <p className="grid grid-cols-5 text-yellow-500"><Star size={15} /><Star size={15} /><Star size={15} /><Star size={15} /></p>
                             <p className="font-semibold">$30</p>
                         </div>

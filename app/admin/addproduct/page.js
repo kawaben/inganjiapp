@@ -71,12 +71,12 @@ export default function AddProductPage() {
   return (
     <div className='p-25'>
       <button  type="button">
-        <Link className="flex items-center gap-3 px-4 py-2 rounded-md text-white bg-[#e08325] hover:bg-black cursor-pointer m-5 transition" href="/admin">GO BACK</Link>
+        <Link className="flex items-center gap-3 px-4 py-2 rounded-md text-[var(--text)] bg-[var(--primary)] hover:bg-[var(--hover)] cursor-pointer m-5 transition" href="/admin">GO BACK</Link>
       </button>
       <h2>Add New Product</h2>
       <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '1rem', maxWidth: '600px' }}>
         <input
-          className="w-full p-3 border border-[#e08325] rounded-md text-[#1b1403] placeholder-gray-700 mt-3"
+          className="w-full p-3 border border-[var(--primary)] rounded-md text-[var(--text)] placeholder-[var(--secondary)] mt-3"
           placeholder="Name"
           value={formData.name}
           onChange={e => setFormData({ ...formData, name: e.target.value })}
@@ -84,7 +84,7 @@ export default function AddProductPage() {
         />
 
         <input
-          className="w-full p-3 border border-[#e08325] rounded-md text-[#1b1403] placeholder-gray-700 mt-3"
+          className="w-full p-3 border border-[var(--primary)] rounded-md text-[var(--text)] placeholder-[var(--secondary)] mt-3"
           type="number"
           placeholder="Price"
           value={formData.price}
@@ -93,7 +93,7 @@ export default function AddProductPage() {
         />
 
         <input
-          className="w-full p-3 border border-[#e08325] rounded-md text-[#1b1403] placeholder-gray-700 mt-3"
+          className="w-full p-3 border border-[var(--primary)] rounded-md text-[var(--text)] placeholder-[var(--secondary)] mt-3"
           type="number"
           placeholder="Old Price"
           value={formData.oldPrice}
@@ -101,7 +101,7 @@ export default function AddProductPage() {
         />
 
         <input
-          className="w-full p-3 border border-[#e08325] rounded-md text-[#1b1403] placeholder-gray-700 mt-3"
+          className="w-full p-3 border border-[var(--primary)] rounded-md text-[var(--text)] placeholder-[var(--secondary)] mt-3"
           type="number"
           step="0.1"
           placeholder="Rating"
@@ -110,14 +110,14 @@ export default function AddProductPage() {
         />
 
         <input
-          className="w-full p-3 border border-[#e08325] rounded-md text-[#1b1403] placeholder-gray-700 mt-3"
+          className="w-full p-3 border border-[var(--primary)] rounded-md text-[var(--text)] placeholder-[var(--secondary)] mt-3"
           placeholder="Sizes (comma-separated, e.g. S,M,L)"
           value={formData.sizes}
           onChange={e => setFormData({ ...formData, sizes: e.target.value })}
         />
 
         <input
-          className="w-full p-3 border border-[#e08325] rounded-md text-[#1b1403] placeholder-gray-700 mt-3"
+          className="w-full p-3 border border-[var(--primary)] rounded-md text-[var(--text)] placeholder-[var(--secondary)] mt-3"
           placeholder="Colors (comma-separated hex codes)"
           value={formData.colors}
           onChange={e => setFormData({ ...formData, colors: e.target.value })}
@@ -126,7 +126,7 @@ export default function AddProductPage() {
         <div>
           <label>Category:</label>
           <select
-            className="w-full p-3 border border-[#e08325] rounded-md text-[#1b1403] placeholder-gray-700 mt-3"
+            className="w-full p-3 border border-[var(--primary)] rounded-md text-[var(--text)] placeholder-[var(--secondary)] mt-3"
             value={formData.category}
             onChange={e => setFormData({ ...formData, category: e.target.value })}
           >
@@ -142,7 +142,7 @@ export default function AddProductPage() {
           <label>Images by Color:</label>
           <div style={{ display: 'flex', gap: '0.5rem' }}>
             <input
-              className="w-full p-3 border border-[#e08325] rounded-md text-[#1b1403] placeholder-gray-700 mt-3"
+              className="w-full p-3 border border-[var(--primary)] rounded-md text-[var(--text)] placeholder-[var(--secondary)] mt-3"
               placeholder="Color Hex (e.g. #ff0000)"
               value={currentColor}
               onChange={e => setCurrentColor(e.target.value)}
@@ -151,7 +151,7 @@ export default function AddProductPage() {
             <input
               type="file"
               accept="image/*"
-              className="w-full p-3 border border-[#e08325] rounded-md text-[#1b1403] placeholder-gray-700 mt-3"
+              className="w-full p-3 border border-[var(--primary)] rounded-md text-[var(--text)] placeholder-[var(--secondary)] mt-3"
               onChange={e => {
                 const file = e.target.files[0];
                 if (file) {
@@ -165,7 +165,7 @@ export default function AddProductPage() {
             />
 
             <button
-              className="flex items-center gap-3 px-4 py-2 rounded-md text-white bg-black hover:bg-red-300 transition"
+              className="flex items-center gap-3 px-4 py-2 rounded-md text-[var(--text)] bg-[var(--primary)] hover:bg-[var(--hover)] cursor-pointer transition"
               type="button"
               onClick={handleAddImage}
             >
@@ -173,7 +173,7 @@ export default function AddProductPage() {
             </button>
           </div>
 
-          <ul className="w-full p-3 border border-[#e08325] rounded-md text-[#1b1403] placeholder-gray-700 mt-3">
+          <ul className="w-full p-3 border border-[var(--primary)] rounded-md text-[var(--text)] placeholder-[var(--secondary)] mt-3">
             {Object.entries(formData.images).map(([color, url]) => (
               <li key={color} className="flex items-center gap-4">
                 <span className="w-6 h-6 rounded-full" style={{ backgroundColor: color }}></span>
@@ -187,13 +187,13 @@ export default function AddProductPage() {
         <input
           type="number"
           placeholder="Stock Count"
-          className="w-full p-3 border border-[#e08325] rounded-md text-[#1b1403] placeholder-gray-700 mt-3"
+          className="w-full p-3 border border-[var(--primary)] rounded-md text-[var(--text)] placeholder-[var(--secondary)] mt-3"
           value={formData.stock}
           onChange={e => setFormData({ ...formData, stock: e.target.value })}
         />
 
         <button
-          className="flex items-center gap-3 px-4 py-2 rounded-md text-black bg-orange-500 transition"
+          className="flex items-center gap-3 px-4 py-2 rounded-md text-[var(--text)] bg-[var(--primary)] hover:bg-[var(--hover)] cursor-pointer transition"
           type="submit"
         >
           Add Product

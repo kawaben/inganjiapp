@@ -20,12 +20,12 @@ const FiltersDropdown = ({ filters, selected, onSelect }) => {
 
   return (
     <div className="relative inline-block text-left">
-      <button onClick={() => setIsOpen(!isOpen)} className="inline-flex items-center px-4 py-2 text-sm font-medium bg-gray-100 border rounded-md shadow-sm">
+      <button onClick={() => setIsOpen(!isOpen)} className="inline-flex items-center px-4 py-2 text-sm font-medium bg-[var(--primary)] border rounded-md shadow-sm">
         {selected || 'Filters'}
         <ChevronDown className="ml-2 h-4 w-4" />
       </button>
       {isOpen && (
-        <div className="absolute z-10 mt-2 w-48 bg-white border rounded-md shadow-lg">
+        <div className="absolute z-10 mt-2 w-48 bg-[var(--background)] border rounded-md shadow-lg">
           {filters.map((filter) => (
             <button
               key={filter}
@@ -33,8 +33,8 @@ const FiltersDropdown = ({ filters, selected, onSelect }) => {
                 onSelect(filter);
                 setIsOpen(false);
               }}
-              className={`block w-full px-4 py-2 text-sm text-left hover:bg-gray-100 ${
-                selected === filter ? 'bg-gray-100 font-semibold' : ''
+              className={`block w-full px-4 py-2 text-sm text-left hover:bg-[var(--background2)] ${
+                selected === filter ? 'bg-[var(--background2)] font-semibold' : ''
               }`}
             >
               {filter}
@@ -83,9 +83,9 @@ export default function ProductTable() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-semibold">Products</h1>
         <div className="flex gap-2">
-          <button className="px-4 py-2 border rounded text-gray-600">Export</button>
+          <button className="px-4 py-2 border rounded text-[var(--text)]">Export</button>
           <Link href="admin/addproduct" passHref>
-            <button className="px-4 py-2 bg-[#c9711a] text-white rounded cursor-pointer">
+            <button className="px-4 py-2 bg-[var(--primary)] text-[var(--text)] rounded cursor-pointer">
               New Product
             </button>
           </Link>
@@ -97,9 +97,9 @@ export default function ProductTable() {
         <FiltersDropdown filters={filters} selected={selectedFilter} onSelect={setSelectedFilter} />
       </div>
 
-      <div className="bg-white shadow rounded-lg overflow-x-auto">
+      <div className="bg-[var(--background)] shadow rounded-lg overflow-x-auto">
         <table className="min-w-full text-sm text-left">
-          <thead className="bg-gray-100 border-b text-gray-700">
+          <thead className="bg-[var(--background2)] border-b text-[var(--text)]">
             <tr>
               <th className="p-4"><input type="checkbox" /></th>
               <th className="p-4">Product Name</th>
@@ -115,7 +115,7 @@ export default function ProductTable() {
             {filteredProducts.map(product => {
               const firstImage = product.images ? Object.values(product.images)[0] : null;
               return (
-                <tr key={product.id} className="hover:bg-gray-200">
+                <tr key={product.id} className="hover:bg-[var(--background2)]">
                   <td className="p-4"><input type="checkbox" /></td>
                   <td className="p-4 flex items-center gap-3">
                     {firstImage && (
@@ -139,7 +139,7 @@ export default function ProductTable() {
 
                   </td>
                   <td className="p-4">
-                    <MoreHorizontal className="w-5 h-5 text-gray-500 cursor-pointer" />
+                    <MoreHorizontal className="w-5 h-5 text-[var(--secondary)] cursor-pointer" />
                   </td>
                 </tr>
               );
@@ -149,11 +149,11 @@ export default function ProductTable() {
       </div>
 
       <div className="flex justify-between items-center mt-6">
-        <p className="text-sm text-gray-500">Page 1 of 7</p>
+        <p className="text-sm text-[var(--secondary)]">Page 1 of 7</p>
         <div className="flex items-center gap-2">
           <button className="px-3 py-1 border rounded">&lt;</button>
           {[1, 2, 3].map(num => (
-            <button key={num} className={`px-3 py-1 border rounded ${num === 1 ? 'bg-[#c9711a] text-white' : ''}`}>
+            <button key={num} className={`px-3 py-1 border rounded ${num === 1 ? 'bg-[var(--primary)] text-[var(--text)]' : ''}`}>
               {num}
             </button>
           ))}

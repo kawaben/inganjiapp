@@ -68,8 +68,8 @@ export default function OrdersPage() {
             chart: <CheckCircle size={20} />,
           },
         ].map((stat, i) => (
-          <div key={i} className="bg-white p-4 rounded-xl shadow">
-            <p className="text-sm text-gray-500">{stat.title}</p>
+          <div key={i} className="bg-[var(--background)] p-4 rounded-xl shadow">
+            <p className="text-sm text-[var(--secondary)]">{stat.title}</p>
             <div className="flex justify-between items-center">
               <h2 className={`text-2xl font-semibold ${stat.color}`}>{stat.value}</h2>
               <span className={`text-2xl ${stat.color}`}>{stat.chart}</span>
@@ -85,8 +85,8 @@ export default function OrdersPage() {
             key={filter}
             className={`text-sm font-medium px-3 py-1 border-b-2 transition ${
               activeFilter === filter
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-blue-500'
+                ? 'border-[var(--link)] text-[var(--link)]'
+                : 'border-transparent text-[var(--secondary)] hover:text-[var(--link)]'
             }`}
             onClick={() => setActiveFilter(filter)}
           >
@@ -96,9 +96,9 @@ export default function OrdersPage() {
       </div>
 
       {/* Orders Table */}
-      <div className="overflow-x-auto bg-white rounded-lg shadow">
+      <div className="overflow-x-auto bg-[var(--background)] rounded-lg shadow">
         <table className="min-w-full text-sm text-left">
-          <thead className="bg-gray-50 text-gray-700">
+          <thead className="bg-[var(--background2)] text-[var(--text)]">
             <tr>
               <th className="px-6 py-3"><input type="checkbox" /></th>
               <th className="px-4 py-3">Order ID</th>
@@ -113,9 +113,9 @@ export default function OrdersPage() {
           </thead>
           <tbody>
             {filteredOrders.map((order) => (
-              <tr key={order.id} className="hover:bg-gray-100">
+              <tr key={order.id} className="hover:bg-[var(--background2)]">
                 <td className="px-6 py-4"><input type="checkbox" /></td>
-                <td className="px-4 py-3 text-blue-600 font-medium">{order.id}</td>
+                <td className="px-4 py-3 text-[var(--link)] font-medium">{order.id}</td>
                 <td className="px-4 py-3">{new Date(order.date).toLocaleString()}</td>
                 <td className="px-6 py-4 flex items-center gap-2">
                   <img src={order.image} alt="" className="w-6 h-6 rounded-full" />

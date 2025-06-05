@@ -128,13 +128,13 @@ export default function OrderPopupCard({ order }) {
       <button
         onClick={() => setIsOpen(true)}
       >
-        <MoreHorizontal className="w-5 h-5 text-gray-500 cursor-pointer" />
+        <MoreHorizontal className="w-5 h-5 text-[var(--secondary)] cursor-pointer" />
       </button>
 
       {/* Modal */}
       {isOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-5000 pt-4">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-5xl p-6 relative flex flex-col md:flex-row gap-6 overflow-auto max-h-[90vh]">
+          <div className="bg-[var(--background2)] rounded-xl shadow-xl w-full max-w-5xl p-6 relative flex flex-col md:flex-row gap-6 overflow-auto max-h-[90vh]">
             {/* Close Button */}
             <button
               onClick={() => setIsOpen(false)}
@@ -145,8 +145,8 @@ export default function OrderPopupCard({ order }) {
 
             {/* Left Column: Order Details */}
             <div className="flex-1">
-                <div className="flex flex-row bg-yellow-600 rounded-md shadow-inner p-4 mb-6">
-                    <div className="flex-1 text-white">
+                <div className="flex flex-row bg-[var(--primary)] rounded-md shadow-inner p-4 mb-6">
+                    <div className="flex-1 text-[var(--text)]">
                         <h2 className="text-xl font-bold">Order #{order.id}</h2>
                         <p className="text-sm mb-4">{new Date(order.date).toLocaleString()}</p>
                     </div>
@@ -154,16 +154,16 @@ export default function OrderPopupCard({ order }) {
                     <div className="flex flex-row items-center justify-center gap-3 ">
 
                         <button onClick={handleDownload}>
-                            <Download className="w-5 h-5 cursor-pointer text-white"/>
+                            <Download className="w-5 h-5 cursor-pointer text-[var(--text)] hover:text-[var(--background)]"/>
                              
                         </button>
-                        <p><Share2 className="w-5 h-5 cursor-pointer text-blue-400"/></p>
+                        <p><Share2 className="w-5 h-5 cursor-pointer text-[var(--link)]"/></p>
                     </div>
                 </div>
               {/* Order Table */}
               <table className="w-full text-sm mb-4">
                 <thead>
-                  <tr className="text-left border-b border-gray-300">
+                  <tr className="text-left border-b border-[var(--border)]">
                     <th className="py-2">Item</th>
                     <th>Qty</th>
                     <th>Rate</th>
@@ -172,7 +172,7 @@ export default function OrderPopupCard({ order }) {
                 </thead>
                 <tbody>
                     {order.items?.map((item, index) => (
-                  <tr key={index} className="border-b border-gray-100">
+                  <tr key={index} className="border-b border-[var(--border)]">
                     <td className="py-2 flex flex-row gap-2 items-center">
                         <Image
                             src={item.image || '/logo.svg'}
@@ -196,7 +196,7 @@ export default function OrderPopupCard({ order }) {
                     {/* Note */}
                     <div className="flex-3 mr-4">
                         <h2 className="font-bold">Note:</h2>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-[var(--secondary)]">
                            {order.note}
                         </p>
                     </div>
@@ -208,17 +208,17 @@ export default function OrderPopupCard({ order }) {
                         <p className="text-lg font-bold">Order Total: ${order.total.toLocaleString('en-US')}</p>
                     </div>
                 </div>
-                <div className="bg-gray-50 flex flex-row rounded-md shadow-inner">
-                    <div className="flex-1 flex flex-col md:flex-row text-gray-400 text-s p-4">
+                <div className="bg-[var(--background)] flex flex-row rounded-md shadow-inner">
+                    <div className="flex-1 flex flex-col md:flex-row text-[var(--secondary)] text-s p-4">
                         <div className="mr-7">
                             <p>Customer Details:</p>
-                            <p className="font-bold text-orange-400">{order.name}</p>
+                            <p className="font-bold text-[var(--primary)]">{order.name}</p>
                             <p>{order.shipingAddress}</p>
                             <p>{order.country}</p>
                         </div>
                         <div>
                             <p>{order.phone}</p>
-                            <p className="text-orange-400">{order.userEmail}</p>
+                            <p className="text-[var(--primary)]">{order.userEmail}</p>
                             <p>By {order.payment}</p>
                             <p>{new Date(order.date).toLocaleString()}</p>
                         </div>
@@ -227,15 +227,15 @@ export default function OrderPopupCard({ order }) {
                     {/* QR Code */}
                     <div className="m-2 text-center">
                         <QRCodeSVG value="https://example.com/order/09746" size={70} />
-                        <p className="text-xs text-gray-500 mt-1">Scan to track</p>
+                        <p className="text-xs text-[var(--secondary)] mt-1">Scan to track</p>
                     </div>
 
                 </div>
             </div>
 
             {/* Right Column: Status */}
-            <div className="w-full md:w-64 bg-gray-50 p-4 rounded-md shadow-inner">
-              <h3 className="font-semibold text-gray-700 mb-4">Order Status</h3>
+            <div className="w-full md:w-64 bg-[var(--background)] p-4 rounded-md shadow-inner">
+              <h3 className="font-semibold text-[var(--text)] mb-4">Order Status</h3>
               <div className="space-y-4 text-sm">
                 {[
                   { label: "Order Placed", date: `${new Date(order.date).toLocaleString()}`, done: true , icon: <CheckCircle size={20} />},
@@ -247,14 +247,14 @@ export default function OrderPopupCard({ order }) {
                   <div key={i} className="flex items-center gap-2">
                     <div
                       className={`w-5 h-5  flex items-center justify-center text-xs ${
-                        step.done ? "text-orange-400" : "text-gray-300"
+                        step.done ? "text-[var(--primary)]" : "text-[var(--secondary)]"
                       }`}
                     >
                       {step.icon}
                     </div>
                     <div>
                       <p>{step.label}</p>
-                      {step.date && <p className="text-gray-400 text-xs">{step.date}</p>}
+                      {step.date && <p className="text-[var(--secondary)] text-xs">{step.date}</p>}
                     </div>
                   </div>
                 ))}

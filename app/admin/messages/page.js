@@ -43,16 +43,16 @@ export default function Messages() {
 
   return (
   <div className="p-4 sm:p-6">
-  <h1 className="text-2xl sm:text-3xl text-[#1b1403] font-bold mb-6 text-center">Admin Messages</h1>
+  <h1 className="text-2xl sm:text-3xl text-[var(--text)] font-bold mb-6 text-center">Admin Messages</h1>
 
   {loading ? (
     <p className="text-center">Loading messages...</p>
   ) : messages.length === 0 ? (
-    <p className="text-[#c9711a] text-center">No messages yet.</p>
+    <p className="text-[var(--primary)] text-center">No messages yet.</p>
   ) : (
     <div className="overflow-x-auto">
       <table className="min-w-full shadow-md rounded-lg overflow-hidden">
-        <thead className="bg-[#f8e2d2] text-[#1b1403]">
+        <thead className="bg-[var(--background)] text-[var(--text)]">
           <tr>
             <th className="p-3 text-left whitespace-nowrap">Name</th>
             <th className="p-3 text-left whitespace-nowrap">Email</th>
@@ -63,13 +63,13 @@ export default function Messages() {
         <tbody>
           {messages.map((msg) => (
             <tr key={msg.id} className="border-b">
-              <td className="p-3 text-[#1b1403] whitespace-nowrap">{msg.name}</td>
-              <td className="p-3 text-[#1b1403] whitespace-nowrap">{msg.email}</td>
-              <td className="p-3 text-[#1b1403]">{msg.message}</td>
-              <td className="p-3 text-[#1b1403]">
+              <td className="p-3 text-[var(--text)] whitespace-nowrap">{msg.name}</td>
+              <td className="p-3 text-[var(--text)] whitespace-nowrap">{msg.email}</td>
+              <td className="p-3 text-[var(--text)]">{msg.message}</td>
+              <td className="p-3 text-[var(--text)]">
                 <button
                   onClick={() => deleteMessage(msg.id)}
-                  className="bg-[#c9711a] text-[#1b1403] px-3 py-1 rounded hover:bg-[#FF4500] transition-colors duration-200"
+                  className="bg-[var(--primary)] text-[var(--text)] px-3 py-1 rounded hover:bg-[var(--hover)] cursor-pointer transition-colors duration-200"
                 >
                   Delete
                 </button>

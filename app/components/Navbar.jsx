@@ -13,6 +13,7 @@ import WishlistPanel from './WishlistPanel';
 import HumburgerPanel from './HumburgerPanel';
 import { useStore } from '../context/StoreContext';
 import { useUser } from '../context/UserContext';
+import ThemeToggle from './ThemeButton';
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -137,6 +138,8 @@ export default function Navbar() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
+
+        <ThemeToggle/>
       </div>
 
         {/* Humburger Menu */}
