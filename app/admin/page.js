@@ -10,6 +10,7 @@ import Orders from "./orders/page";
 import User from "./users/page";
 import Products from "./products/page";
 import Messages from "./messages/page";
+import ThemeToggle from "../components/ThemeButton";
 
 
 export default function AdminDashboard() {
@@ -35,8 +36,11 @@ export default function AdminDashboard() {
                    <li className={`flex items-center gap-3 px-4 py-2 rounded-md transition cursor-pointer hover:bg-gray-100 ${activeSection === "Messages" ? "bg-[#e08325]/10 text-[#e08325]" : "text-black"}`} onClick={() => setActiveSection("Messages")}><MessageSquare size={18} /> Messages </li>
                 </ul>
               </div>
-             
-                
+             {/*Theme Button*/}
+              <div className="mt-auto pt-10">
+                <ThemeToggle/>
+              </div>
+                {/*Logout Button*/}
               <div className="mt-auto pt-10">
                 <button className="flex items-center gap-3 px-4 py-2 rounded-md text-red-600 hover:bg-red-100 transition">
                   <LogOut size={18} />

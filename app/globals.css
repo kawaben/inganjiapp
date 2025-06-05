@@ -18,6 +18,18 @@
   --border: #CCCCCC;
   --highlight: #FFFF00;
 }
+html.dark {
+  --background: #171717;
+  --foreground: #f8e2d2;
+  --text: #f0e6d2;
+  --primary: #e88e38;
+  --secondary: #a89d94;
+  --accent: #ff7849;
+  --link: #66b2ff;
+  --hover: #ff6633;
+  --border: #444444;
+  --highlight: #ffd700;
+}
 
 /* Dark Mode Customization */
 @media (prefers-color-scheme: dark) {

@@ -1,6 +1,7 @@
 "use client";
 
 import "./globals.css";
+import { ThemeProvider } from 'next-themes';
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import { StoreProvider } from './context/StoreContext';
@@ -11,18 +12,21 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <UserProvider>
-          <StoreProvider>
-            <Navbar />
+        <ThemeProvider attribute="class">
+            <UserProvider>
+            <StoreProvider>
+              <Navbar />
 
-            
-            <CartLoader /> 
+              
+              <CartLoader /> 
 
-            {children}
+              {children}
 
-            <Footer />
-          </StoreProvider>
-        </UserProvider>
+              <Footer />
+            </StoreProvider>
+          </UserProvider>
+        </ThemeProvider>
+        
       </body>
     </html>
   );
