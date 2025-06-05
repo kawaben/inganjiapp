@@ -42,14 +42,19 @@ export default function ProductPage() {
     loadProduct();
   }, [id]);
 
- const handleColorClick = (color) => {
-  setSelectedColors(prev => (prev === color ? null : color)); 
+const handleColorClick = (color) => {
+  setSelectedColors(prev => ({
+    ...prev,
+    [product.id]: prev[product.id] === color ? null : color,
+  }));
+
   const image = product.images?.[color] 
     || Object.values(product.images || {})[0] 
     || '/logo.svg';
 
   setSelectedImage(image);
 };
+
 
 
   const handleSizeClick = (productId, size) => {
@@ -124,7 +129,7 @@ export default function ProductPage() {
               key={i}
               onClick={() => handleColorClick(color)}
               className={`w-6 h-6 rounded-full border-2 ${
-                selectedColors === color ? 'border-black' : 'border-gray-300'
+                selectedColors[product.id] === color ? 'border-black' : 'border-gray-300'
               }`}
               style={{ backgroundColor: color }}
             ></button>
@@ -172,10 +177,12 @@ export default function ProductPage() {
         {/* Add to Bag */}
        <AddToCartButton
           product={product}
-          selectedColor={selectedColors}
+          selectedColor={selectedColors[product.id] || product.colors[0]}
           selectedSize={selectedSize[product.id]}
-         
         />
+
+
+
 
 
 
