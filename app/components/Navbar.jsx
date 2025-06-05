@@ -70,11 +70,11 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Menu */}
-        <div className="hidden md:flex flex-1 justify-center space-x-12">
-          <Link href="/shop/men">MEN</Link>{' '}
-          <Link href="/shop/accessories">ACCESSORIES</Link>
-          <Link href="/shop/women">WOMEN</Link>
-          <Link href="/shop/kids">KIDS</Link>
+        <div className="hidden md:flex flex-1 justify-center space-x-12 ">
+          <Link href="/shop/men"><p className='text-[var(--text)] hover:text-[var(--primary)] cursor-pointer'>MEN</p></Link>{' '}
+          <Link href="/shop/accessories"><p className='text-[var(--text)] hover:text-[var(--primary)] cursor-pointer'>ACCESSORIES</p></Link>
+          <Link href="/shop/women"><p className='text-[var(--text)] hover:text-[var(--primary)] cursor-pointer'>WOMEN</p></Link>
+          <Link href="/shop/kids"><p className='text-[var(--text)] hover:text-[var(--primary)] cursor-pointer'>KIDS</p></Link>
         </div>
 
        

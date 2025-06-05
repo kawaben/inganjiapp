@@ -52,13 +52,7 @@ nav{
   z-index: 2000;
 
 }
-a {
-  color: var(--text);
-  cursor: pointer;
-}
-a:hover {
-  color: #e08325;
-}
+
 
 h1{
   size: 2000px;

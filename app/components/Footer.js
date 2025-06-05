@@ -17,10 +17,10 @@ export default function Footer() {
           <div>
             <h3 className="font-semibold text-orange-300 mb-3">Quick Links</h3>
             <ul className="space-y-2">
-              <li><a href="#">About Us</a></li>
-              <li><a href="#">Shops</a></li>
-              <li><a href="#">Blog</a></li>
-              <li><a href="/contact">Contact</a></li>
+              <li className='text-[#1b1403] hover:text-[var(--primary)]'><a href="#">About Us</a></li>
+              <li className='text-[#1b1403] hover:text-[var(--primary)]'><a href="#">Shops</a></li>
+              <li className='text-[#1b1403] hover:text-[var(--primary)]'><a href="#">Blog</a></li>
+              <li className='text-[#1b1403] hover:text-[var(--primary)]'><a href="/contact">Contact</a></li>
             </ul>
           </div>
   
@@ -28,12 +28,12 @@ export default function Footer() {
           <div>
             <h3 className="font-semibold text-orange-300 mb-3">Follow Us</h3>
             <ul className="space-y-4">
-              <li><a className="flex items-center space-x-4"><FaFacebookF/> <span>nuovi re</span></a></li>
-              <li><a className="flex items-center space-x-4"><FaTwitter/> <span>nuovi re</span></a></li>
-              <li><a className="flex items-center space-x-4"><FaInstagram/> <span>nuovi re</span></a></li>
-              <li><a className="flex items-center space-x-4"><FaLinkedin/> <span>nuovi re</span></a></li>
-              <li><a className="flex items-center space-x-4"><FaTiktok/> <span>nuovi re</span></a></li>
-              <li><a className="flex items-center space-x-4"><FaPinterest/> <span>nuovi re</span></a></li>
+              <li className='text-[#1b1403] hover:text-[var(--primary)] cursor-pointer'><a className="flex items-center space-x-4 "><FaFacebookF/> <span>nuovi re</span></a></li>
+              <li className='text-[#1b1403] hover:text-[var(--primary)] cursor-pointer'><a className="flex items-center space-x-4 "><FaTwitter/> <span>nuovi re</span></a></li>
+              <li className='text-[#1b1403] hover:text-[var(--primary)] cursor-pointer'><a className="flex items-center space-x-4 "><FaInstagram/> <span>nuovi re</span></a></li>
+              <li className='text-[#1b1403] hover:text-[var(--primary)] cursor-pointer'><a className="flex items-center space-x-4 "><FaLinkedin/> <span>nuovi re</span></a></li>
+              <li className='text-[#1b1403] hover:text-[var(--primary)] cursor-pointer'><a className="flex items-center space-x-4 "><FaTiktok/> <span>nuovi re</span></a></li>
+              <li className='text-[#1b1403] hover:text-[var(--primary)] cursor-pointer'><a className="flex items-center space-x-4 "><FaPinterest/> <span>nuovi re</span></a></li>
             </ul>
           </div>
   
