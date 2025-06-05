@@ -64,7 +64,7 @@ export default function Navbar() {
     };
 
   return (
-    <div className="fixed z-100 container mx-auto flex justify-between items-center max-w-full text-[#1b1403]  bg-[#f8e2d2]">
+    <div className="fixed z-100 container mx-auto flex justify-between items-center max-w-full text-[var(--text)]  bg-[var(--background)]">
       <Link href="/">
           <Image src="/logo.svg" alt="NOUVI RE Logo" width={120} height={40} priority />
         </Link>
@@ -79,13 +79,13 @@ export default function Navbar() {
 
        
 
-      <div className="flex gap-4 m-8 text-[#1b1403]">
-        <NavbarIcon icon={<FaSearch className="w-6 h-6 text-[#1b1403] hover:text-[#e08325]"/>} onClick={() => togglePanel('search')} />
-        <NavbarIcon icon={<FaBell className="w-6 h-6 text-[#1b1403] hover:text-[#e08325]"/>} onClick={() => togglePanel('notifications')} />
+      <div className="flex gap-4 m-8 text-[var(--secondary)]">
+        <NavbarIcon icon={<FaSearch className="w-6 h-6 text-[var(--secondary)] hover:text-[var(--primary)] cursor-pointer"/>} onClick={() => togglePanel('search')} />
+        <NavbarIcon icon={<FaBell className="w-6 h-6 text-[var(--secondary)] hover:text-[var(--primary)] cursor-pointer"/>} onClick={() => togglePanel('notifications')} />
         <NavbarIcon 
                     icon={
                       <div className="relative">
-                        <FaHeart className="w-6 h-6 text-[#1b1403] hover:text-[#e08325]"/>
+                        <FaHeart className="w-6 h-6 text-[var(--secondary)] hover:text-[var(--primary)] cursor-pointer"/>
                         <span className="absolute -top-2 -right-2 bg-[#e08325] text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
                           {wishlist.length}
                         </span>
@@ -95,7 +95,7 @@ export default function Navbar() {
         <NavbarIcon
                     icon={
                       <div className="relative">
-                        <FaShoppingCart className="w-6 h-6 text-[#1b1403] hover:text-[#e08325]" />
+                        <FaShoppingCart className="w-6 h-6 text-[var(--secondary)] hover:text-[var(--primary)] cursor-pointer" />
                         <span className="absolute -top-2 -right-2 bg-[#e08325] text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
                           {cart.length}
                         </span>
@@ -122,7 +122,7 @@ export default function Navbar() {
       ) : (
         <NavbarIcon
           icon={
-            <FaUser className="w-6 h-6 text-[#1b1403] hover:text-[#e08325]" />
+            <FaUser className="w-6 h-6 text-[var(--secondary)] hover:text-[var(--primary)] cursor-pointer" />
           }
           onClick={() => togglePanel('account')}
         />
@@ -133,7 +133,7 @@ export default function Navbar() {
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
-            className="w-6 h-6 hover:text-[#e08325]"
+            className="w-6 h-6 hover:text-[var(--primary)] cursor-pointer"
           >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
