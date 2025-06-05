@@ -4,11 +4,12 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAdminAuth } from '../hooks/useAdminAuth';
 import { usePathname } from 'next/navigation'
-import { Home, Package, ClipboardList, Users, LogOut } from 'lucide-react'
+import { Home, Package, ClipboardList, Users, LogOut,MessageSquare } from 'lucide-react'
 import Dashboard from "./dashboard/page";
 import Orders from "./orders/page";
 import User from "./users/page";
 import Products from "./products/page";
+import Messages from "./messages/page";
 
 
 export default function AdminDashboard() {
@@ -31,6 +32,7 @@ export default function AdminDashboard() {
                   <li className={`flex items-center gap-3 px-4 py-2 rounded-md transition cursor-pointer hover:bg-gray-100 ${activeSection === "Products" ? "bg-[#e08325]/10 text-[#e08325]" : "text-black"}`} onClick={() => setActiveSection("Products")}> <Package size={18} />Products </li>
                   <li className={`flex items-center gap-3 px-4 py-2 rounded-md transition cursor-pointer hover:bg-gray-100 ${activeSection === "User" ? "bg-[#e08325]/10 text-[#e08325]" : "text-black"}`} onClick={() => setActiveSection("User")}><Users size={18} /> Users </li>
                    <li className={`flex items-center gap-3 px-4 py-2 rounded-md transition cursor-pointer hover:bg-gray-100 ${activeSection === "Orders" ? "bg-[#e08325]/10 text-[#e08325]" : "text-black"}`} onClick={() => setActiveSection("Orders")}><ClipboardList size={18} /> Orders </li>
+                   <li className={`flex items-center gap-3 px-4 py-2 rounded-md transition cursor-pointer hover:bg-gray-100 ${activeSection === "Messages" ? "bg-[#e08325]/10 text-[#e08325]" : "text-black"}`} onClick={() => setActiveSection("Messages")}><MessageSquare size={18} /> Messages </li>
                 </ul>
               </div>
              
@@ -60,6 +62,11 @@ export default function AdminDashboard() {
           {activeSection === "Products" && (
             <Products />
           )}
+
+          {activeSection === "Messages" && (
+            <Messages />
+          )}
+
 
         </main>
       </div>

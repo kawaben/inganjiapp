@@ -1,5 +1,5 @@
 import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedin, FaTiktok, FaPinterest } from 'react-icons/fa';
-
+import Link from 'next/link';
 
 export default function Footer() {
     return (
@@ -20,7 +20,7 @@ export default function Footer() {
               <li><a href="#">About Us</a></li>
               <li><a href="#">Shops</a></li>
               <li><a href="#">Blog</a></li>
-              <li><a href="#">Contact</a></li>
+              <li><a href="/contact">Contact</a></li>
             </ul>
           </div>
   
