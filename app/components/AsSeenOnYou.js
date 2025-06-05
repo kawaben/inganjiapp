@@ -29,22 +29,22 @@ export default function Slideshow() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center bg-[#f6e3d3] min-h-screen text-center px-4">
+    <div className="flex flex-col items-center justify-center min-h-screen text-center px-4">
       <h2 className="text-2xl font-semibold mb-2">As Seen On You</h2>
-      <p className="mb-6 text-gray-700">Show us how you #LiveTheThrone</p>
+      <p className="mb-6 text-[var(--secondary)]">Show us how you #LiveTheThrone</p>
 
       <div className="flex items-center justify-center gap-4">
-        <button onClick={prevSlide} className="text-2xl">{'<'}</button>
+        <button onClick={prevSlide} className="text-2xl cursor-pointer">{'<'}</button>
 
         <div className="slides">
           <img src={slides[index].image} alt="Look" className="h-72 object-contain" />
-          <p className="mt-2 text-white">{slides[index].username}</p>
+          <p className="mt-2 text-[var(--text)]">{slides[index].username}</p>
         </div>
 
-        <button onClick={nextSlide} className="text-2xl">{'>'}</button>
+        <button onClick={nextSlide} className="text-2xl cursor-pointer">{'>'}</button>
       </div>
 
-      <button className="mt-6 bg-orange-400 text-white py-2 px-6 rounded hover:bg-orange-500 transition">
+      <button className="mt-6 bg-[var(--primary)] text-[var(--text)] py-2 px-6 rounded hover:bg-[var(--hover)] cursor-pointer transition">
         Add Your Photo
       </button>
     </div>

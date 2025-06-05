@@ -26,14 +26,14 @@ export default function Products() {
         {products.map((product) => (
           <div
             key={product.id}
-            className="p-4 rounded-lg shadow-lg cursor-pointer bg-red-100 hover:scale-105 transition"
+            className="p-4 rounded-lg shadow-lg cursor-pointer bg-[var(--background2)] hover:scale-105 transition"
             onClick={() => handleRedirect(product.id)}
           >
             <div className={`flex items-center justify-center rounded-lg ${product.bg}`}>
               <Image src={product.image} alt={product.name} layout="responsive" width={1200} height={675} className="object-contain rounded" />
             </div>
             <h3 className="mt-4 text-lg font-semibold">{product.name}</h3>
-            <p className="text-gray-700">${product.price.toFixed(2)}</p>
+            <p className="text-[var(--secondary)]">${product.price.toFixed(2)}</p>
           </div>
         ))}
       </div>
