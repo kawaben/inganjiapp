@@ -17,7 +17,7 @@
   --link: #007BFF;
   --hover: #FF4500;
   --border: #CCCCCC;
-  --highlight: #FFFF00;
+  --highlight: #06a50e;
 }
 html.dark {
   --background: #171717;
@@ -30,7 +30,7 @@ html.dark {
   --link: #66b2ff;
   --hover: #ff6633;
   --border: #444444;
-  --highlight: #ffd700;
+  --highlight: #06a50e;
 }
 
 

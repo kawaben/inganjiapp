@@ -89,15 +89,15 @@ const handleColorClick = (color) => {
       <div className="gallery">
         {/* Thumbnails */}
         {product.images && (
-  <div className="thumbnail-list">
+  <div className="thumbnail-list gap-4">
     {Object.entries(product.images).map(([colorHex, image], index) => (
 
               <img
                 key={index}
                 src={image}
                 alt={`Thumbnail ${index + 1}`}
-                className={`w-16 h-16 object-cover cursor-pointer border rounded ${
-                  selectedImage === image ? "border-black" : "border-gray-300"
+                className={`w-16 h-16 mb-3 object-cover cursor-pointer border rounded ${
+                  selectedImage === image ? "border-[var(--primary)]" : "border-[var(--text)]"
                 }`}
                 onClick={() => setSelectedImage(image)}
               />
@@ -118,7 +118,7 @@ const handleColorClick = (color) => {
         <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
 
         <p className="text-xl font-semibold mb-2">${product.price.toFixed(2)}</p>
-        <p className="text-sm text-green-600 mb-4">Free Shipping for Members</p>
+        <p className="text-sm text-[var(--highlight)] mb-4">Free Shipping for Members</p>
 
         {/* Color Options */}
         <div className="mb-4">
@@ -128,8 +128,8 @@ const handleColorClick = (color) => {
             <button
               key={i}
               onClick={() => handleColorClick(color)}
-              className={`w-6 h-6 rounded-full border-2 ${
-                selectedColors[product.id] === color ? 'border-black' : 'border-gray-300'
+              className={`w-6 h-6 rounded-full cursor-pointer border-2 ${
+                selectedColors[product.id] === color ? 'border-[var(--text)]' : 'border-[var(--secondary)]'
               }`}
               style={{ backgroundColor: color }}
             ></button>
@@ -146,8 +146,8 @@ const handleColorClick = (color) => {
                     <button
                       key={i}
                       onClick={() => handleSizeClick(product.id, size)}
-                      className={`flex px-3 py-1 items-center justify-center text-sm border rounded ${
-                        selectedSize[product.id] === size ? 'bg-black text-white' : 'text-black border-black'
+                      className={`flex px-3 py-1 items-center justify-center text-sm cursor-pointer border rounded ${
+                        selectedSize[product.id] === size ? 'bg-[var(--text)] text-[var(--background)]' : 'text-[var(--text)] border-[var(--text)]'
                       }`}
                     >
                       {size}
@@ -161,14 +161,14 @@ const handleColorClick = (color) => {
           <span className="font-semibold">Quantity:</span>
           <button
             onClick={() => setQuantity(Math.max(1, quantity - 1))}
-            className="px-3 py-1 border rounded"
+            className="px-3 py-1 border rounded cursor-pointer"
           >
             -
           </button>
           <span>{quantity}</span>
           <button
             onClick={() => setQuantity(quantity + 1)}
-            className="px-3 py-1 border rounded"
+            className="px-3 py-1 border rounded cursor-pointer"
           >
             +
           </button>

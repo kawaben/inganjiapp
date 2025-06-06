@@ -107,7 +107,7 @@ export default function CategoryPage() {
                       key={i}
                       onClick={() => handleColorClick(product.id, color)}
                       className={`w-6 h-6 rounded-full border-2 ${
-                        selectedColors[product.id] === color ? 'border-black' : 'border-gray-300'
+                        selectedColors[product.id] === color ? 'border-[var(--text)]' : 'border-[var(--secondary)]'
                       }`}
                       style={{ backgroundColor: color }}
                     ></button>
@@ -120,7 +120,7 @@ export default function CategoryPage() {
                       key={i}
                       onClick={() => handleSizeClick(product.id, size)}
                       className={`flex px-2 py-1 w-6 h-6 items-center justify-center text-sm border rounded ${
-                        selectedSizes[product.id] === size ? 'bg-black text-white' : 'bg-white text-black border-gray-300'
+                        selectedSizes[product.id] === size ? 'bg-[var(--text)] text-[var(--background)]' : 'text-[var(--text)] border-[var(--text)]'
                       }`}
                     >
                       {size}
