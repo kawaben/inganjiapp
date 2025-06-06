@@ -25,11 +25,11 @@ export default function Cart() {
   const totalPrice = subTotalPrice + 20;
 
   return (
-    <div className="max-w-4xl text-[#1b1403] rounded-lg shadow gap-5">
-      <h1 className="text-2xl font-bold text-center mb-6">My Shopping Cart</h1>
+    <div className="max-w-4xl text-[var(--text)] rounded-lg shadow gap-5">
+      <h1 className="text-2xl font-bold text-center text-[var(--primary)] mb-6">My Shopping Cart</h1>
 
       {/* Header */}
-      <div className="grid grid-cols-6 gap-4 items-center font-semibold text-[#1b1403] p-2 bg-[#f8e2d2] rounded-lg">
+      <div className="grid grid-cols-6 gap-4 items-center font-semibold text-[var(--text)] p-2 bg-[var(--background)] rounded-lg">
         <div className="col-span-2">Product</div>
         <div>Size</div>
         <div>Quantity</div>
@@ -62,7 +62,7 @@ export default function Cart() {
           </div>
           <div>
             <div className="font-medium">{item.name}</div>
-            <div className="text-sm text-gray-400">ID: {item.id}</div>
+            <div className="text-sm text-[var(--secondary)]">ID: {item.id}</div>
           </div>
         </div>
 
@@ -72,14 +72,14 @@ export default function Cart() {
         {/* Quantity */}
         <div className="flex items-center gap-2">
           <button
-            className="px-2 border bg-[#e08325] rounded cursor-pointer"
+            className="px-2 border border-[var(--text)] rounded cursor-pointer"
             onClick={() => decreaseQuantity(item)}
           >
             -
           </button>
           <span>{item.quantity}</span>
           <button
-            className="px-2 border bg-[#e08325] rounded cursor-pointer"
+            className="px-2 border border-[var(--text)] rounded cursor-pointer"
             onClick={() => increaseQuantity(item)}
           >
             +
@@ -93,7 +93,7 @@ export default function Cart() {
 
         {/* Remove */}
         <div
-          className="text-[#e08325] cursor-pointer w-5 h-5"
+          className="text-[var(--primary)] cursor-pointer w-5 h-5"
           onClick={() => removeFromCart(item)}
         >
           <TrashIcon />
@@ -102,7 +102,7 @@ export default function Cart() {
     );
   })
       ) : (
-        <p className="text-gray-500 mt-4">Your Cart is empty.</p>
+        <p className="text-[var(--secondary)] mt-4">Your Cart is empty.</p>
       )}
 
 
@@ -135,9 +135,9 @@ export default function Cart() {
         <input
           type="text"
           placeholder="Please enter promo code"
-          className="w-full p-2 border rounded text-sm mb-2"
+          className="w-full p-2 border rounded text-sm mb-2 placeholder-[var(--secondary)]"
         />
-        <button className="float-right text-sm bg-[#e08325] text-[#f8e2d2] px-4 py-2 rounded">
+        <button className="float-right text-sm bg-[var(--primary)] text-[var(--foreground)] px-4 py-2 rounded">
           Apply Discount
         </button>
       </div>
@@ -146,13 +146,13 @@ export default function Cart() {
       <div className="mt-10 flex justify-between gap-4">
         <button
           onClick={handleClearCart}
-          className="flex-1 py-2 bg-[#1b1403] text-[#f8e2d2] rounded cursor-pointer"
+          className="flex-1 py-2 bg-[var(--secondary)] text-[var(--foreground)] rounded cursor-pointer"
         >
           Clear Cart
         </button>
         <Link
           href="/user/Checkout"
-          className="flex-1 py-2 bg-[#e08325] text-[#f8e2d2] rounded cursor-pointer text-center"
+          className="flex-1 py-2 bg-[var(--primary)] text-[var(--foreground)] rounded cursor-pointer text-center"
         >
           Checkout
         </Link>

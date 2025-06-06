@@ -98,7 +98,7 @@ export default function Profile() {
  
   if (!currentUser) {
     return (
-      <div className="min-h-screen bg-[#f8e2d2] flex items-center justify-center text-center p-4">
+      <div className="min-h-screen bg-[var(--background)] flex items-center justify-center text-center p-4">
         <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
           <h2 className="text-xl font-semibold mb-2">You're not logged in</h2>
           <p className="text-gray-600 mb-4">Please log in to view your profile.</p>
@@ -116,51 +116,51 @@ export default function Profile() {
 
   return (
     <>
-    <h1 className="text-2xl font-bold mb-4">My Profile</h1>
-    <div className=" bg-gray-100 rounded-2xl shadow  p-4 flex items-center gap-4 mb-6">
+    <h1 className="text-2xl font-bold mb-4 text-[var(--primary)]">My Profile</h1>
+    <div className=" bg-[var(--background)] rounded-2xl shadow  p-4 flex items-center gap-4 mb-6">
     <img
         src={user.image}
         alt="Profile"
         className="w-16 h-16 rounded-full object-cover"
     />
     <div>
-        <h2 className="text-xl font-semibold">{user.firstname} {user.lastname} ({user.username})</h2>
-        <p className="text-gray-500">{user.bio}</p>
-        <p className="text-gray-400 text-sm">{user.location}</p>
+        <h2 className="text-xl font-semibold text-[var(--text)]">{user.firstname} {user.lastname} ({user.username})</h2>
+        <p className="text-[var(--secondary)]">{user.bio}</p>
+        <p className="text-[var(--secondary)] text-sm">{user.location}</p>
     </div>
-    <button className="ml-auto text-sm text-[#1b1403] border border-gray-300 bg-[#e08325] rounded p-1 cursor-pointer" onClick={openEditModal}>✎ Edit</button>
+    <button className="ml-auto text-sm text-[var(--foreground)] bg-[var(--primary)] rounded p-1 cursor-pointer" onClick={openEditModal}>✎ Edit</button>
     </div>
 
     {/* Personal Info */}
-    <div className=" bg-gray-100 rounded-2xl shadow  p-4 mb-6">
+    <div className=" bg-[var(--background)] text-[var(--text)] rounded-2xl shadow  p-4 mb-6">
     <div className="flex justify-between items-center mb-4">
         <h3 className="font-semibold">Personal Information</h3>
     </div>
     <div className="grid grid-cols-2 gap-4 text-sm">
-        <div><strong>First Name:</strong> {user.firstname}</div>
-        <div><strong>Last Name:</strong> {user.lastname}</div>
-        <div><strong>Username:</strong> {user.username}</div>
-        <div><strong>Email:</strong> {user.email}</div>
-        <div><strong>Phone:</strong> {user.phone}</div>
-        <div className="col-span-2"><strong>Bio:</strong> {user.bio}</div>
+        <div><strong>First Name:</strong><p className="text-[var(--secondary)]"> {user.firstname}</p></div>
+        <div><strong>Last Name:</strong><p className="text-[var(--secondary)]"> {user.lastname}</p></div>
+        <div><strong>Username:</strong><p className="text-[var(--secondary)]"> {user.username}</p></div>
+        <div><strong>Email:</strong><p className="text-[var(--secondary)]"> {user.email}</p></div>
+        <div><strong>Phone:</strong><p className="text-[var(--secondary)]"> {user.phone}</p></div>
+        <div className="col-span-2"><strong>Bio:</strong><p className="text-[var(--secondary)]"> {user.bio}</p></div>
     </div>
     </div>
 
     {/* Address Info */}
-    <div className=" bg-gray-100 rounded-2xl shadow  p-4">
+    <div className=" bg-[var(--background)] text-[var(--text)] rounded-2xl shadow  p-4">
     <div className="flex justify-between items-center mb-4">
         <h3 className="font-semibold">Address</h3>
     </div>
     <div className="grid grid-cols-2 gap-4 text-sm">
-        <div><strong>Country:</strong> {user.country}</div>
-        <div><strong>City/State:</strong> {user.location}</div>
+        <div><strong>Country:</strong><p className="text-[var(--secondary)]"> {user.country}</p></div>
+        <div><strong>City/State:</strong><p className="text-[var(--secondary)]"> {user.location}</p></div>
     </div>
     </div>
 
     {/* Edit Profile Modal */}
     {isModalOpen && (
-        <div className="fixed inset-0 flex text-sm items-center justify-center bg-black bg-opacity-40 z-50">
-          <div className="bg-white mt-20  p-10  rounded-xl shadow-lg w-full max-w-sm">
+        <div className="fixed inset-0 flex text-sm items-center justify-center bg-[var(--background)] bg-opacity-40 z-50">
+          <div className="bg-[var(--background2)] text-[var(--text)] mt-20  p-10  rounded-xl shadow-lg w-full max-w-sm">
             <h3 className="text-lg font-semibold mb-4">Edit Profile</h3>
             <div className="grid grid-cols-3 gap-4">
                 <div>
@@ -254,13 +254,13 @@ export default function Profile() {
 
             <div className="flex justify-end space-x-3">
               <button
-                className="px-4 py-2 rounded-md bg-gray-300 hover:bg-gray-400"
+                className="px-4 py-2 rounded-md bg-[var(--secondary)] cursor-pointer text-[var(--foreground)]"
                 onClick={() => setIsModalOpen(false)}
               >
                 Cancel
               </button>
               <button
-                className="px-4 py-2 rounded-md bg-blue-500 text-white hover:bg-blue-600"
+                className="px-4 py-2 rounded-md bg-[var(--primary)] text-[var(--foreground)] cursor-pointer"
                 onClick={handleSave}
               >
                 Save

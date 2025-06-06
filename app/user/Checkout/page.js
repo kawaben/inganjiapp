@@ -100,8 +100,8 @@ export default function Checkout() {
 
   return (
    
-    <div className="pt-23 p-6">
-        <h2 className="text-2xl font-semibold mb-8">Checkout</h2>
+    <div className="pt-25 p-6">
+        <h2 className="text-2xl font-semibold mb-8 text-[var(--primary)]">Checkout</h2>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Billing Details */}
@@ -110,92 +110,97 @@ export default function Checkout() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <input type="text" placeholder="First name" value={formData.firstname}
                       onChange={e => setFormData({ ...formData, firstname: e.target.value })}
-                      required className="input" />
+                      required className="p-3 border-2 border-transparent bg-[var(--background2)] rounded-md text-[var(--text)] placeholder-[var(--secondary)]" />
                       
                     <input type="text" placeholder="Last name" value={formData.lastname}
                       onChange={e => setFormData({ ...formData, lastname: e.target.value })}
-                      required className="input" />
+                      required className="p-3 border-2 border-transparent bg-[var(--background2)] rounded-md text-[var(--text)] placeholder-[var(--secondary)]" />
                 </div>
-                <input type="text" placeholder="Company name (optional)" value={formData.companyname}
-                      onChange={e => setFormData({ ...formData, companyname: e.target.value })}
-                      required className="input" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <input type="text" placeholder="Company name (optional)" value={formData.companyname}
+                        onChange={e => setFormData({ ...formData, companyname: e.target.value })}
+                        required className="p-3 border-2 border-transparent bg-[var(--background2)] rounded-md text-[var(--text)] placeholder-[var(--secondary)]" />
 
-                <input type="text" placeholder="Street address" value={formData.shipingAddress}
+                  <input type="text" placeholder="Street address" value={formData.shipingAddress}
                       onChange={e => setFormData({ ...formData, shipingAddress: e.target.value })}
-                      required className="input" />
-
-                <input type="text" placeholder="Apartment, suite, etc. (optional)" value={formData.name}
+                      required className="p-3 border-2 border-transparent bg-[var(--background2)] rounded-md text-[var(--text)] placeholder-[var(--secondary)]" />
+                </div>
+                <div className="grid grid-cols-1">
+                  <input type="text" placeholder="Apartment, suite, etc. (optional)" value={formData.name}
                       onChange={e => setFormData({ ...formData, name: e.target.value })}
-                      required className="input" />
-
+                      required className="p-3 border-2 border-transparent bg-[var(--background2)] rounded-md text-[var(--text)] placeholder-[var(--secondary)]" />
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <input type="text" placeholder="Town / City" value={formData.location}
                         onChange={e => setFormData({ ...formData, location: e.target.value })}
-                        required className="input" />
+                        required className="p-3 border-2 border-transparent bg-[var(--background2)] rounded-md text-[var(--text)] placeholder-[var(--secondary)]" />
 
                     <input type="text" placeholder="Country / State" value={formData.country}
                         onChange={e => setFormData({ ...formData, country: e.target.value })}
-                        required className="input" />
+                        required className="p-3 border-2 border-transparent bg-[var(--background2)] rounded-md text-[var(--text)] placeholder-[var(--secondary)]" />
 
                     <input type="text" placeholder="ZIP Code (optional)" value={formData.zipcode}
                         onChange={e => setFormData({ ...formData, zipcode: e.target.value })}
-                        required className="input" />
+                        required className="p-3 border-2 border-transparent bg-[var(--background2)] rounded-md text-[var(--text)] placeholder-[var(--secondary)]" />
                 </div>
 
-                <input type="text" placeholder="Phone" value={formData.phone}
-                      onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                      required className="input" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-                <input type="email" placeholder="Email address" value={formData.email}
-                      onChange={e => setFormData({ ...formData, email: e.target.value })}
-                      required className="input" />
+                  <input type="text" placeholder="Phone" value={formData.phone}
+                        onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                        required className="p-3 border-2 border-transparent bg-[var(--background2)] rounded-md text-[var(--text)] placeholder-[var(--secondary)]" />
 
+                  <input type="email" placeholder="Email address" value={formData.email}
+                        onChange={e => setFormData({ ...formData, email: e.target.value })}
+                        required className="p-3 border-2 border-transparent bg-[var(--background2)] rounded-md text-[var(--text)] placeholder-[var(--secondary)]" />
+                </div>
                 <div className="flex items-center space-x-2">
                     <input type="checkbox" id="create-account" />
                     <label htmlFor="create-account">Create an account?</label>
                 </div>
-
-                <textarea placeholder="Order notes (optional)" value={formData.note}
+                <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+                    <textarea placeholder="Order notes (optional)" value={formData.note}
                       onChange={e => setFormData({ ...formData, note: e.target.value })}
-                      required className="input h-24" />
+                      required className="p-3 border-2 border-transparent bg-[var(--background2)] rounded-md text-[var(--text)] placeholder-[var(--secondary)]" />
+                </div>
                 </form>
             </div>
 
             {/* Order Summary */}
-            <div className="border border-gray-200 p-6 rounded-lg shadow-sm">
-              <h3 className="text-xl font-semibold mb-4">Your Order</h3>
+            <div className="bg-[var(--background2)] p-6 rounded-lg shadow-sm">
+              <h3 className="text-xl font-semibold text-[var(--primary)] mb-4">Your Order</h3>
 
               {cart.length > 0 ? (
                 <ul className="divide-y divide-gray-200 mb-4">
                   {cart.map((item, index) => (
                     <li key={`${item.id}-${item.color}-${item.size}-${index}`} className="py-2 flex justify-between text-sm">
                       <div>
-                        <span className="font-medium">{item.name}</span>{' '}
-                        <span className="text-gray-500">× {item.quantity}</span>
-                        <div className="text-gray-400 text-xs">
+                        <span className="font-medium text-[var(--text)]">{item.name}</span>{' '}
+                        <span className="text-[var(--secondary)]">× {item.quantity}</span>
+                        <div className="text-[var(--secondary)] text-xs">
                           {item.color && <span>Color: {item.color}</span>}
                           {item.size && <span className="ml-2">Size: {item.size}</span>}
                         </div>
                       </div>
-                      <div className="font-semibold">
+                      <div className="font-semibold text-[var(--text)]">
                         ${(item.price * item.quantity).toFixed(2)}
                       </div>
                     </li>
                   ))}
                 </ul>
               ) : (
-                <p className="text-gray-500">Your Cart is empty.</p>
+                <p className="text-[var(--secondary)]">Your Cart is empty.</p>
               )}
 
               {/* Totals */}
-              <div className="border-t mt-4 pt-4 space-y-2 text-sm">
+              <div className="border-t mt-4 pt-4 space-y-2 text-sm text-[var(--text)]">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
                   <span>${subTotalPrice.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Shipping</span>
-                  <span>Flat rate: $20.00</span>
+                  <span> $20.00</span>
                 </div>
                 <div className="flex justify-between font-semibold text-base">
                   <span>Total</span>
@@ -204,7 +209,7 @@ export default function Checkout() {
               </div>
 
               {/* Payment Options */}
-              <div className="mt-6 space-y-3 text-sm">
+              <div className="mt-6 space-y-3 text-sm text-[var(--text)]">
                 <div>
                   <input type="radio" id="bank"  name="payment" value={formData.payment}
                       onChange={e => setFormData({ ...formData, payment:'Bank Transfer' })}
@@ -221,11 +226,11 @@ export default function Checkout() {
               </div>
 
               {/* Terms */}
-              <div className="mt-4 text-sm">
+              <div className="mt-4 text-sm text-[var(--secondary)]">
                 <input type="checkbox" id="terms" className="mr-2" />
                 <label htmlFor="terms">
                   I have read and agree to the website{' '}
-                  <a href="#" className="text-blue-600 underline">
+                  <a href="#" className="text-[var(--link)] underline">
                     terms and conditions
                   </a>
                 </label>
@@ -233,7 +238,7 @@ export default function Checkout() {
 
               {/* Place Order Button */}
               <button
-                className="w-full bg-[#e08325] text-white py-3 rounded-lg mt-6 font-semibold hover:bg-[#c96e1d] transition"
+                className="w-full bg-[var(--primary)] text-[var(--foreground)] py-3 rounded-lg mt-6 font-semibold cursor-pointer transition"
                 onClick={handlePlaceOrder}
               >
                 Place order
