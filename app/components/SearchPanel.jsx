@@ -102,14 +102,14 @@ const handleSuggestionClick = (suggestion) => {
 
 
     return (
-        <div className={`fixed top-16 right-0 w-full md:w-1/3 h-screen bg-[#f8e2d2] shadow-lg transition-transform duration-300 panel p-5 z-10  "translate-x-0" : "translate-x-full"`}>
-        <h2 className="text-lg font-bold uppercase text-black mb-4">Search</h2>
+        <div className={`fixed top-16 right-0 w-full md:w-1/3 h-screen bg-[var(--background)] shadow-lg transition-transform duration-300 panel p-5 z-10  "translate-x-0" : "translate-x-full"`}>
+        <h2 className="text-lg font-bold uppercase text-[var(--text)] mb-4">Search</h2>
         <input
           type="text"
           value={searchQuery}
           onChange={handleSearchChange}
-          placeholder="What Are You Looking For?"
-          className="w-full p-3 border-none rounded-md bg-[#3a3a3a] text-[#f8e2d2] placeholder-gray-300"
+          placeholder="What Are You Looking For ?"
+          className="w-full p-3 border-none rounded-md bg-[var(--background2)] text-[var(--secondary)] placeholder-[var(--secondary)]"
         />
         {filteredSuggestions.length > 0 && (
          <ul>
@@ -117,15 +117,7 @@ const handleSuggestionClick = (suggestion) => {
             <li
               key={index}
               onClick={() => handleSuggestionClick(item)}
-
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "12px",
-                padding: "8px",
-                cursor: "pointer",
-                borderBottom: "1px solid #ddd",
-              }}
+              className="flex alignItems:center gap-3 p-3 cursor-pointer border-b border-[var(--secondary)]"
             >
               <img
                 src={item.image}
@@ -150,7 +142,7 @@ const handleSuggestionClick = (suggestion) => {
               setSearchQuery("");
               setFilteredSuggestions([]);
             }}
-            className="mt-3 bg-[#e08325] text-[#f8e2d2] p-2 w-full rounded-md"
+            className="mt-3 bg-[var(--primary)] text-[var(--text)] p-2 w-full rounded-md cursor-pointer"
           >
             Clear All
           </button>

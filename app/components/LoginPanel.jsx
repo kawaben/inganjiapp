@@ -86,8 +86,8 @@ const handleSignup = async (e) => {
 
 
     return (
-      <div className={`fixed top-16 right-0 w-full md:w-1/3 h-screen bg-[#f8e2d2] shadow-lg transition-transform duration-300 panel p-5 z-10 "translate-x-0" : "translate-x-full"`}>
-            <h2 className="text-lg font-bold uppercase text-black mb-4">Account</h2>
+      <div className={`fixed top-16 right-0 w-full md:w-1/3 h-screen bg-[var(--background)] shadow-lg transition-transform duration-300 panel p-5 z-10 "translate-x-0" : "translate-x-full"`}>
+            <h2 className="text-lg font-bold uppercase text-[var(--text)] mb-4">Account</h2>
              {!isLoggedIn ? (
               <form onSubmit={isSignUp ? handleSignup : handleLogin} className="space-y-4">
                 
@@ -96,7 +96,7 @@ const handleSignup = async (e) => {
                   placeholder="Email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full p-3 rounded bg-[#3a3a3a] text-[#f8e2d2] placeholder-gray-300"
+                  className="w-full p-3 rounded bg-[var(--background2)] text-[var(--secondary)] placeholder-[var(--secondary)]"
                   required
                 />
                 <input
@@ -104,16 +104,16 @@ const handleSignup = async (e) => {
                   placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full p-3 rounded bg-[#3a3a3a] text-[#f8e2d2] placeholder-gray-300"
+                  className="w-full p-3 rounded bg-[var(--background2)] text-[var(--secondary)] placeholder-[var(--secondary)]"
                   required
                 />
                 <button
                   type="submit"
-                  className="w-full bg-[#e08325] text-[#0c0805] p-3 rounded-md"
+                  className="w-full bg-[var(--primary)] text-[var(--foreground)] p-3 rounded-md cursor-pointer"
                 >
                   {isSignUp ? "Sign Up" : "Log In"}
                 </button>
-                <p className="text-sm text-black text-center">
+                <p className="text-sm text-[var(--secondary)] text-center">
                   {isSignUp ? (
                     <>
                       Already have an account?{" "}
@@ -139,9 +139,9 @@ const handleSignup = async (e) => {
               </form>
             ) : (
               <div className="space-y-4">
-                <p className="text-black">Welcome back, {JSON.parse(localStorage.getItem("loggedInUser"))?.email}</p>
+                <p className="text-[var(--text)]">Welcome back, {JSON.parse(localStorage.getItem("loggedInUser"))?.email}</p>
                 <button
-                  className="w-full bg-[#0c0805] text-[#f8e2d2] p-3 rounded-md"
+                  className="w-full bg-[var(--secondary)] text-[var(--foreground)] p-3 rounded-md cursor-pointer"
                   onClick={() => {
                     logout
                   }}

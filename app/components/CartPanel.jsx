@@ -19,9 +19,9 @@ export default function CartPanel() {
   const totalPrice = cart.reduce((total, item) => total + item.price * item.quantity, 0);
 
   return (
-    <div className="fixed overflow-y-auto bottom-16 top-16 right-0 w-full md:w-1/3 h-screen bg-[#f8e2d2] shadow-lg transition-transform duration-300 panel p-5 z-10">
+    <div className="fixed overflow-y-auto bottom-16 top-16 right-0 w-full md:w-1/3 h-screen bg-[var(--background)] shadow-lg transition-transform duration-300 panel p-5 z-10">
       <div className="overflow-y-auto flex-grow space-y-4">
-        <h2 className="text-lg font-bold uppercase text-black mb-4">Your Cart</h2>
+        <h2 className="text-lg font-bold uppercase text-[var(--text)] mb-4">Your Cart</h2>
         <div className="space-y-4">
           {cart.length > 0 ? (
             cart.map((item) => {
@@ -30,22 +30,22 @@ export default function CartPanel() {
   return (
     <div
       key={`${item.id}-${colorHex}-${item.size}-${item.userEmail}`}
-      className="flex items-center justify-between bg-white p-3 rounded shadow-sm"
+      className="flex items-center justify-between bg-[var(--background2)] p-3 rounded shadow-sm"
     >
       <div>
         <p className="font-semibold">{item.name}</p>
-        <p className="text-sm text-gray-600">${Number(item.price || 0).toFixed(2)} each</p>
-        <p className="text-xs text-gray-500 capitalize">
+        <p className="text-sm text-[var(--secondary)]">${Number(item.price || 0).toFixed(2)} each</p>
+        <p className="text-xs text-[var(--secondary)] capitalize">
           Color: {colorHex}, Size: {item.size}
         </p>
       </div>
 
                 <div className="flex items-center space-x-2">
-                  <button onClick={() => decreaseQuantity(item)} className="bg-[#e08325] text-[#0c0805] px-2 py-1 rounded">-</button>
+                  <button onClick={() => decreaseQuantity(item)} className="bg-[var(--primary)] text-[var(--foreground)] px-2 py-1 rounded cursor-pointer">-</button>
                   <span className="px-3">{item.quantity}</span>
-                  <button onClick={() => increaseQuantity(item)} className="bg-[#e08325] text-[#0c0805] px-2 py-1 rounded">+</button>
-                  <button onClick={() => removeFromCart(item)} className="bg-[#e08325] p-2 rounded">
-                    <TrashIcon className="w-5 h-5 text-[#0c0805]" />
+                  <button onClick={() => increaseQuantity(item)} className="bg-[var(--primary)] text-[var(--foreground)] px-2 py-1 rounded cursor-pointer">+</button>
+                  <button onClick={() => removeFromCart(item)} className="bg-[var(--primary)] p-2 rounded cursor-pointer">
+                    <TrashIcon className="w-5 h-5 text-[var(--foreground)]" />
                   </button>
                 </div>
               </div>
@@ -60,13 +60,13 @@ export default function CartPanel() {
         {cart.length > 0 && (
           <button
             onClick={handleClearCart}
-            className="mt-4 bg-[#e08325] text-[#f8e2d2] hover:bg-[#0c0805] p-2 w-full rounded-md"
+            className="mt-4 bg-[var(--primary)] text-[var(--foreground)] cursor-pointer p-2 w-full rounded-md"
           >
             Clear All
           </button>
         )}
 
-        <button className="mt-4 w-full bg-[#0c0805] text-[#f8e2d2] hover:bg-[#e08325] p-3 rounded-md">
+        <button className="mt-4 w-full bg-[var(--secondary)] text-[var(--background)] hover:bg-[#e08325] p-3 rounded-md">
           Proceed to Checkout
         </button>
       </div>
