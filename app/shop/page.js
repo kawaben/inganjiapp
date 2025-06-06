@@ -12,14 +12,14 @@ const shops = [
 ];
 
 export default function Shops() {
-  const router = useRouter(); // Use Next.js router
+  const router = useRouter(); 
 
   const handleRedirect = (id) => {
-    router.push(`/shop/${id}`); // Redirect to the product page
+    router.push(`/shop/${id}`); 
   };
 
   return (
-    <div className="shop-container">
+    <div className="shop-container text-[var(--text)]">
       <h2>For Everyone</h2>
       <div className="shop-grid">
         {shops.map((shop) => (
@@ -31,7 +31,7 @@ export default function Shops() {
             
               <img src={shop.image} alt={shop.name}  />
             
-            <h3 className="mt-4 text-lg font-semibold">SHOP/{shop.name}</h3>
+            <h3 className="mt-4 text-lg font-semibold text-[var(--text)]">SHOP/{shop.name}</h3>
           </div>
         ))}
       </div>

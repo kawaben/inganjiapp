@@ -29,7 +29,7 @@ export default function Slideshow() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen text-center px-4">
+    <div className="flex flex-col items-center justify-center min-h-screen text-center text-[var(--text)] px-4">
       <h2 className="text-2xl font-semibold mb-2">As Seen On You</h2>
       <p className="mb-6 text-[var(--secondary)]">Show us how you #LiveTheThrone</p>
 

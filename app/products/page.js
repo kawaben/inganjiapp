@@ -20,7 +20,7 @@ export default function Products() {
 
 
   return (
-    <div className="p-6">
+    <div className="p-6 text-[var(--text)]">
       <h2 className="text-3xl font-bold text-center mb-6">Shop Our Collection</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
         {products.map((product) => (

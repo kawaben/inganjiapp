@@ -52,11 +52,11 @@ export default function WishlistButton({ product,selectedColor, selectedSize }) 
   };
 
   return (
-    <button onClick={toggleWishlist}>
+    <button onClick={toggleWishlist} className='cursor-pointer'>
       {isInWishlist ? (
-        <FaHeart className="text-[#e08325]" />
+        <FaHeart className="text-[var(--primary)]" />
       ) : (
-        <FaRegHeart className="text-[#1b1403] hover:text-[#e08325]" />
+        <FaRegHeart className="text-[var(--primary)]" />
       )}
     </button>
   );

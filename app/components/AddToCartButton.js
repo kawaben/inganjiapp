@@ -51,10 +51,10 @@ const AddToCartButton = ({ product, selectedColor, selectedSize }) => {
     <button
       onClick={handleClick}
       disabled={added}
-      className={`h-12 px-4 py-2 rounded ${
+      className={`h-12 px-4 py-2 rounded cursor-pointer ${
         added
-          ? 'bg-[#1b1403] text-white'
-          : 'bg-[#e08325] text-white hover:bg-[#b86819]'
+          ? 'bg-[var(--foreground)] text-[var(--primary)]'
+          : 'bg-[var(--primary)] text-[var(--foreground)]'
       }`}
     >
       {added ? 'Added to Cart' : 'Add to Cart'}

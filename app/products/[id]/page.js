@@ -114,8 +114,8 @@ const handleColorClick = (color) => {
       </div>
 
       {/* Right: Product Details */}
-      <div className="item-details_class">
-        <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
+      <div className="item-details_class text-[var(--text)]">
+        <h1 className="text-3xl font-bold mb-2 ">{product.name}</h1>
 
         <p className="text-xl font-semibold mb-2">${product.price.toFixed(2)}</p>
         <p className="text-sm text-[var(--highlight)] mb-4">Free Shipping for Members</p>

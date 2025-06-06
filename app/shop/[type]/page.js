@@ -67,8 +67,8 @@ export default function CategoryPage() {
   return (
     <div className="category">
       {/* Sidebar */}
-      <div className="filter-sidebar">
-        <h1>Available Today</h1>
+      <div className="filter-sidebar text-[var(--text)]">
+        <h1 className=''>Available Today</h1>
         <p>
           <span role="img" aria-label="location">📍</span> Items may be available for pickup.
           <a href="#"> Find Nearby Store</a>
@@ -128,15 +128,15 @@ export default function CategoryPage() {
                   ))}
                 </div>
 
-                <h4>{product.name}</h4>
+                <h4 className='text-[var(--text)]'>{product.name}</h4>
                 <p className="flex items-center justify-between w-32">
-                  <span className="flex items-center gap-1">
+                  <span className="flex items-center gap-1 text-[var(--text)]">
                     ⭐ {product.rating}
                   </span>
                  <WishlistButton product={product} />
                 </p>
 
-                <p>
+                <p className='text-[var(--text)]'>
                   <strong>${product.price}</strong>{' '}
                   <span style={{ textDecoration: 'line-through' }}>${product.oldPrice}</span>
                 </p>

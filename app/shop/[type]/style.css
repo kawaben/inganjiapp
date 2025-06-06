@@ -5,7 +5,6 @@
   
   .shop {
     display: flex;
-    background-color: aqua;
   }
   
   .filters {
@@ -69,9 +68,9 @@
 
 
 .grid-container {
-  flex: 1;  /* Take remaining space */
+  flex: 1;  
   box-sizing: border-box;
-  overflow: hidden; /* optional: prevent overflow inside */
+  overflow: hidden; 
 }
 
 .product-grid {
@@ -103,7 +102,7 @@
   }
 
   .pagination-button:hover{
-    background-color: var(--primary-color);
+    background-color: var(--primary-colo);
   }
 
   .pagination-button.active{
