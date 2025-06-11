@@ -19,7 +19,7 @@ export default function CartPanel() {
   const totalPrice = cart.reduce((total, item) => total + item.price * item.quantity, 0);
 
   return (
-    <div className="fixed overflow-y-auto bottom-16 top-16 right-0 w-full md:w-1/3 h-screen bg-[var(--background)] shadow-lg transition-transform duration-300 panel p-5 z-10">
+    <div className={`fixed top-28 right-0 h-3/4 rounded-md w-full  md:w-1/3 md:right-1  bg-[var(--background)] shadow-lg transition-transform duration-300 panel p-5 z-10  "translate-x-0" : "translate-x-full"`}>
       <div className="overflow-y-auto flex-grow space-y-4">
         <h2 className="text-lg font-bold uppercase text-[var(--text)] mb-4">Your Cart</h2>
         <div className="space-y-4">

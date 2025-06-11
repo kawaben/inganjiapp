@@ -46,7 +46,7 @@ export default function Messages() {
   <h1 className="text-2xl sm:text-3xl text-[var(--text)] font-bold mb-6 text-center">Admin Messages</h1>
 
   {loading ? (
-    <p className="text-center">Loading messages...</p>
+    <p className="text-center text-[var(--primary)]">Loading messages...</p>
   ) : messages.length === 0 ? (
     <p className="text-[var(--primary)] text-center">No messages yet.</p>
   ) : (
@@ -62,7 +62,7 @@ export default function Messages() {
         </thead>
         <tbody>
           {messages.map((msg) => (
-            <tr key={msg.id} className="border-b">
+            <tr key={msg.id} className="hover:bg-[var(--secondary)] cursor-pointer">
               <td className="p-3 text-[var(--text)] whitespace-nowrap">{msg.name}</td>
               <td className="p-3 text-[var(--text)] whitespace-nowrap">{msg.email}</td>
               <td className="p-3 text-[var(--text)]">{msg.message}</td>

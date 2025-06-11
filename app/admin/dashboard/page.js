@@ -23,7 +23,7 @@ export default function Dashboard() {
                 
                 <div>
                     <p className="text-sm text-[var(--secondary)]"> Saved Products</p>
-                    <h2 className="text-2xl font-semibold">178+</h2>
+                    <h2 className="text-2xl font-semibold text-[var(--secondary)]">178+</h2>
                 </div>
               
             </div>
@@ -35,7 +35,7 @@ export default function Dashboard() {
                 
                 <div>
                     <p className="text-sm text-[var(--secondary)]">Stock Products</p>
-                    <h2 className="text-2xl font-semibold">20+</h2>
+                    <h2 className="text-2xl font-semibold text-[var(--secondary)]">20+</h2>
                 </div>
               
             </div>
@@ -46,7 +46,7 @@ export default function Dashboard() {
                 </div>
                 <div>
                     <p className="text-sm text-[var(--secondary)]">Sales Products</p>
-                    <h2 className="text-2xl font-semibold">190+</h2>
+                    <h2 className="text-2xl font-semibold text-[var(--secondary)]">190+</h2>
                 </div>
               
             </div>
@@ -57,7 +57,7 @@ export default function Dashboard() {
                 </div>
                 <div>
                     <p className="text-sm text-[var(--secondary)]">Jobs Applications</p>
-                    <h2 className="text-2xl font-semibold">10+</h2>
+                    <h2 className="text-2xl font-semibold text-[var(--secondary)]">10+</h2>
                 </div>
               
             </div>
@@ -66,7 +66,7 @@ export default function Dashboard() {
 
         <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="mt-8 p-10 bg-[var(--background)] rounded-2xl shadow">
-                <h3 className="text-lg font-semibold mb-4">Analytics</h3>
+                <h3 className="text-lg font-semibold text-[var(--secondary)] mb-4">Analytics</h3>
                 <div className="h-60">
                 <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
@@ -79,15 +79,15 @@ export default function Dashboard() {
                     </PieChart>
                 </ResponsiveContainer>
                 <div className="flex items-center justify-center gap-4">
-                    <div className="flex items-center justify-left gap-2">
+                    <div className="flex items-center justify-left text-[var(--secondary)] gap-2">
                         <div className="h-4 w-4 bg-[#4f46e5] rounded-xl"></div>
                         <div>Sales</div>
                     </div>
-                    <div className="flex items-center justify-left gap-2">
+                    <div className="flex items-center justify-left text-[var(--secondary)] gap-2">
                         <div className="h-4 w-4 bg-[#f97316] rounded-xl"></div>
                         <div>Returns</div>
                     </div>
-                    <div className="flex items-center justify-left gap-2">
+                    <div className="flex items-center justify-left text-[var(--secondary)] gap-2">
                         <div className="h-4 w-4 bg-[#facc15] rounded-xl"></div>
                         <div>Distribute</div>
                     </div>
@@ -96,7 +96,7 @@ export default function Dashboard() {
             </div>
 
             <div className="mt-8 p-6 bg-[var(--background)] rounded-2xl shadow">
-                <h3 className="text-lg font-semibold mb-4">Top Selling Products</h3>
+                <h3 className="text-lg font-semibold text-[var(--secondary)] mb-4">Top Selling Products</h3>
                 <div className="grid grid-cols-2 md:grid-cols-1 lg:grid-cols-2  gap-3">
                     <div className="flex items-center justify-left rounded-xl gap-2">
                         <div><img
@@ -108,7 +108,7 @@ export default function Dashboard() {
                         <div>
                             <p className="text-[var(--secondary)]">Queen of Ace</p>
                             <p className="grid grid-cols-5 text-yellow-500"><Star size={15} /><Star size={15} /><Star size={15} /><Star size={15} /></p>
-                            <p className="font-semibold">$30</p>
+                            <p className="font-semibold text-[var(--secondary)]">$30</p>
                         </div>
                     </div>
 
@@ -122,7 +122,7 @@ export default function Dashboard() {
                         <div>
                             <p className="text-[var(--secondary)]">Pen On Tee</p>
                             <p className="grid grid-cols-5 text-yellow-500"><Star size={15} /><Star size={15} /><Star size={15} /><Star size={15} /></p>
-                            <p className="font-semibold">$30</p>
+                            <p className="font-semibold text-[var(--secondary)]">$30</p>
                         </div>
                     </div>
 
@@ -136,7 +136,7 @@ export default function Dashboard() {
                         <div>
                             <p className="text-[var(--secondary)]">I am King</p>
                             <p className="grid grid-cols-5 text-yellow-500"><Star size={15} /><Star size={15} /><Star size={15} /><Star size={15} /></p>
-                            <p className="font-semibold">$30</p>
+                            <p className="font-semibold text-[var(--secondary)]">$30</p>
                         </div>
                     </div>
                 

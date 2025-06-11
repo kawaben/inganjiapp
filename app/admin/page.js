@@ -21,8 +21,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen  bg-[var(--background)] p-6">
-      <h1 className="text-2xl font-bold mb-2 pt-20">Hi, {user?.name ?? 'Admin'}</h1>
-      <div className="flex flex-col md:flex-row bg-[var(--background2)] rounded shadow mt-5">
+      <div className="flex flex-col md:flex-row bg-[var(--background2)] rounded shadow mt-24">
         
 
         <aside className="w-full  md:w-64 rounded p-4 pt-6 ">

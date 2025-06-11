@@ -116,9 +116,9 @@ export default function OrdersPage() {
               <tr key={order.id} className="hover:bg-[var(--background2)]">
                 <td className="px-6 py-4"><input type="checkbox" /></td>
                 <td className="px-4 py-3 text-[var(--link)] font-medium">{order.id}</td>
-                <td className="px-4 py-3">{new Date(order.date).toLocaleString()}</td>
-                <td className="px-6 py-4 flex items-center gap-2">
-                  <img src={order.image} alt="" className="w-6 h-6 rounded-full" />
+                <td className="px-4 py-3 text-[var(--secondary)]">{new Date(order.date).toLocaleString()}</td>
+                <td className="px-6 py-4 flex items-center gap-2 text-[var(--secondary)]">
+                  <img src={order.image} alt="" className="w-6 h-6 rounded-full " />
                   {order.name}
                 </td>
                 <td className="px-4 py-3">
@@ -134,8 +134,8 @@ export default function OrdersPage() {
                     {order.fulfillment}
                   </span>
                 </td>
-                <td className="px-4 py-3">${order.total.toFixed(2)}</td>
-                <td className="px-4 py-3">$100</td>
+                <td className="px-4 py-3 text-[var(--secondary)]">${order.total.toFixed(2)}</td>
+                <td className="px-4 py-3 text-[var(--secondary)]">$100</td>
                 <td className="px-4 py-3">
                   <span
                     className={`px-2 py-2 rounded text-xs font-medium ${

@@ -164,10 +164,10 @@ export default function OrderPopupCard({ order }) {
               <table className="w-full text-sm mb-4">
                 <thead>
                   <tr className="text-left border-b border-[var(--border)]">
-                    <th className="py-2">Item</th>
-                    <th>Qty</th>
-                    <th>Rate</th>
-                    <th>Amount</th>
+                    <th className="py-2 text-[var(--text)]">Item</th>
+                    <th className='text-[var(--secondary)]'>Qty</th>
+                    <th className='text-[var(--secondary)]'>Rate</th>
+                    <th className='text-[var(--secondary)]'>Amount</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -181,11 +181,11 @@ export default function OrderPopupCard({ order }) {
                             alt={item.name}
                             className="rounded"
                         />
-                      <strong>{item.name}</strong><br />
+                      <strong className='text-[var(--secondary)]'>{item.name}</strong><br />
                     </td>
-                    <td>{item.quantity}</td>
-                    <td>${item.price.toLocaleString('en-US')}</td>
-                    <td>${(item.quantity * item.price).toLocaleString('en-US')}</td>
+                    <td className='text-[var(--secondary)]'>{item.quantity}</td>
+                    <td className='text-[var(--secondary)]'>${item.price.toLocaleString('en-US')}</td>
+                    <td className='text-[var(--secondary)]'>${(item.quantity * item.price).toLocaleString('en-US')}</td>
                   </tr>
                   ))}
                 </tbody>
@@ -194,18 +194,18 @@ export default function OrderPopupCard({ order }) {
                   
                     
                     {/* Note */}
-                    <div className="flex-3 mr-4">
-                        <h2 className="font-bold">Note:</h2>
+                    <div className="flex-3 mr-4 ">
+                        <h2 className="font-bold text-[var(--text)]">Note:</h2>
                         <p className="text-xs text-[var(--secondary)]">
                            {order.note}
                         </p>
                     </div>
                     
                       {/* Totals */}
-                    <div className="flex-1  space-y-1 mb-4 ">
-                        <p><span className="font-medium">Total:</span> ${(order.total - 20).toLocaleString('en-US')}</p>
-                        <p><span className="font-medium">Shipping:</span> $20.00</p>
-                        <p className="text-lg font-bold">Order Total: ${order.total.toLocaleString('en-US')}</p>
+                    <div className="flex-1  space-y-1 mb-4 text-[var(--text)] ">
+                        <p><span className="font-medium text-[var(--secondary)]">Total:</span> ${(order.total - 20).toLocaleString('en-US')}</p>
+                        <p><span className="font-medium text-[var(--secondary)]">Shipping:</span> $20.00</p>
+                        <p><span className="text-lg font-bold text-[var(--secondary)]">Order Total:</span> ${order.total.toLocaleString('en-US')}</p>
                     </div>
                 </div>
                 <div className="bg-[var(--background)] flex flex-row rounded-md shadow-inner">
@@ -236,7 +236,7 @@ export default function OrderPopupCard({ order }) {
             {/* Right Column: Status */}
             <div className="w-full md:w-64 bg-[var(--background)] p-4 rounded-md shadow-inner">
               <h3 className="font-semibold text-[var(--text)] mb-4">Order Status</h3>
-              <div className="space-y-4 text-sm">
+              <div className="space-y-4 text-sm text-[var(--text)]">
                 {[
                   { label: "Order Placed", date: `${new Date(order.date).toLocaleString()}`, done: true , icon: <CheckCircle size={20} />},
                   { label: "Products Picked", date: "27 Jul 2022", done: true,icon: <ShoppingBag size={20} /> },

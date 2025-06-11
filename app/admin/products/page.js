@@ -80,8 +80,8 @@ export default function ProductTable() {
 
   return (
     <div className="p-6 min-h-screen">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold">Products</h1>
+      <div className="flex justify-between items-center mb-6 ">
+        <h1 className="text-2xl font-semibold text-[var(--primary)]">Products</h1>
         <div className="flex gap-2">
           <button className="px-4 py-2 border rounded text-[var(--text)]">Export</button>
           <Link href="admin/addproduct" passHref>
@@ -92,8 +92,8 @@ export default function ProductTable() {
         </div>
       </div>
 
-      <div className="flex justify-between mb-4">
-        <input type="text" placeholder="Search..." className="w-64 px-4 py-2 border rounded" />
+      <div className="flex justify-between mb-4 ">
+        <input type="text" placeholder="Search..." className="w-64 px-4 py-2  rounded-md bg-[var(--background)] text-[var(--secondary)]" />
         <FiltersDropdown filters={filters} selected={selectedFilter} onSelect={setSelectedFilter} />
       </div>
 
@@ -111,7 +111,7 @@ export default function ProductTable() {
               <th className="p-4"></th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="text-[var(--secondary)]">
             {filteredProducts.map(product => {
               const firstImage = product.images ? Object.values(product.images)[0] : null;
               return (
@@ -148,7 +148,7 @@ export default function ProductTable() {
         </table>
       </div>
 
-      <div className="flex justify-between items-center mt-6">
+      <div className="flex justify-between items-center mt-6 text-[var(--secondary)]">
         <p className="text-sm text-[var(--secondary)]">Page 1 of 7</p>
         <div className="flex items-center gap-2">
           <button className="px-3 py-1 border rounded">&lt;</button>

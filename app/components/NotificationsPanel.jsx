@@ -18,7 +18,7 @@ export default function NotificationsPanel() {
 
 
     return (
-        <div className={`fixed top-16 right-0 w-full md:w-1/3 h-screen bg-[var(--background)] shadow-lg transition-transform duration-300 panel p-5 z-10 "translate-x-0" : "translate-x-full"`}>
+        <div className={`fixed top-28 right-0 h-3/4 rounded-md w-full  md:w-1/3 md:right-1  bg-[var(--background)] shadow-lg transition-transform duration-300 panel p-5 z-10  "translate-x-0" : "translate-x-full"`}>
         <h2 className="text-lg font-bold uppercase text-[var(--text)] mb-4">Notifications 🔔</h2>
         <ul className="space-y-4">
           {notifications.length > 0 ? (
