@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
-import { prisma } from "../../lib/prisma"; // Adjust the path if needed
+import { prisma } from "../../lib/prisma"; 
+import { PrismaClientKnownRequestError } from "../../generated/prisma/runtime/library";
 
 export async function GET() {
+  
   try {
-    const users = await prisma.users.findMany({
+    const users = await prisma.user.findMany({  
       select: {
         id: true,
         email: true,
@@ -15,13 +17,15 @@ export async function GET() {
         location: true,
         country: true,
         image: true,
-        createdAt: true,
       },
     });
 
     return NextResponse.json(users);
   } catch (error) {
-    console.error("Fetch users error:", error);
-    return NextResponse.json({ error: "Failed to fetch users" }, { status: 500 });
+  console.error("Fetch users error:", error);
+  if (error instanceof PrismaClientKnownRequestError) {
+    return NextResponse.json({ error: "Database error" }, { status: 400 });
   }
+  return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+}
 }

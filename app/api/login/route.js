@@ -1,6 +1,6 @@
-// app/api/login/route.js
+
 import { NextResponse } from "next/server";
-import prisma from "@/lib/prisma"; // Make sure this file exports a working Prisma client
+import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
 export async function POST(req) {
