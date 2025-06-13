@@ -26,14 +26,13 @@ export default function LoginPanel() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
-      credentials: "include" // Important for cookies
+      credentials: "include" 
     });
 
     const data = await res.json();
 
     if (res.ok) {
-      // No need to handle token manually anymore
-      // Just use the user data from the response
+
       setIsLoggedIn(true);
       router.push("/user");
     } else {

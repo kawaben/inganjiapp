@@ -67,8 +67,7 @@ export default function Profile({ user: initialUser }: ProfileProps) {
       setUser(updatedUser);
       setIsModalOpen(false);
       
-      // Update the user in the parent component if needed
-      // You might want to lift this state up or use a context
+      
     } catch (err) {
       console.error("Error updating user:", err);
     }
