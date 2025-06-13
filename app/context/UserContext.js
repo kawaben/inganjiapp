@@ -9,12 +9,12 @@ export function UserProvider({ children }) {
   const router = useRouter();
 
  
-  useEffect(() => {
-    const storedUser = localStorage.getItem('loggedInUser');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-  }, []);
+  //useEffect(() => {
+    //const storedUser = localStorage.getItem('loggedInUser');
+    //if (storedUser) {
+      //setUser(JSON.parse(storedUser));
+    //}
+  //}, []);
 
   const login = (userData) => {
     localStorage.setItem('loggedInUser', JSON.stringify(userData));

@@ -34,12 +34,12 @@ export default function Navbar() {
       }
     }, [pathname]);
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem('loggedInUser');
-    if (storedUser) {
-      login(JSON.parse(storedUser));
-    }
-  }, []);
+  //useEffect(() => {
+    //const storedUser = localStorage.getItem('loggedInUser');
+    //if (storedUser) {
+      //login(JSON.parse(storedUser));
+    //}
+  //}, []);
 
   useEffect(() => {
   const storedLogin = localStorage.getItem('isLoggedIn');

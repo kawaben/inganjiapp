@@ -15,8 +15,8 @@ datasource db {
 }
 
 model User {
-  id        Int     @id @default(autoincrement())
-  email     String  @unique
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
   password  String
   firstname String?
   lastname  String?
@@ -26,8 +26,40 @@ model User {
   location  String?
   country   String?
   image     String?
+  cart      Cart[]
+  orders    Order[]
   createdAt DateTime @default(now())
 }
 
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  price       Float
+  image       String
+  category    String
+  createdAt   DateTime @default(now())
 
+  cartItems Cart[]
+}
 
+model Cart {
+  id        Int    @id @default(autoincrement())
+  userId    Int
+  productId Int
+  color     String
+  size      String
+  quantity  Int
+
+  user    User    @relation(fields: [userId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+}
+
+model Order {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  items     Json // Array of items with product info + quantity
+  total     Float
+  createdAt DateTime @default(now())
+}
