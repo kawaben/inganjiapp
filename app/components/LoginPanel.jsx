@@ -20,30 +20,30 @@ export default function LoginPanel() {
   //}, []);
 
   const handleLogin = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+  e.preventDefault();
+  try {
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+      credentials: "include" // Important for cookies
+    });
 
-      const data = await res.json();
+    const data = await res.json();
 
-      if (res.ok) {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("loggedInUser", JSON.stringify(data.user));
-        login(data.user); // context update
-        setIsLoggedIn(true);
-        router.push("/user");
-      } else {
-        alert(data.error || "Login failed");
-      }
-    } catch (error) {
-      console.error("Login error:", error);
-      alert("Something went wrong");
+    if (res.ok) {
+      // No need to handle token manually anymore
+      // Just use the user data from the response
+      setIsLoggedIn(true);
+      router.push("/user");
+    } else {
+      alert(data.error || "Login failed");
     }
-  };
+  } catch (error) {
+    console.error("Login error:", error);
+    alert("Something went wrong");
+  }
+};
 
   const handleSignup = async (e) => {
     e.preventDefault();
