@@ -26,12 +26,18 @@ export default function LoginPanel() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
-      credentials: "include" 
+      credentials: "include",
     });
 
     const data = await res.json();
 
     if (res.ok) {
+      // Save to localStorage
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("loggedInUser", JSON.stringify(data));
+
+      // Update user context
+      login(data);
 
       setIsLoggedIn(true);
       router.push("/user");
@@ -43,6 +49,7 @@ export default function LoginPanel() {
     alert("Something went wrong");
   }
 };
+
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -63,7 +70,7 @@ export default function LoginPanel() {
       if (res.ok) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("loggedInUser", JSON.stringify(data));
-        login(data); // context update
+        login(data); 
         setIsLoggedIn(true);
         router.push("/user");
       } else {

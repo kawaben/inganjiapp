@@ -26,12 +26,13 @@ export async function POST(request: Request) {
 
   // Create response with user data
   const response = NextResponse.json({
-    user: {
-      id: user.id,
-      email: user.email,
-      firstname: user.firstname
-    }
-  });
+  user: {
+    id: user.id,
+    email: user.email,
+    firstname: user.firstname,
+  },
+  token, 
+});
 
   // Set HTTP-only cookie with the token
   response.cookies.set({
