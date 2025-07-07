@@ -1,13 +1,14 @@
-"use client";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+'use client';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { getUserByEmail } from '../lib/db';
 import { User, ShoppingCart, Heart, Bell, Settings, ClipboardList, LogOut } from 'lucide-react';
-import Profile from "./Myprofile/page"
-import Cart from "./Cart/page";
-import Wishlist from "./Wishlist/page";
-import Notifications from "./Notifications/page";
-import Setting from "./Settings/page";
-import Orders from "./orders/page";
+import Profile from './Myprofile/page';
+import Cart from './Cart/page';
+import Wishlist from './Wishlist/page';
+import Notifications from './Notifications/page';
+import Setting from './Settings/page';
+import Orders from './orders/page';
 
 // Type definitions
 interface User {
@@ -16,67 +17,57 @@ interface User {
   firstname: string;
   lastname: string;
   role?: string;
-}
-
-interface CartItem {
-  id: number;
-  name: string;
-  size: string;
-  price: number;
-  quantity: number;
+  username?: string;
+  phone?: string;
+  location?: string;
+  country?: string;
+  bio?: string;
+  image?: string;
 }
 
 type ActiveSection = 
-  | "My Profile" 
-  | "Cart" 
-  | "Wishlist" 
-  | "Notifications" 
-  | "Setting" 
-  | "Orders";
+  | 'My Profile'
+  | 'Cart'
+  | 'Wishlist'
+  | 'Notifications'
+  | 'Setting'
+  | 'Orders';
 
 export default function UserPage() {
-  const [activeSection, setActiveSection] = useState<ActiveSection>("My Profile");
+  const [activeSection, setActiveSection] = useState<ActiveSection>('My Profile');
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  // Fetch user data from API
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await fetch('/api/auth/me', {
-          credentials: 'include'
-        });
+    const fetchUserFromDB = async () => {
+      const email = localStorage.getItem('loggedInUserEmail');
 
-        if (!response.ok) {
-          throw new Error('Not authenticated');
-        }
-
-        const data = await response.json();
-        setUser(data.user);
-      } catch (error) {
-        console.error("Authentication error:", error);
+      if (!email) {
         router.push('/login');
-      } finally {
-        setLoading(false);
+        return;
       }
+
+      const dbUser = await getUserByEmail(email);
+
+      if (!dbUser) {
+        router.push('/login');
+        return;
+      }
+
+      setUser(dbUser);
+      setLoading(false);
     };
 
-    fetchUser();
+    fetchUserFromDB();
   }, [router]);
 
   const handleLogout = async () => {
     try {
-      const response = await fetch('/api/auth/logout', {
-        method: 'POST',
-        credentials: 'include'
-      });
+      // Remove token/email from localStorage
+      localStorage.removeItem('token');
+      localStorage.removeItem('loggedInUserEmail');
 
-      if (!response.ok) {
-        throw new Error('Logout failed');
-      }
-
-      // Clear client-side state
       setUser(null);
       router.push('/');
     } catch (error) {
@@ -102,12 +93,12 @@ export default function UserPage() {
   }
 
   const navItems = [
-    { section: "My Profile", icon: <User size={18} /> },
-    { section: "Cart", icon: <ShoppingCart size={18} /> },
-    { section: "Notifications", icon: <Bell size={18} /> },
-    { section: "Wishlist", icon: <Heart size={18} /> },
-    { section: "Setting", icon: <Settings size={18} /> },
-    { section: "Orders", icon: <ClipboardList size={18} /> },
+    { section: 'My Profile', icon: <User size={18} /> },
+    { section: 'Cart', icon: <ShoppingCart size={18} /> },
+    { section: 'Notifications', icon: <Bell size={18} /> },
+    { section: 'Wishlist', icon: <Heart size={18} /> },
+    { section: 'Setting', icon: <Settings size={18} /> },
+    { section: 'Orders', icon: <ClipboardList size={18} /> },
   ] as const;
 
   return (
@@ -117,12 +108,12 @@ export default function UserPage() {
         <aside className="w-full md:w-64 rounded p-4 pt-6">
           <ul className="space-y-3">
             {navItems.map(({ section, icon }) => (
-              <li 
+              <li
                 key={section}
                 className={`flex items-center gap-3 px-4 py-2 rounded-md transition cursor-pointer hover:bg-[var(--secondary)] ${
-                  activeSection === section 
-                    ? "text-[var(--primary)] font-semibold" 
-                    : "text-[var(--text)]"
+                  activeSection === section
+                    ? 'text-[var(--primary)] font-semibold'
+                    : 'text-[var(--text)]'
                 }`}
                 onClick={() => setActiveSection(section)}
               >
@@ -130,7 +121,7 @@ export default function UserPage() {
               </li>
             ))}
             <li>
-              <button 
+              <button
                 onClick={handleLogout}
                 className="flex items-center gap-3 px-4 py-2 rounded-md text-[var(--hover)] hover:bg-[var(--secondary)] cursor-pointer transition w-full"
               >
@@ -143,12 +134,12 @@ export default function UserPage() {
 
         {/* Main Content */}
         <main className="flex-1 p-4 md:p-8">
-          {activeSection === "My Profile" && <Profile user={user} />}
-          {activeSection === "Cart" && <Cart />}
-          {activeSection === "Wishlist" && <Wishlist />}
-          {activeSection === "Notifications" && <Notifications />}
-          {activeSection === "Setting" && <Setting />}
-          {activeSection === "Orders" && <Orders />}
+          {activeSection === 'My Profile' && <Profile user={user} />}
+          {activeSection === 'Cart' && <Cart />}
+          {activeSection === 'Wishlist' && <Wishlist />}
+          {activeSection === 'Notifications' && <Notifications />}
+          {activeSection === 'Setting' && <Setting />}
+          {activeSection === 'Orders' && <Orders />}
         </main>
       </div>
     </div>
