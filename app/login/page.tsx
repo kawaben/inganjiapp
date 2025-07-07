@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { getUserByEmail } from '../lib/db'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -10,48 +9,35 @@ export default function LoginPage() {
   const [error, setError] = useState('')
   const router = useRouter()
 
- 
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
 
-const handleLogin = async (e: React.FormEvent) => {
-  e.preventDefault()
-  setError('')
+    try {
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      })
 
-  try {
-    const res = await fetch('/api/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    })
+      const data = await res.json()
 
-    const data = await res.json()
+      if (!res.ok) {
+        setError(data.error || 'Login failed')
+        return
+      }
 
-    if (!res.ok) {
-      setError(data.error || 'Login failed')
-      return
+      // Save JWT token
+      localStorage.setItem('token', data.token)
+
+      // Navigate to protected page
+      router.push('/orders')
+    } catch (err) {
+      setError('Something went wrong. Please try again.')
     }
-
-    // Save JWT token
-    localStorage.setItem('token', data.token)
-
-    // Save logged-in user's email for future lookups
-    localStorage.setItem('loggedInUserEmail', email)
-
-    // (Optional) Preload full user info from IndexedDB
-    const dbUser = await getUserByEmail(email)
-    if (!dbUser) {
-      console.warn('User not found in IndexedDB. Consider redirecting to setup/profile page.')
-    }
-
-    // Redirect
-    router.push('/users')
-  } catch (err) {
-    console.error(err)
-    setError('Something went wrong. Please try again.')
   }
-}
-
 
   return (
     <div className="max-w-md mx-auto py-16 px-4">
