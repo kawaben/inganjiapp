@@ -8,45 +8,61 @@ export default function LoginPanel() {
   const [password, setPassword] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const { login, logout } = useUser();
+  const { login, logout, user } = useUser();
 
-
+  // Check initial auth state
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const res = await fetch("/api/auth/check", {
+          credentials: "include",
+        });
+        if (res.ok) {
+          const data = await res.json();
+          login(data.user);
+          setIsLoggedIn(true);
+        }
+      } catch (error) {
+        console.error("Auth check error:", error);
+      }
+    };
+    checkAuth();
+  }, [login]);
 
   const handleLogin = async (e) => {
-  e.preventDefault();
-  try {
-    const res = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-      credentials: "include",
-    });
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+        credentials: "include",
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    if (res.ok) {
-      // Save to localStorage
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("loggedInUser", JSON.stringify(data));
-
-      // Update user context
-      login(data);
-
-      setIsLoggedIn(true);
-      router.push("/user");
-    } else {
-      alert(data.error || "Login failed");
+      if (res.ok) {
+        // Update user context with data from response
+        login(data.user);
+        setIsLoggedIn(true);
+        router.push("/user");
+      } else {
+        alert(data.error || "Login failed");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      alert("Something went wrong");
+    } finally {
+      setIsLoading(false);
     }
-  } catch (error) {
-    console.error("Login error:", error);
-    alert("Something went wrong");
-  }
-};
-
+  };
 
   const handleSignup = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
       const res = await fetch("/api/auth/signup", {
         method: "POST",
@@ -58,14 +74,13 @@ export default function LoginPanel() {
           lastname: "Last",
           username: "Username",
         }),
+        credentials: "include",
       });
 
       const data = await res.json();
 
       if (res.ok) {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("loggedInUser", JSON.stringify(data));
-        login(data); 
+        login(data.user);
         setIsLoggedIn(true);
         router.push("/user");
       } else {
@@ -74,17 +89,23 @@ export default function LoginPanel() {
     } catch (error) {
       console.error("Signup error:", error);
       alert("Something went wrong");
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    localStorage.removeItem("token");
-    localStorage.removeItem("loggedInUser");
-    setIsLoggedIn(false);
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+      logout();
+      setIsLoggedIn(false);
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
   };
-
- 
 
   return (
     <div className="fixed top-28 right-0 h-3/4 rounded-md w-full md:w-1/3 md:right-1 bg-[var(--background)] shadow-lg transition-transform duration-300 panel p-5 z-10">
@@ -110,9 +131,10 @@ export default function LoginPanel() {
           />
           <button
             type="submit"
-            className="w-full bg-[var(--primary)] text-[var(--foreground)] p-3 rounded-md cursor-pointer"
+            className="w-full bg-[var(--primary)] text-[var(--foreground)] p-3 rounded-md cursor-pointer disabled:opacity-50"
+            disabled={isLoading}
           >
-            {isSignUp ? "Sign Up" : "Log In"}
+            {isLoading ? "Processing..." : isSignUp ? "Sign Up" : "Log In"}
           </button>
           <p className="text-sm text-[var(--secondary)] text-center">
             {isSignUp ? (
@@ -134,7 +156,7 @@ export default function LoginPanel() {
         </form>
       ) : (
         <div className="space-y-4">
-          <p className="text-[var(--text)]">Welcome back,</p>
+          <p className="text-[var(--text)]">Welcome back, {user?.email}</p>
           <button
             className="w-full bg-[var(--secondary)] text-[var(--foreground)] p-3 rounded-md cursor-pointer"
             onClick={handleLogout}
