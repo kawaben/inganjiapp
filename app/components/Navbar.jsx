@@ -34,12 +34,6 @@ export default function Navbar() {
       }
     }, [pathname]);
 
-  //useEffect(() => {
-    //const storedUser = localStorage.getItem('loggedInUser');
-    //if (storedUser) {
-      //login(JSON.parse(storedUser));
-    //}
-  //}, []);
 
   useEffect(() => {
   const storedLogin = localStorage.getItem('isLoggedIn');
@@ -109,7 +103,7 @@ export default function Navbar() {
         >
           <Link href="/user" className="flex items-center gap-2">
             <Image
-            src={user.image || '/images/f1-blue.jpg'}
+            src={user.image || '/default-avatar.png'}
             alt="User Profile"
             width={36}
             height={36}

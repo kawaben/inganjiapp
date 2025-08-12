@@ -8,7 +8,7 @@ interface RequestBody {
   password: string
   firstname: string
   lastname: string
-  username?: string
+  username: string
   phone?: string
 }
 
@@ -16,7 +16,7 @@ export async function POST(request: Request) {
   try {
     const body: RequestBody = await request.json()
 
-    if (!body.email || !body.password || !body.firstname || !body.lastname) {
+    if (!body.email || !body.password || !body.firstname || !body.lastname || !body.username) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -39,7 +39,7 @@ export async function POST(request: Request) {
         password: hashedPassword,
         firstname: body.firstname,
         lastname: body.lastname,
-        username: body.username || null,
+        username: body.username,
         phone: body.phone || null,
       },
       select: {

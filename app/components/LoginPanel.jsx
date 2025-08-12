@@ -11,13 +11,7 @@ export default function LoginPanel() {
   const router = useRouter();
   const { login, logout } = useUser();
 
-  //useEffect(() => {
-    //const storedUser = localStorage.getItem("loggedInUser");
-    //if (storedUser) {
-      //login(JSON.parse(storedUser));
-      //setIsLoggedIn(true);
-    //}
-  //}, []);
+
 
   const handleLogin = async (e) => {
   e.preventDefault();
@@ -62,6 +56,7 @@ export default function LoginPanel() {
           password,
           firstname: "First",
           lastname: "Last",
+          username: "Username",
         }),
       });
 
@@ -89,7 +84,7 @@ export default function LoginPanel() {
     setIsLoggedIn(false);
   };
 
- // const loggedInEmail = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("loggedInUser"))?.email : "";
+ 
 
   return (
     <div className="fixed top-28 right-0 h-3/4 rounded-md w-full md:w-1/3 md:right-1 bg-[var(--background)] shadow-lg transition-transform duration-300 panel p-5 z-10">

@@ -1,19 +1,18 @@
 'use client';
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { updateUser } from "../../lib/db";
 
 interface User {
   id: string;
   email: string;
-  firstname?: string;
-  lastname?: string;
-  username?: string;
-  image?: string;
-  phone?: string;
-  location?: string;
-  country?: string;
-  bio?: string;
+  firstname?: string | null;
+  lastname?: string | null;
+  username?: string | null;
+  image?: string | null;
+  phone?: string | null;
+  location?: string | null;
+  country?: string | null;
+  bio?: string | null;
 }
 
 interface ProfileProps {
@@ -24,6 +23,9 @@ export default function Profile({ user: initialUser }: ProfileProps) {
   const router = useRouter();
   const [user, setUser] = useState<User>(initialUser);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
@@ -53,6 +55,8 @@ export default function Profile({ user: initialUser }: ProfileProps) {
       bio: user.bio || "",
     });
     setIsModalOpen(true);
+    setError(null);
+    setSuccess(null);
   };
   
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -62,23 +66,56 @@ export default function Profile({ user: initialUser }: ProfileProps) {
 
   const handleSave = async () => {
     try {
-      const updatedUser = { ...user, ...formData };
-      await updateUser(updatedUser);
-      setUser(updatedUser);
-      setIsModalOpen(false);
+      setIsLoading(true);
+      setError(null);
       
+      // Basic validation
+      if (!formData.firstname.trim()) {
+        throw new Error("First name is required");
+      }
+
+      const updatedUser = { ...user, ...formData };
+      
+      const response = await fetch(`/api/users/${user.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedUser),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to update profile');
+      }
+
+      const savedUser = await response.json();
+      setUser(savedUser);
+      setIsModalOpen(false);
+      setSuccess('Profile updated successfully!');
+      setTimeout(() => setSuccess(null), 3000);
       
     } catch (err) {
       console.error("Error updating user:", err);
+      setError(err instanceof Error ? err.message : 'An unknown error occurred');
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Basic image validation
+      if (file.size > 2 * 1024 * 1024) { // 2MB limit
+        setError('Image too large (max 2MB)');
+        return;
+      }
+
       const reader = new FileReader();
       reader.onloadend = () => {
         setFormData(prev => ({ ...prev, image: reader.result as string }));
+        setError(null);
       };
       reader.readAsDataURL(file);
     }
@@ -97,22 +134,36 @@ export default function Profile({ user: initialUser }: ProfileProps) {
   return (
     <>
       <h1 className="text-2xl font-bold mb-4 text-[var(--primary)]">My Profile</h1>
+      
+      {success && (
+        <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-md">
+          {success}
+        </div>
+      )}
+      
+      {error && (
+        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">
+          {error}
+        </div>
+      )}
+
       <div className="bg-[var(--background)] rounded-2xl shadow p-4 flex items-center gap-4 mb-6">
         <img
-          src={user.image || "/default-profile.png"}
+          src={user.image || "/default-avatar.png"}
           alt="Profile"
           className="w-16 h-16 rounded-full object-cover"
         />
         <div>
           <h2 className="text-xl font-semibold text-[var(--text)]">
-            {user.firstname} {user.lastname} {user.username && `(${user.username})`}
+            {user.firstname} {user.lastname} {user.username}
           </h2>
           {user.bio && <p className="text-[var(--secondary)]">{user.bio}</p>}
           {user.location && <p className="text-[var(--secondary)] text-sm">{user.location}</p>}
         </div>
         <button 
-          className="ml-auto text-sm text-[var(--foreground)] bg-[var(--primary)] rounded p-1 cursor-pointer" 
+          className="ml-auto text-sm text-[var(--foreground)] bg-[var(--primary)] rounded p-1 cursor-pointer  transition-colors" 
           onClick={openEditModal}
+          disabled={isLoading}
         >
           ✎ Edit
         </button>
@@ -160,6 +211,7 @@ export default function Profile({ user: initialUser }: ProfileProps) {
                   value={formData.firstname}
                   onChange={handleInputChange}
                   className="w-full mb-3 px-4 py-2 border rounded-md"
+                  disabled={isLoading}
                 />
               </div>
               <div>
@@ -170,6 +222,7 @@ export default function Profile({ user: initialUser }: ProfileProps) {
                   value={formData.lastname}
                   onChange={handleInputChange}
                   className="w-full mb-3 px-4 py-2 border rounded-md"
+                  disabled={isLoading}
                 />
               </div>
               <div>
@@ -180,6 +233,7 @@ export default function Profile({ user: initialUser }: ProfileProps) {
                   value={formData.username}
                   onChange={handleInputChange}
                   className="w-full mb-3 px-4 py-2 border rounded-md"
+                  disabled={isLoading}
                 />
               </div>
               <div>
@@ -190,6 +244,7 @@ export default function Profile({ user: initialUser }: ProfileProps) {
                   value={formData.phone}
                   onChange={handleInputChange}
                   className="w-full mb-3 px-4 py-2 border rounded-md"
+                  disabled={isLoading}
                 />
               </div>
               <div>
@@ -200,6 +255,7 @@ export default function Profile({ user: initialUser }: ProfileProps) {
                   value={formData.location}
                   onChange={handleInputChange}
                   className="w-full mb-3 px-4 py-2 border rounded-md"
+                  disabled={isLoading}
                 />
               </div>
               <div>
@@ -210,6 +266,7 @@ export default function Profile({ user: initialUser }: ProfileProps) {
                   value={formData.country}
                   onChange={handleInputChange}
                   className="w-full mb-3 px-4 py-2 border rounded-md"
+                  disabled={isLoading}
                 />
               </div>
             </div>
@@ -221,6 +278,7 @@ export default function Profile({ user: initialUser }: ProfileProps) {
                 accept="image/*"
                 onChange={handleImageChange}
                 className="w-full text-sm"
+                disabled={isLoading}
               />
               {formData.image && (
                 <img
@@ -238,21 +296,32 @@ export default function Profile({ user: initialUser }: ProfileProps) {
                 value={formData.bio}
                 onChange={handleInputChange}
                 className="w-full mb-3 px-4 py-2 border rounded-md resize-none"
+                disabled={isLoading}
               />
             </div>
 
             <div className="flex justify-end space-x-3">
               <button
-                className="px-4 py-2 rounded-md bg-[var(--secondary)] cursor-pointer text-[var(--foreground)]"
+                className="px-4 py-2 rounded-md bg-[var(--secondary)] cursor-pointer text-[var(--foreground)] hover:bg-[var(--secondary-dark)] transition-colors"
                 onClick={() => setIsModalOpen(false)}
+                disabled={isLoading}
               >
                 Cancel
               </button>
               <button
-                className="px-4 py-2 rounded-md bg-[var(--primary)] text-[var(--foreground)] cursor-pointer"
+                className="px-4 py-2 rounded-md bg-[var(--primary)] text-[var(--foreground)] cursor-pointer hover:bg-[var(--primary-dark)] transition-colors flex items-center justify-center min-w-[80px]"
                 onClick={handleSave}
+                disabled={isLoading}
               >
-                Save
+                {isLoading ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Saving...
+                  </>
+                ) : 'Save'}
               </button>
             </div>
           </div>
