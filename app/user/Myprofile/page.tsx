@@ -1,19 +1,24 @@
 'use client';
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { z } from "zod";
 
-interface User {
+// Define schema for form validation
+const userSchema = z.object({
+  firstname: z.string().min(1, "First name is required"),
+  lastname: z.string().optional(),
+  username: z.string().optional(),
+  phone: z.string().regex(/^[+]?[(]?[0-9]{1,4}[)]?[-\s./0-9]*$/, "Invalid phone number").optional(),
+  location: z.string().optional(),
+  country: z.string().optional(),
+  bio: z.string().max(500, "Bio must be less than 500 characters").optional(),
+  image: z.string().optional(),
+});
+
+type User = z.infer<typeof userSchema> & {
   id: string;
   email: string;
-  firstname?: string | null;
-  lastname?: string | null;
-  username?: string | null;
-  image?: string | null;
-  phone?: string | null;
-  location?: string | null;
-  country?: string | null;
-  bio?: string | null;
-}
+};
 
 interface ProfileProps {
   user: User;
@@ -21,12 +26,13 @@ interface ProfileProps {
 
 export default function Profile({ user: initialUser }: ProfileProps) {
   const router = useRouter();
-  const [user, setUser] = useState<User>(initialUser);
+  const [user, setUser] = useState<User | null>(initialUser);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<Omit<User, 'id' | 'email'>>({
     firstname: "",
     lastname: "",
     username: "",
@@ -36,14 +42,118 @@ export default function Profile({ user: initialUser }: ProfileProps) {
     country: "",
     bio: "",
   });
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+
+  // Verify authentication and fetch user data
+  useEffect(() => {
+    const verifyAuth = async () => {
+      try {
+        console.log('[Auth] Starting verification...');
+        setIsVerifying(true);
+        
+        // 1. Verify authentication
+        console.log('[Auth] Calling /api/auth/verify...');
+        const authRes = await fetch('/api/auth/verify', {
+          credentials: 'include',
+        });
+
+        console.log(`[Auth] Verify response status: ${authRes.status}`);
+        
+        if (authRes.status !== 200) {
+          interface ErrorResponse {
+            error?: string;
+            message?: string;
+            [key: string]: any;
+          }
+
+          let errorData: ErrorResponse = {};
+          
+          try {
+            // First try to parse as JSON
+            errorData = (await authRes.json()) as ErrorResponse;
+          } catch (jsonError) {
+            // If JSON parsing fails, get the text response instead
+            try {
+              const text = await authRes.text();
+              errorData = { error: text || 'Unknown error' };
+            } catch (textError) {
+              errorData = { error: 'Failed to parse error response' };
+            }
+          }
+
+          const errorMessage = errorData.error || errorData.message || 'Not authenticated';
+          
+          console.error('[Auth] Verification failed:', {
+            status: authRes.status,
+            statusText: authRes.statusText,
+            url: authRes.url,
+            error: errorMessage,
+            fullError: errorData
+          });
+
+          throw new Error(errorMessage);
+        }
+
+        console.log('[Auth] Verification successful');
+        
+        // 2. Fetch user data if needed
+        if (!initialUser) {
+          console.log('[Auth] Fetching user data from /api/users/me...');
+          const userRes = await fetch('/api/users/me', {
+            credentials: 'include',
+          });
+          
+          console.log(`[Auth] User data response status: ${userRes.status}`);
+          
+          if (!userRes.ok) {
+            let userErrorData: { error?: string } = {};
+            try {
+              userErrorData = await userRes.json();
+            } catch {
+              userErrorData = {};
+            }
+            
+            console.error('[Auth] User fetch failed:', {
+              status: userRes.status,
+              statusText: userRes.statusText,
+              error: userErrorData.error || 'No error details'
+            });
+            throw new Error(userErrorData.error || 'Failed to fetch user');
+          }
+
+          const userData = await userRes.json();
+          console.log('[Auth] User data received:', userData);
+          setUser(userData);
+        }
+      } catch (error) {
+        console.error('[Auth] Authentication check failed:', error);
+        router.push('/login');
+      } finally {
+        console.log('[Auth] Verification process completed');
+        setIsVerifying(false);
+      }
+    };
+
+    verifyAuth();
+  }, [router, initialUser]);
 
   useEffect(() => {
-    if (initialUser) {
-      setUser(initialUser);
+    if (user) {
+      setFormData({
+        firstname: user.firstname || "",
+        lastname: user.lastname || "",
+        username: user.username || "",
+        phone: user.phone || "",
+        location: user.location || "",
+        country: user.country || "",
+        image: user.image || "",
+        bio: user.bio || "",
+      });
     }
-  }, [initialUser]);
+  }, [user]);
 
   const openEditModal = () => {
+    if (!user) return;
     setFormData({
       firstname: user.firstname || "",
       lastname: user.lastname || "",
@@ -54,14 +164,24 @@ export default function Profile({ user: initialUser }: ProfileProps) {
       image: user.image || "",
       bio: user.bio || "",
     });
+    setFormErrors({});
     setIsModalOpen(true);
     setError(null);
     setSuccess(null);
   };
-  
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    
+    // Clear error when user starts typing
+    if (formErrors[name]) {
+      setFormErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
   };
 
   const handleSave = async () => {
@@ -69,19 +189,27 @@ export default function Profile({ user: initialUser }: ProfileProps) {
       setIsLoading(true);
       setError(null);
       
-      // Basic validation
-      if (!formData.firstname.trim()) {
-        throw new Error("First name is required");
+      // Validate form data
+      const validation = userSchema.safeParse(formData);
+      if (!validation.success) {
+        const errors: Record<string, string> = {};
+        validation.error.issues.forEach(issue => {
+          if (issue.path.length > 0) {
+            const fieldName = issue.path[0] as string;
+            errors[fieldName] = issue.message;
+          }
+        });
+        setFormErrors(errors);
+        return;
       }
 
-      const updatedUser = { ...user, ...formData };
+      const updatedUser = { ...user, ...formData } as User;
       
-      const response = await fetch(`/api/users/${user.id}`, {
+      const response = await fetch(`/api/users/${user?.id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedUser),
+        credentials: 'include',
       });
 
       if (!response.ok) {
@@ -103,7 +231,7 @@ export default function Profile({ user: initialUser }: ProfileProps) {
     }
   };
 
-  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       // Basic image validation
@@ -121,212 +249,282 @@ export default function Profile({ user: initialUser }: ProfileProps) {
     }
   };
 
-  if (!user) {
+  if (isVerifying || !user) {
     return (
       <div className="min-h-screen bg-[var(--background)] flex items-center justify-center text-center p-4">
         <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
-          <h2 className="text-xl font-semibold mb-2">Loading profile...</h2>
+          <div className="flex justify-center">
+            <svg className="animate-spin h-8 w-8 text-[var(--primary)]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          </div>
+          <h2 className="text-xl font-semibold mt-4">Loading profile...</h2>
         </div>
       </div>
     );
   }
 
   return (
-    <>
-      <h1 className="text-2xl font-bold mb-4 text-[var(--primary)]">My Profile</h1>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-2xl font-bold mb-6 text-[var(--primary)]">My Profile</h1>
       
       {success && (
-        <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-md">
+        <div className="mb-6 p-4 bg-green-100 text-green-700 rounded-md shadow">
           {success}
         </div>
       )}
       
       {error && (
-        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">
+        <div className="mb-6 p-4 bg-red-100 text-red-700 rounded-md shadow">
           {error}
         </div>
       )}
 
-      <div className="bg-[var(--background)] rounded-2xl shadow p-4 flex items-center gap-4 mb-6">
-        <img
-          src={user.image || "/default-avatar.png"}
-          alt="Profile"
-          className="w-16 h-16 rounded-full object-cover"
-        />
-        <div>
+      <div className="bg-[var(--background)] rounded-2xl shadow p-6 flex flex-col sm:flex-row items-center gap-6 mb-8">
+        <div className="relative">
+          <img
+            src={user.image || "/default-avatar.png"}
+            alt="Profile"
+            className="w-24 h-24 rounded-full object-cover border-2 border-[var(--primary)]"
+          />
+        </div>
+        <div className="flex-1">
           <h2 className="text-xl font-semibold text-[var(--text)]">
-            {user.firstname} {user.lastname} {user.username}
+            {user.firstname} {user.lastname} {user.username && `(@${user.username})`}
           </h2>
-          {user.bio && <p className="text-[var(--secondary)]">{user.bio}</p>}
-          {user.location && <p className="text-[var(--secondary)] text-sm">{user.location}</p>}
+          {user.bio && <p className="text-[var(--secondary)] mt-2">{user.bio}</p>}
+          {user.location && <p className="text-[var(--secondary)] text-sm mt-1">{user.location}</p>}
         </div>
         <button 
-          className="ml-auto text-sm text-[var(--foreground)] bg-[var(--primary)] rounded p-1 cursor-pointer  transition-colors" 
+          className="px-4 py-2 text-sm text-[var(--foreground)] bg-[var(--primary)] rounded-lg cursor-pointer transition-colors flex items-center gap-2"
           onClick={openEditModal}
           disabled={isLoading}
         >
-          ✎ Edit
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          </svg>
+          Edit Profile
         </button>
       </div>
 
-      {/* Personal Info */}
-      <div className="bg-[var(--background)] text-[var(--text)] rounded-2xl shadow p-4 mb-6">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="font-semibold">Personal Information</h3>
+      <div className="bg-[var(--background)] text-[var(--text)] rounded-2xl shadow p-6 mb-8">
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="font-semibold text-lg">Personal Information</h3>
         </div>
-        <div className="grid grid-cols-2 gap-4 text-sm">
-          <div><strong>First Name:</strong><p className="text-[var(--secondary)]"> {user.firstname}</p></div>
-          {user.lastname && <div><strong>Last Name:</strong><p className="text-[var(--secondary)]"> {user.lastname}</p></div>}
-          {user.username && <div><strong>Username:</strong><p className="text-[var(--secondary)]"> {user.username}</p></div>}
-          <div><strong>Email:</strong><p className="text-[var(--secondary)]"> {user.email}</p></div>
-          {user.phone && <div><strong>Phone:</strong><p className="text-[var(--secondary)]"> {user.phone}</p></div>}
-          {user.bio && <div className="col-span-2"><strong>Bio:</strong><p className="text-[var(--secondary)]"> {user.bio}</p></div>}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <p className="text-sm text-[var(--secondary)] mb-1">First Name</p>
+            <p className="font-medium">{user.firstname}</p>
+          </div>
+          {user.lastname && (
+            <div>
+              <p className="text-sm text-[var(--secondary)] mb-1">Last Name</p>
+              <p className="font-medium">{user.lastname}</p>
+            </div>
+          )}
+          {user.username && (
+            <div>
+              <p className="text-sm text-[var(--secondary)] mb-1">Username</p>
+              <p className="font-medium">@{user.username}</p>
+            </div>
+          )}
+          <div>
+            <p className="text-sm text-[var(--secondary)] mb-1">Email</p>
+            <p className="font-medium">{user.email}</p>
+          </div>
+          {user.phone && (
+            <div>
+              <p className="text-sm text-[var(--secondary)] mb-1">Phone</p>
+              <p className="font-medium">{user.phone}</p>
+            </div>
+          )}
+          {user.bio && (
+            <div className="md:col-span-2">
+              <p className="text-sm text-[var(--secondary)] mb-1">Bio</p>
+              <p className="font-medium">{user.bio}</p>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Address Info */}
       {(user.country || user.location) && (
-        <div className="bg-[var(--background)] text-[var(--text)] rounded-2xl shadow p-4">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="font-semibold">Address</h3>
+        <div className="bg-[var(--background)] text-[var(--text)] rounded-2xl shadow p-6">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="font-semibold text-lg">Location</h3>
           </div>
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            {user.country && <div><strong>Country:</strong><p className="text-[var(--secondary)]"> {user.country}</p></div>}
-            {user.location && <div><strong>City/State:</strong><p className="text-[var(--secondary)]"> {user.location}</p></div>}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {user.country && (
+              <div>
+                <p className="text-sm text-[var(--secondary)] mb-1">Country</p>
+                <p className="font-medium">{user.country}</p>
+              </div>
+            )}
+            {user.location && (
+              <div>
+                <p className="text-sm text-[var(--secondary)] mb-1">City/State</p>
+                <p className="font-medium">{user.location}</p>
+              </div>
+            )}
           </div>
         </div>
       )}
 
-      {/* Edit Profile Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 flex text-sm items-center justify-center bg-[var(--background)] bg-opacity-40 z-50">
-          <div className="bg-[var(--background2)] text-[var(--text)] mt-20 p-10 rounded-xl shadow-lg w-full max-w-sm">
-            <h3 className="text-lg font-semibold mb-4">Edit Profile</h3>
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <input
-                  type="text"
-                  name="firstname"
-                  placeholder="First Name"
-                  value={formData.firstname}
-                  onChange={handleInputChange}
-                  className="w-full mb-3 px-4 py-2 border rounded-md"
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-500">
+          <div className="bg-[var(--background2)] text-[var(--text)] rounded-xl shadow-lg w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-semibold">Edit Profile</h3>
+                <button 
+                  onClick={() => setIsModalOpen(false)}
+                  className="text-[var(--secondary)] hover:text-[var(--text)]"
                   disabled={isLoading}
-                />
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
               </div>
-              <div>
-                <input
-                  type="text"
-                  name="lastname"
-                  placeholder="Last Name"
-                  value={formData.lastname}
-                  onChange={handleInputChange}
-                  className="w-full mb-3 px-4 py-2 border rounded-md"
-                  disabled={isLoading}
-                />
-              </div>
-              <div>
-                <input
-                  type="text"
-                  name="username"
-                  placeholder="Username"
-                  value={formData.username}
-                  onChange={handleInputChange}
-                  className="w-full mb-3 px-4 py-2 border rounded-md"
-                  disabled={isLoading}
-                />
-              </div>
-              <div>
-                <input
-                  type="tel"
-                  name="phone"
-                  placeholder="Phone"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  className="w-full mb-3 px-4 py-2 border rounded-md"
-                  disabled={isLoading}
-                />
-              </div>
-              <div>
-                <input
-                  type="text"
-                  name="location"
-                  placeholder="Location"
-                  value={formData.location}
-                  onChange={handleInputChange}
-                  className="w-full mb-3 px-4 py-2 border rounded-md"
-                  disabled={isLoading}
-                />
-              </div>
-              <div>
-                <input
-                  type="text"
-                  name="country"
-                  placeholder="Country"
-                  value={formData.country}
-                  onChange={handleInputChange}
-                  className="w-full mb-3 px-4 py-2 border rounded-md"
-                  disabled={isLoading}
-                />
-              </div>
-            </div>
 
-            <div className="mb-3">
-              <label className="block mb-1 font-medium">Profile Image</label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="w-full text-sm"
-                disabled={isLoading}
-              />
-              {formData.image && (
-                <img
-                  src={formData.image}
-                  alt="Preview"
-                  className="w-20 h-20 mt-2 object-cover rounded-full border"
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                <div>
+                  <label className="block text-sm font-medium text-[var(--secondary)] mb-1">First Name*</label>
+                  <input
+                    type="text"
+                    name="firstname"
+                    value={formData.firstname}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-2 border rounded-md ${formErrors.firstname ? 'border-red-500' : 'border-[var(--border)]'}`}
+                    disabled={isLoading}
+                  />
+                  {formErrors.firstname && <p className="text-red-500 text-xs mt-1">{formErrors.firstname}</p>}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--secondary)] mb-1">Last Name</label>
+                  <input
+                    type="text"
+                    name="lastname"
+                    value={formData.lastname}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 border border-[var(--border)] rounded-md"
+                    disabled={isLoading}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--secondary)] mb-1">Username</label>
+                  <input
+                    type="text"
+                    name="username"
+                    value={formData.username}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 border border-[var(--border)] rounded-md"
+                    disabled={isLoading}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--secondary)] mb-1">Phone</label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-2 border rounded-md ${formErrors.phone ? 'border-red-500' : 'border-[var(--border)]'}`}
+                    disabled={isLoading}
+                  />
+                  {formErrors.phone && <p className="text-red-500 text-xs mt-1">{formErrors.phone}</p>}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--secondary)] mb-1">Location</label>
+                  <input
+                    type="text"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 border border-[var(--border)] rounded-md"
+                    disabled={isLoading}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--secondary)] mb-1">Country</label>
+                  <input
+                    type="text"
+                    name="country"
+                    value={formData.country}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 border border-[var(--border)] rounded-md"
+                    disabled={isLoading}
+                  />
+                </div>
+              </div>
+
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-[var(--secondary)] mb-2">Profile Image</label>
+                <div className="flex items-center gap-4">
+                  <div className="relative">
+                    <img
+                      src={formData.image || "/default-avatar.png"}
+                      alt="Preview"
+                      className="w-16 h-16 rounded-full object-cover border-2 border-[var(--primary)]"
+                    />
+                  </div>
+                  <label className="flex-1">
+                    <div className="px-4 py-2 bg-[var(--background)] text-[var(--text)] rounded-md border border-[var(--border)] hover:bg-[var(--background-light)] cursor-pointer transition-colors text-center">
+                      Change Photo
+                    </div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="hidden"
+                      disabled={isLoading}
+                    />
+                  </label>
+                </div>
+              </div>
+
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-[var(--secondary)] mb-1">Bio</label>
+                <textarea
+                  name="bio"
+                  value={formData.bio}
+                  onChange={handleInputChange}
+                  className={`w-full px-4 py-2 border rounded-md ${formErrors.bio ? 'border-red-500' : 'border-[var(--border)]'}`}
+                  rows={3}
+                  disabled={isLoading}
                 />
-              )}
-            </div>
+                {formErrors.bio && <p className="text-red-500 text-xs mt-1">{formErrors.bio}</p>}
+                <p className="text-xs text-[var(--secondary)] mt-1">{(formData.bio || '').length}/500 characters</p>
+              </div>
 
-            <div>
-              <textarea
-                name="bio"
-                placeholder="Bio"
-                value={formData.bio}
-                onChange={handleInputChange}
-                className="w-full mb-3 px-4 py-2 border rounded-md resize-none"
-                disabled={isLoading}
-              />
-            </div>
-
-            <div className="flex justify-end space-x-3">
-              <button
-                className="px-4 py-2 rounded-md bg-[var(--secondary)] cursor-pointer text-[var(--foreground)] hover:bg-[var(--secondary-dark)] transition-colors"
-                onClick={() => setIsModalOpen(false)}
-                disabled={isLoading}
-              >
-                Cancel
-              </button>
-              <button
-                className="px-4 py-2 rounded-md bg-[var(--primary)] text-[var(--foreground)] cursor-pointer hover:bg-[var(--primary-dark)] transition-colors flex items-center justify-center min-w-[80px]"
-                onClick={handleSave}
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <>
-                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Saving...
-                  </>
-                ) : 'Save'}
-              </button>
+              <div className="flex justify-end gap-3">
+                <button
+                  className="px-6 py-2 rounded-md bg-[var(--background)] text-[var(--text)] cursor-pointer border border-[var(--border)] hover:bg-[var(--background-light)] transition-colors"
+                  onClick={() => setIsModalOpen(false)}
+                  disabled={isLoading}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="px-6 py-2 rounded-md bg-[var(--primary)] text-[var(--foreground)] cursor-pointer transition-colors flex items-center justify-center min-w-[100px]"
+                  onClick={handleSave}
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Saving
+                    </>
+                  ) : 'Save Changes'}
+                </button>
+              </div>
             </div>
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }

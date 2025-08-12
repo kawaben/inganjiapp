@@ -53,7 +53,8 @@ export async function middleware(req: NextRequest) {
       )
     }
 
-    const token = authHeader.split(' ')[1]
+    const token = req.cookies.get('auth-token')?.value || 
+             authHeader?.split(' ')[1];
 
     try {
       // 3.2 Verify token

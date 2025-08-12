@@ -10,7 +10,7 @@ export async function POST() {
     );
     
     // Clear the token cookie
-    response.cookies.delete('token');
+    response.cookies.delete('auth-token');
     
     return response;
   } catch (error) {

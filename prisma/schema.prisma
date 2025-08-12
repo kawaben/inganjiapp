@@ -20,7 +20,7 @@ model User {
   password  String
   firstname String?
   lastname  String?
-  username  String?
+  username  String? @unique
   phone     String?
   bio       String?
   location  String?
