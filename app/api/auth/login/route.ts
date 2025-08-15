@@ -36,7 +36,7 @@ export async function POST(request: Request) {
 
   // Set HTTP-only cookie with the token
   response.cookies.set({
-    name: "auth-token",
+    name: "token",
     value: token,
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
