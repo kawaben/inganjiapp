@@ -9,6 +9,10 @@ interface User {
   lastname?: string;
   username?: string;
   image?: string;
+  phone?:string;
+  location?: string;
+  country?: string;
+  bio?: string;
 }
 
 interface UserContextType {

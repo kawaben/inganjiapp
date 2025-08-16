@@ -1,10 +1,13 @@
+
 'use client';
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
+import { useUser } from "../../context/UserContext";
 
 // Define schema for form validation
 const userSchema = z.object({
+  email: z.string().min(1, "First name is required"),
   firstname: z.string().min(1, "First name is required"),
   lastname: z.string().optional(),
   username: z.string().optional(),
@@ -15,24 +18,33 @@ const userSchema = z.object({
   image: z.string().optional(),
 });
 
-type User = z.infer<typeof userSchema> & {
+type UserFormData = z.infer<typeof userSchema>;
+
+// Type definitions
+interface User {
   id: string;
   email: string;
-};
-
-interface ProfileProps {
-  user: User;
+  firstname: string;
+  lastname: string;
+  username: string;
+  image: string;
+  phone:string;
+  location: string;
+  country: string;
+  bio: string;
+  role?: string;
 }
 
-export default function Profile({ user: initialUser }: ProfileProps) {
+export default function Profile() {
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(initialUser);
+  const { isAuthenticated, isLoading: isUserLoading, checkAuth } = useUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isVerifying, setIsVerifying] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [formData, setFormData] = useState<Omit<User, 'id' | 'email'>>({
+  const [user, setUser] = useState<User | null>(null);
+  const [formData, setFormData] = useState<UserFormData>({
+    email: "",
     firstname: "",
     lastname: "",
     username: "",
@@ -44,102 +56,11 @@ export default function Profile({ user: initialUser }: ProfileProps) {
   });
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
-  // Verify authentication and fetch user data
-  useEffect(() => {
-    const verifyAuth = async () => {
-      try {
-        console.log('[Auth] Starting verification...');
-        setIsVerifying(true);
-        
-        // 1. Verify authentication
-        console.log('[Auth] Calling /api/auth/verify...');
-        const authRes = await fetch('/api/auth/verify', {
-          credentials: 'include',
-        });
-
-        console.log(`[Auth] Verify response status: ${authRes.status}`);
-        
-        if (authRes.status !== 200) {
-          interface ErrorResponse {
-            error?: string;
-            message?: string;
-            [key: string]: any;
-          }
-
-          let errorData: ErrorResponse = {};
-          
-          try {
-            // First try to parse as JSON
-            errorData = (await authRes.json()) as ErrorResponse;
-          } catch (jsonError) {
-            // If JSON parsing fails, get the text response instead
-            try {
-              const text = await authRes.text();
-              errorData = { error: text || 'Unknown error' };
-            } catch (textError) {
-              errorData = { error: 'Failed to parse error response' };
-            }
-          }
-
-          const errorMessage = errorData.error || errorData.message || 'Not authenticated';
-          
-          console.error('[Auth] Verification failed:', {
-            status: authRes.status,
-            statusText: authRes.statusText,
-            url: authRes.url,
-            error: errorMessage,
-            fullError: errorData
-          });
-
-          throw new Error(errorMessage);
-        }
-
-        console.log('[Auth] Verification successful');
-        
-        // 2. Fetch user data if needed
-        if (!initialUser) {
-          console.log('[Auth] Fetching user data from /api/users/me...');
-          const userRes = await fetch('/api/users/me', {
-            credentials: 'include',
-          });
-          
-          console.log(`[Auth] User data response status: ${userRes.status}`);
-          
-          if (!userRes.ok) {
-            let userErrorData: { error?: string } = {};
-            try {
-              userErrorData = await userRes.json();
-            } catch {
-              userErrorData = {};
-            }
-            
-            console.error('[Auth] User fetch failed:', {
-              status: userRes.status,
-              statusText: userRes.statusText,
-              error: userErrorData.error || 'No error details'
-            });
-            throw new Error(userErrorData.error || 'Failed to fetch user');
-          }
-
-          const userData = await userRes.json();
-          console.log('[Auth] User data received:', userData);
-          setUser(userData);
-        }
-      } catch (error) {
-        console.error('[Auth] Authentication check failed:', error);
-        router.push('/login');
-      } finally {
-        console.log('[Auth] Verification process completed');
-        setIsVerifying(false);
-      }
-    };
-
-    verifyAuth();
-  }, [router, initialUser]);
-
+  // Initialize form data when user is available
   useEffect(() => {
     if (user) {
       setFormData({
+        email: user.email || "",
         firstname: user.firstname || "",
         lastname: user.lastname || "",
         username: user.username || "",
@@ -152,9 +73,17 @@ export default function Profile({ user: initialUser }: ProfileProps) {
     }
   }, [user]);
 
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!isUserLoading && !isAuthenticated) {
+     // router.push('/');
+    }
+  }, [isUserLoading, isAuthenticated, router]);
+
   const openEditModal = () => {
     if (!user) return;
     setFormData({
+      email: user.email || "",
       firstname: user.firstname || "",
       lastname: user.lastname || "",
       username: user.username || "",
@@ -185,53 +114,58 @@ export default function Profile({ user: initialUser }: ProfileProps) {
   };
 
   const handleSave = async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      
-      // Validate form data
-      const validation = userSchema.safeParse(formData);
-      if (!validation.success) {
-        const errors: Record<string, string> = {};
-        validation.error.issues.forEach(issue => {
-          if (issue.path.length > 0) {
-            const fieldName = issue.path[0] as string;
-            errors[fieldName] = issue.message;
-          }
-        });
-        setFormErrors(errors);
-        return;
-      }
+  if (!user) return;
 
-      const updatedUser = { ...user, ...formData } as User;
-      
-      const response = await fetch(`/api/users/${user?.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedUser),
-        credentials: 'include',
+  try {
+    setIsLoading(true);
+    setError(null);
+    setFormErrors({});
+
+    // ✅ Validate form data
+    const validation = userSchema.safeParse(formData);
+    if (!validation.success) {
+      const errors: Record<string, string> = {};
+      validation.error.issues.forEach(issue => {
+        if (issue.path.length > 0) {
+          const fieldName = issue.path[0] as string;
+          errors[fieldName] = issue.message;
+        }
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to update profile');
-      }
-
-      const savedUser = await response.json();
-      setUser(savedUser);
-      setIsModalOpen(false);
-      setSuccess('Profile updated successfully!');
-      setTimeout(() => setSuccess(null), 3000);
-      
-    } catch (err) {
-      console.error("Error updating user:", err);
-      setError(err instanceof Error ? err.message : 'An unknown error occurred');
-    } finally {
-      setIsLoading(false);
+      setFormErrors(errors);
+      return;
     }
-  };
 
-const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    // ✅ Send update request
+    const response = await fetch(`/api/users/${user.id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData),
+      credentials: 'include',
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Failed to update profile');
+    }
+
+    // ✅ Get updated user directly from response
+    const updatedUser = await response.json();
+
+    // ✅ Update user state directly instead of forcing re-check
+    setUser(updatedUser); // <-- prevents unwanted logout
+    setIsModalOpen(false);
+    setSuccess('Profile updated successfully!');
+    
+  } catch (err) {
+    console.error("Error updating user:", err);
+    setError(err instanceof Error ? err.message : 'An unknown error occurred');
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       // Basic image validation
@@ -249,7 +183,30 @@ const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     }
   };
 
-  if (isVerifying || !user) {
+  useEffect(() => {
+      const fetchUser = async () => {
+        try {
+          const response = await fetch('/api/auth/me', {
+            credentials: 'include'
+          });
+  
+          if (!response.ok) {
+            throw new Error('Not authenticated');
+          }
+  
+          const data = await response.json();
+          setUser(data.user);
+        } catch (error) {
+          console.error("Authentication error:", error);
+          router.push('/');
+        } 
+      };
+  
+      fetchUser();
+    }, [router]);
+
+
+  if (isUserLoading || !user) {
     return (
       <div className="min-h-screen bg-[var(--background)] flex items-center justify-center text-center p-4">
         <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
@@ -389,6 +346,18 @@ const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                 <div>
+                  <label className="block text-sm font-medium text-[var(--secondary)] mb-1">Email*</label>
+                  <input
+                    type="text"
+                    name="firstname"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-2 border rounded-md ${formErrors.email ? 'border-red-500' : 'border-[var(--border)]'}`}
+                    disabled={isLoading}
+                  />
+                  {formErrors.email && <p className="text-red-500 text-xs mt-1">{formErrors.email}</p>}
+                </div>
+                <div>
                   <label className="block text-sm font-medium text-[var(--secondary)] mb-1">First Name*</label>
                   <input
                     type="text"
@@ -498,17 +467,21 @@ const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
               </div>
 
               <div className="flex justify-end gap-3">
-                <button
+                <button 
                   className="px-6 py-2 rounded-md bg-[var(--background)] text-[var(--text)] cursor-pointer border border-[var(--border)] hover:bg-[var(--background-light)] transition-colors"
                   onClick={() => setIsModalOpen(false)}
                   disabled={isLoading}
                 >
                   Cancel
                 </button>
-                <button
+                <button type="button"
                   className="px-6 py-2 rounded-md bg-[var(--primary)] text-[var(--foreground)] cursor-pointer transition-colors flex items-center justify-center min-w-[100px]"
-                  onClick={handleSave}
+                  onClick={() => {
+                        handleSave();
+                       
+                      }}
                   disabled={isLoading}
+                  
                 >
                   {isLoading ? (
                     <>

@@ -2,30 +2,13 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { User, ShoppingCart, Heart, Bell, Settings, ClipboardList, LogOut } from 'lucide-react';
+import { useUser } from "../context/UserContext";
 import Profile from "./Myprofile/page"
 import Cart from "./Cart/page";
 import Wishlist from "./Wishlist/page";
 import Notifications from "./Notifications/page";
 import Setting from "./Settings/page";
 import Orders from "./orders/page";
-
-// Type definitions
-interface User {
-  id: string;
-  email: string;
-  firstname: string;
-  lastname: string;
-  username: string;
-  role?: string;
-}
-
-interface CartItem {
-  id: number;
-  name: string;
-  size: string;
-  price: number;
-  quantity: number;
-}
 
 type ActiveSection = 
   | "My Profile" 
@@ -37,56 +20,16 @@ type ActiveSection =
 
 export default function UserPage() {
   const [activeSection, setActiveSection] = useState<ActiveSection>("My Profile");
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter();
+  const { user, isAuthenticated, isLoading, logout } = useUser();
 
-  // Fetch user data from API
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await fetch('/api/auth/me', {
-          credentials: 'include'
-        });
-
-        if (!response.ok) {
-          throw new Error('Not authenticated');
-        }
-
-        const data = await response.json();
-        setUser(data.user);
-      } catch (error) {
-        console.error("Authentication error:", error);
-        router.push('/login');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, [router]);
-
-  const handleLogout = async () => {
-    try {
-      const response = await fetch('/api/auth/logout', {
-        method: 'POST',
-        credentials: 'include'
-      });
-
-      if (!response.ok) {
-        throw new Error('Logout failed');
-      }
-
-      // Clear client-side state
-      setUser(null);
-      router.push('/');
-    } catch (error) {
-      console.error('Logout error:', error);
-      alert('Logout failed. Please try again.');
+    if (!isLoading && !isAuthenticated) {
+     router.push('/');
     }
-  };
+  }, [isLoading, isAuthenticated, router]);
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-[var(--background)] flex items-center justify-center">
         <p>Loading...</p>
@@ -94,7 +37,7 @@ export default function UserPage() {
     );
   }
 
-  if (!user) {
+  if (!isAuthenticated || !user) {
     return (
       <div className="min-h-screen bg-[var(--background)] flex items-center justify-center">
         <p>Redirecting to login...</p>
@@ -132,7 +75,7 @@ export default function UserPage() {
             ))}
             <li>
               <button 
-                onClick={handleLogout}
+                onClick={logout}
                 className="flex items-center gap-3 px-4 py-2 rounded-md text-[var(--hover)] hover:bg-[var(--secondary)] cursor-pointer transition w-full"
               >
                 <LogOut size={18} />
@@ -144,7 +87,7 @@ export default function UserPage() {
 
         {/* Main Content */}
         <main className="flex-1 p-4 md:p-8">
-          {activeSection === "My Profile" && <Profile user={user} />}
+          {activeSection === "My Profile" && <Profile/>}
           {activeSection === "Cart" && <Cart />}
           {activeSection === "Wishlist" && <Wishlist />}
           {activeSection === "Notifications" && <Notifications />}
