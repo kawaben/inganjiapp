@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 interface User {
-  id: number;
+  user_id: number;
   email: string;
   firstname: string;
   lastname?: string;

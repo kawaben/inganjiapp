@@ -37,7 +37,7 @@ export async function GET() {
     return NextResponse.json({
       success: true,
       user: {
-        id: decoded.userId,
+        user_id: decoded.userId,
         email: decoded.email
       }
     });

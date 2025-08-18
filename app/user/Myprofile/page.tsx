@@ -22,7 +22,7 @@ type UserFormData = z.infer<typeof userSchema>;
 
 // Type definitions
 interface User {
-  id: string;
+  user_id: string;
   email: string;
   firstname: string;
   lastname: string;
@@ -136,7 +136,7 @@ export default function Profile() {
     }
 
     // ✅ Send update request
-    const response = await fetch(`/api/users/${user.id}`, {
+    const response = await fetch(`/api/users/${user.user_id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),

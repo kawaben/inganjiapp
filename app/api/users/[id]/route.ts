@@ -5,21 +5,21 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 type Params = {
   params: {
-    id: string;
+    user_id: string;
   };
 };
 
 export async function GET(request: Request, { params }: Params) {
   try {
-    const id = parseInt(params.id);
-    if (isNaN(id)) {
+    const user_id = parseInt(params.user_id); // Changed from 'id' to 'user_id'
+    if (isNaN(user_id)) {
       return NextResponse.json({ error: "Invalid user ID" }, { status: 400 });
     }
 
     const user = await prisma.user.findUnique({
-      where: { id },
+      where: { user_id }, // Now matches the variable name
       select: {
-        id: true,
+        user_id: true,
         email: true,
         username: true,
         firstname: true,
@@ -48,8 +48,8 @@ export async function GET(request: Request, { params }: Params) {
 
 export async function PUT(request: Request, { params }: Params) {
   try {
-    const id = parseInt(params.id);
-    if (isNaN(id)) {
+    const user_id = parseInt(params.user_id); // Changed from 'id' to 'user_id'
+    if (isNaN(user_id)) {
       return NextResponse.json({ error: "Invalid user ID" }, { status: 400 });
     }
 
@@ -63,7 +63,7 @@ export async function PUT(request: Request, { params }: Params) {
     }
 
     const updatedUser = await prisma.user.update({
-      where: { id },
+      where: { user_id }, // Now matches the variable name
       data: {
         email: body.email,
         firstname: body.firstname,
@@ -76,7 +76,7 @@ export async function PUT(request: Request, { params }: Params) {
         image: body.image,
       },
       select: {
-        id: true,
+        user_id: true,
         email: true,
         username: true,
         firstname: true,
@@ -93,7 +93,6 @@ export async function PUT(request: Request, { params }: Params) {
   } catch (error) {
     console.error("Update user error:", error);
     
-    // error handling for Prisma
     if (error instanceof PrismaClientKnownRequestError) {
       if (error.code === "P2025") {
         return NextResponse.json(

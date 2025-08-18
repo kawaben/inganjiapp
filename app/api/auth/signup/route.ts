@@ -43,7 +43,7 @@ export async function POST(request: Request) {
         phone: body.phone || null,
       },
       select: {
-        id: true,
+        user_id: true,
         email: true,
         firstname: true,
         lastname: true,
@@ -54,7 +54,7 @@ export async function POST(request: Request) {
     // 🔐 Generate JWT Token
     const token = jwt.sign(
       {
-        id: newUser.id,
+        user_id: newUser.user_id,
         email: newUser.email,
       },
       process.env.JWT_SECRET!,

@@ -7,6 +7,7 @@
 generator client {
   provider = "prisma-client-js"
   output   = "../app/generated/prisma"
+  previewFeatures = ["clientExtensions"]
 }
 
 datasource db {
@@ -15,7 +16,7 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
+  user_id        Int      @id @default(autoincrement())
   email     String   @unique
   password  String
   firstname String?
@@ -44,22 +45,21 @@ model Product {
 }
 
 model Cart {
-  id        Int    @id @default(autoincrement())
+  id        Int     @id @default(autoincrement())
+  user      User    @relation(fields: [userId], references: [user_id])  // Changed from [id]
+  product   Product @relation(fields: [productId], references: [id])
   userId    Int
   productId Int
   color     String
   size      String
   quantity  Int
-
-  user    User    @relation(fields: [userId], references: [id])
-  product Product @relation(fields: [productId], references: [id])
 }
 
 model Order {
   id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [user_id])  // Changed from [id]
   userId    Int
-  user      User     @relation(fields: [userId], references: [id])
-  items     Json // Array of items with product info + quantity
+  items     Json
   total     Float
   createdAt DateTime @default(now())
 }

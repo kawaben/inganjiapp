@@ -5,7 +5,7 @@ import { useUser } from "../context/UserContext";
 
 // Type definitions
 interface User {
-  id: string;
+  user_id: string;
   email: string;
   firstname: string;
   lastname: string;
