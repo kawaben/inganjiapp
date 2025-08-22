@@ -5,6 +5,8 @@ import jwt from 'jsonwebtoken'
 import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
 
+
+
 // Initialize rate limiter (10 requests per minute per IP)
 const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(),
@@ -15,6 +17,14 @@ const JWT_SECRET = process.env.JWT_SECRET!
 
 export async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname
+
+  if (!process.env.JWT_SECRET) {
+  console.error('JWT_SECRET is not set!');
+  return new NextResponse(
+    JSON.stringify({ error: 'Server configuration error' }),
+    { status: 500 }
+  );
+}
 
   // 1. Skip middleware for auth/public routes
   if (
@@ -53,7 +63,7 @@ export async function middleware(req: NextRequest) {
       )
     }
 
-    const token = req.cookies.get('auth-token')?.value || 
+    const token = req.cookies.get('token')?.value || 
              authHeader?.split(' ')[1];
 
     try {

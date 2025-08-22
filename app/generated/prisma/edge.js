@@ -190,7 +190,9 @@ const config = {
         "native": true
       }
     ],
-    "previewFeatures": [],
+    "previewFeatures": [
+      "clientExtensions"
+    ],
     "sourceFilePath": "C:\\Projects\\inganjiapp\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
@@ -214,8 +216,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../app/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  user_id   Int      @id @default(autoincrement())\n  email     String   @unique\n  password  String\n  firstname String?\n  lastname  String?\n  username  String?  @unique\n  phone     String?\n  bio       String?\n  location  String?\n  country   String?\n  image     String?\n  cart      Cart[]\n  orders    Order[]\n  createdAt DateTime @default(now())\n}\n\nmodel Product {\n  id          Int      @id @default(autoincrement())\n  name        String\n  description String\n  price       Float\n  image       String\n  category    String\n  createdAt   DateTime @default(now())\n\n  cartItems Cart[]\n}\n\nmodel Cart {\n  id        Int     @id @default(autoincrement())\n  user      User    @relation(fields: [userId], references: [user_id]) // Changed from [id]\n  product   Product @relation(fields: [productId], references: [id])\n  userId    Int\n  productId Int\n  color     String\n  size      String\n  quantity  Int\n}\n\nmodel Order {\n  id        Int      @id @default(autoincrement())\n  user      User     @relation(fields: [userId], references: [user_id]) // Changed from [id]\n  userId    Int\n  items     Json\n  total     Float\n  createdAt DateTime @default(now())\n}\n",
-  "inlineSchemaHash": "4c2e5353a3a65dfa584f27f66b837f8b57b5938ef9217b5ad8c1182a4bdfd05e",
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider        = \"prisma-client-js\"\n  output          = \"../app/generated/prisma\"\n  previewFeatures = [\"clientExtensions\"]\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  user_id   Int      @id @default(autoincrement())\n  email     String   @unique\n  password  String\n  firstname String?\n  lastname  String?\n  username  String?  @unique\n  phone     String?\n  bio       String?\n  location  String?\n  country   String?\n  image     String?\n  cart      Cart[]\n  orders    Order[]\n  createdAt DateTime @default(now())\n}\n\nmodel Product {\n  id          Int      @id @default(autoincrement())\n  name        String\n  description String\n  price       Float\n  image       String\n  category    String\n  createdAt   DateTime @default(now())\n\n  cartItems Cart[]\n}\n\nmodel Cart {\n  id        Int     @id @default(autoincrement())\n  user      User    @relation(fields: [userId], references: [user_id]) // Changed from [id]\n  product   Product @relation(fields: [productId], references: [id])\n  userId    Int\n  productId Int\n  color     String\n  size      String\n  quantity  Int\n}\n\nmodel Order {\n  id        Int      @id @default(autoincrement())\n  user      User     @relation(fields: [userId], references: [user_id]) // Changed from [id]\n  userId    Int\n  items     Json\n  total     Float\n  createdAt DateTime @default(now())\n}\n",
+  "inlineSchemaHash": "094568262fca438ce6be1db55862e94fba812229ae403445ee97f20bb87d6bd5",
   "copyEngine": true
 }
 config.dirname = '/'

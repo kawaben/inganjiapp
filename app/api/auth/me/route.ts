@@ -15,7 +15,9 @@ export async function GET(request: NextRequest) {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: string };
     
-    const userId = parseInt(decoded.userId, 10);
+    const userId = typeof decoded.userId === 'string' 
+  ? parseInt(decoded.userId, 10) 
+  : decoded.userId;
     
     // Validate the conversion
     if (isNaN(userId)) {

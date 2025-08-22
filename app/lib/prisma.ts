@@ -1,16 +1,21 @@
 
-import { PrismaClient } from '../generated/prisma'
+import { PrismaClient } from '@prisma/client';
+import { serverEnv } from '../../env.mjs'; 
 
-// Prevent multiple instances of Prisma Client in development
+const prismaClientSingleton = () => {
+  return new PrismaClient({
+    log: serverEnv.NODE_ENV === 'development'
+      ? ['query', 'error', 'warn']
+      : ['error']
+  });
+};
+
 declare global {
-  var prisma: PrismaClient | undefined
+  var prisma: undefined | ReturnType<typeof prismaClientSingleton>;
 }
 
-const prisma = globalThis.prisma || new PrismaClient()
+const prisma = globalThis.prisma ?? prismaClientSingleton();
 
-if (process.env.NODE_ENV !== 'production') {
-  globalThis.prisma = prisma
-}
+if (serverEnv.NODE_ENV !== 'production') globalThis.prisma = prisma;
 
-export { prisma }
-
+export { prisma };

@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 interface User {
-  user_id: number;
+  user_id: string;
   email: string;
   firstname: string;
   lastname?: string;
@@ -68,6 +68,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     try {
       await fetch('/api/auth/logout', {
         method: 'POST',
+        credentials: 'include'
       });
       setUser(null);
       setIsAuthenticated(false);

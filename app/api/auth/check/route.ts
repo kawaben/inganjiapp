@@ -9,7 +9,7 @@ export async function GET() {
   try {
     // 1. Get auth token from cookies
     const cookieStore = await cookies()
-    const token = cookieStore.get('auth-token')?.value
+    const token = cookieStore.get('token')?.value
 
     if (!token) {
       return NextResponse.json(
@@ -26,7 +26,7 @@ export async function GET() {
 
     // 3. Get minimal user data from database
     const user = await prisma.user.findUnique({
-      where: { id: decoded.userId },
+      where: { user_id: decoded.userId },
       select: {
         user_id: true,
         email: true,

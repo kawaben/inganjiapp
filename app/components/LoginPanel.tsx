@@ -27,13 +27,16 @@ export default function LoginPanel({ onClose,onLoginSuccess, isAccountPanel = fa
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { login, logout, user, isAuthenticated } = useUser();
+  const [firstname, setFirstname] = useState("");
+  const [lastname, setLastname] = useState("");
+  const [username, setUsername] = useState("");
 
   // Check initial auth state - only for account panel
 useEffect(() => {
   if (isAccountPanel && !isAuthenticated) {
     const checkAuth = async () => {
       try {
-        const res = await fetch("/api/auth/check", {
+        const res = await fetch("/api/auth/me", {
           credentials: "include",
         });
         if (res.ok) {
@@ -49,77 +52,109 @@ useEffect(() => {
   }
 }, [login, isAccountPanel, isAuthenticated]);
 
- const handleLogin = async (e) => {
-  e.preventDefault();
+// Updated handleAuthRequest with optional onSuccess callback
+const handleAuthRequest = async (
+  url: string,
+  body: object,
+  onSuccess?: () => void
+) => {
   setIsLoading(true);
   try {
-    const res = await fetch("/api/auth/login", {
+    const res = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify(body),
       credentials: "include",
     });
 
     const data = await res.json();
 
-    if (res.ok) {
-      // Update to pass both user and token
-      login(data.user, data.token); // Pass both arguments
-      if (!isAccountPanel && onClose) {
-        onClose();
-      }
-      if (!isAccountPanel) {
-        router.push("/user");
-      }
-    } else {
-      alert(data.error || "Login failed");
+    if (!res.ok) {
+      throw new Error(data.error || "Request failed");
     }
-  } catch (error) {
-    console.error("Login error:", error);
-    alert("Something went wrong");
+
+    onSuccess?.();
+    return data;
   } finally {
     setIsLoading(false);
   }
 };
 
-const handleSignup = async (e) => {
+// Updated handleLogin
+const handleLogin = async (e: React.FormEvent) => {
   e.preventDefault();
-  setIsLoading(true);
+  
+  if (!email || !password) {
+    alert("Please enter both email and password");
+    return;
+  }
+
   try {
-    const res = await fetch("/api/auth/signup", {
+    const data = await handleAuthRequest("/api/auth/login", { email, password });
+    
+    login(data.user, data.token);
+    if (!isAccountPanel) {
+      onClose?.();
+      router.push("/user");
+    }
+  } catch (error) {
+  console.error("Login error:", error);
+  alert(
+    error instanceof Error 
+      ? error.message 
+      : "Login failed. Please try again."
+  );
+}
+};
+
+// Updated handleSignup with proper form state
+const handleSignup = async (e: React.FormEvent) => {
+  e.preventDefault();
+  
+  if (!email || !password) {
+    alert("Please enter both email and password");
+    return;
+  }
+
+  try {
+    console.log("Attempting signup with:", { email, password });
+    const response = await fetch("/api/auth/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         email,
         password,
-        firstname: "First",
-        lastname: "Last",
-        username: "Username",
+        firstname: firstname || "User",
+        lastname: lastname || "Account",
+        username: username || `user${Math.floor(Math.random() * 9000) + 1000}`,
       }),
-      credentials: "include",
     });
 
-    const data = await res.json();
+    const data = await response.json();
+    
+    if (!response.ok) {
+      console.error("Signup failed:", data);
+      throw new Error(data.error || "Signup failed");
+    }
 
-    if (res.ok) {
-      // Update to pass both user and token
-      login(data.user, data.token);
-      if (!isAccountPanel && onClose) {
-        onClose();
-      }
-      if (!isAccountPanel) {
-        router.push("/user");
-      }
-    } else {
-      alert(data.error || "Signup failed");
+    console.log("Signup successful:", data);
+    login(data.user, data.token);
+    
+    if (!isAccountPanel) {
+      onClose?.();
+      router.push("/user");
     }
   } catch (error) {
-    console.error("Signup error:", error);
-    alert("Something went wrong");
-  } finally {
-    setIsLoading(false);
-  }
+  console.error("Signup error:", error);
+  alert(
+    error instanceof Error
+      ? error.message
+      : "Signup failed. Please check console for details."
+  );
+}
 };
+
+
 
   const handleLogout = async () => {
     try {
@@ -128,7 +163,6 @@ const handleSignup = async (e) => {
         credentials: "include",
       });
       logout();
-      // Close the panel after logout if it's the account panel
       if (isAccountPanel && onClose) {
         onClose();
       }
@@ -161,6 +195,7 @@ const handleSignup = async (e) => {
             className="w-full p-3 rounded bg-[var(--background2)] text-[var(--secondary)] placeholder-[var(--secondary)]"
             required
           />
+          
           <button
             type="submit"
             className="w-full bg-[var(--primary)] text-[var(--foreground)] p-3 rounded-md cursor-pointer disabled:opacity-50"

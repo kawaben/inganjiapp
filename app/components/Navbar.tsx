@@ -18,7 +18,7 @@ import { useRouter } from "next/navigation";
 
 // Type definitions
 interface User {
-  id: string;
+  user_id: string;
   email: string;
   firstname: string;
   lastname: string;
@@ -27,22 +27,24 @@ interface User {
   role?: string;
 }
 
+
 export default function Navbar() {
   const pathname = usePathname();
   const [activePanel, setActivePanel] = useState(null);
   const [showLogin, setShowLogin] = useState(false);
-  
+  const { user, isAuthenticated, isLoading } = useUser();
   const { cart } = useStore();
   const { wishlist } = useStore();
-  const { isAuthenticated, isLoading } = useUser();
-  const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
 
   useEffect(() => {
+    
     if (pathname === '/user') {
       togglePanel(null);
     }
   }, [pathname]);
+
+  
 
   const togglePanel = (panel) => {
     if (panel === 'account' && !isAuthenticated) {
@@ -57,27 +59,7 @@ export default function Navbar() {
     setActivePanel(activePanel === panelName ? null : panelName);
   };
 
-  useEffect(() => {
-      const fetchUser = async () => {
-        try {
-          const response = await fetch('/api/auth/me', {
-            credentials: 'include'
-          });
   
-          if (!response.ok) {
-            throw new Error('Not authenticated');
-          }
-  
-          const data = await response.json();
-          setUser(data.user);
-        } catch (error) {
-          console.error("Authentication error:", error);
-          router.push('/');
-        } 
-      };
-  
-      fetchUser();
-    }, [router]);
   
 
   if (isLoading) {
