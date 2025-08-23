@@ -1,23 +1,23 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../../lib/prisma";
-import { Prisma } from "@prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
+//Params should have id as string (not user_id as number)
 type Params = {
   params: {
-    user_id: string;
+    id: string; 
   };
 };
 
 export async function GET(request: Request, { params }: Params) {
   try {
-    const user_id = parseInt(params.user_id); // Changed from 'id' to 'user_id'
+    const user_id = parseInt(params.id, 10); 
     if (isNaN(user_id)) {
       return NextResponse.json({ error: "Invalid user ID" }, { status: 400 });
     }
 
     const user = await prisma.user.findUnique({
-      where: { user_id }, // Now matches the variable name
+      where: { user_id }, 
       select: {
         user_id: true,
         email: true,
@@ -48,24 +48,18 @@ export async function GET(request: Request, { params }: Params) {
 
 export async function PUT(request: Request, { params }: Params) {
   try {
-    const user_id = parseInt(params.user_id); // Changed from 'id' to 'user_id'
+    const user_id = parseInt(params.id, 10); 
     if (isNaN(user_id)) {
       return NextResponse.json({ error: "Invalid user ID" }, { status: 400 });
     }
 
     const body = await request.json();
     
-    if (!body.email) {
-      return NextResponse.json(
-        { error: "Email is required" },
-        { status: 400 }
-      );
-    }
+    
 
     const updatedUser = await prisma.user.update({
-      where: { user_id }, // Now matches the variable name
-      data: {
-        email: body.email,
+      where: { user_id },
+      data: { 
         firstname: body.firstname,
         lastname: body.lastname,
         username: body.username,

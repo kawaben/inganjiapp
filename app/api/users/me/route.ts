@@ -20,13 +20,22 @@ export async function GET() {
 
     // 2. Verify JWT token
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
-      userId: string;
+      userId: string; 
       email: string;
     };
 
-    // 3. Fetch user from database
+    // 3. CONVERT string to number for Prisma
+    const userId = parseInt(decoded.userId, 10);
+    if (isNaN(userId)) {
+      return NextResponse.json(
+        { error: 'Invalid user ID format' },
+        { status: 400 }
+      );
+    }
+
+    // 4. Fetch user from database using converted number
     const user = await prisma.user.findUnique({
-      where: { id: decoded.userId },
+      where: { user_id: userId }, 
       select: {
         user_id: true,
         email: true,
@@ -39,7 +48,6 @@ export async function GET() {
         country: true,
         bio: true,
         createdAt: true,
-        updatedAt: true
       }
     });
 
@@ -50,7 +58,7 @@ export async function GET() {
       );
     }
 
-    // 4. Return user data (excluding sensitive fields)
+    // 5. Return user data (excluding sensitive fields)
     return NextResponse.json({
       success: true,
       user

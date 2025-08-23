@@ -20,7 +20,7 @@ export async function GET() {
 
     // 2. Verify JWT token
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
-      userId: string
+      userId: number
       email: string
     }
 
