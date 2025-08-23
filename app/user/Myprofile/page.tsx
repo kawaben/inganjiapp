@@ -7,7 +7,7 @@ import { useUser } from "../../context/UserContext";
 
 // Define schema for form validation
 const userSchema = z.object({
-  email: z.string().min(1, "First name is required"),
+  email: z.string().email("Invalid email address").min(1, "Email is required"),
   firstname: z.string().min(1, "First name is required"),
   lastname: z.string().optional(),
   username: z.string().optional(),
@@ -20,29 +20,13 @@ const userSchema = z.object({
 
 type UserFormData = z.infer<typeof userSchema>;
 
-// Type definitions
-interface User {
-  user_id: string;
-  email: string;
-  firstname: string;
-  lastname: string;
-  username: string;
-  image: string;
-  phone:string;
-  location: string;
-  country: string;
-  bio: string;
-  role?: string;
-}
-
 export default function Profile() {
   const router = useRouter();
-  const { isAuthenticated, isLoading: isUserLoading, checkAuth } = useUser();
+  const { user, isAuthenticated, isLoading: isUserLoading, login, checkAuth } = useUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [user, setUser] = useState<User | null>(null);
   const [formData, setFormData] = useState<UserFormData>({
     email: "",
     firstname: "",
@@ -55,6 +39,7 @@ export default function Profile() {
     bio: "",
   });
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+
 
   // Initialize form data when user is available
   useEffect(() => {
@@ -76,11 +61,11 @@ export default function Profile() {
   // Redirect if not authenticated
   useEffect(() => {
     if (!isUserLoading && !isAuthenticated) {
-     // router.push('/');
+      //router.push('/');
     }
   }, [isUserLoading, isAuthenticated, router]);
 
-  const openEditModal = () => {
+ const openEditModal = () => {
     if (!user) return;
     setFormData({
       email: user.email || "",
@@ -114,96 +99,82 @@ export default function Profile() {
   };
 
   const handleSave = async () => {
-  if (!user) return;
+    if (!user) return;
 
-  try {
-    setIsLoading(true);
-    setError(null);
-    setFormErrors({});
+    try {
+      setIsLoading(true);
+      setError(null);
+      setFormErrors({});
 
-    // ✅ Validate form data
-    const validation = userSchema.safeParse(formData);
-    if (!validation.success) {
-      const errors: Record<string, string> = {};
-      validation.error.issues.forEach(issue => {
-        if (issue.path.length > 0) {
-          const fieldName = issue.path[0] as string;
-          errors[fieldName] = issue.message;
-        }
+      // ✅ Validate form data
+      const validation = userSchema.safeParse(formData);
+      if (!validation.success) {
+        const errors: Record<string, string> = {};
+        validation.error.issues.forEach(issue => {
+          if (issue.path.length > 0) {
+            const fieldName = issue.path[0] as string;
+            errors[fieldName] = issue.message;
+          }
+        });
+        setFormErrors(errors);
+        return;
+      }
+
+      // ✅ Send update request
+      const response = await fetch(`/api/users/${user.user_id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+        credentials: 'include',
       });
-      setFormErrors(errors);
-      return;
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(responseData.error || 'Failed to update profile');
+      }
+
+      // ✅ Update user context by re-fetching user data
+      await checkAuth(); // This will update the user context with fresh data
+      
+      setIsModalOpen(false);
+      setSuccess('Profile updated successfully!');
+      
+    } catch (err) {
+      console.error("Error updating user:", err);
+      setError(err instanceof Error ? err.message : 'An unknown error occurred');
+    } finally {
+      setIsLoading(false);
     }
-
-    // ✅ Send update request
-    const response = await fetch(`/api/users/${user.user_id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData),
-      credentials: 'include',
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || 'Failed to update profile');
-    }
-
-    // ✅ Get updated user directly from response
-    const updatedUser = await response.json();
-
-    // ✅ Update user state directly instead of forcing re-check
-    setUser(updatedUser); // <-- prevents unwanted logout
-    setIsModalOpen(false);
-    setSuccess('Profile updated successfully!');
-    
-  } catch (err) {
-    console.error("Error updating user:", err);
-    setError(err instanceof Error ? err.message : 'An unknown error occurred');
-  } finally {
-    setIsLoading(false);
-  }
-};
+  };
 
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      // Basic image validation
-      if (file.size > 2 * 1024 * 1024) { // 2MB limit
-        setError('Image too large (max 2MB)');
-        return;
-      }
+    if (!file) return;
 
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData(prev => ({ ...prev, image: reader.result as string }));
-        setError(null);
-      };
-      reader.readAsDataURL(file);
+    // Basic image validation
+    if (file.size > 2 * 1024 * 1024) {
+      setError('Image too large (max 2MB)');
+      return;
     }
-  };
 
-  useEffect(() => {
-      const fetchUser = async () => {
-        try {
-          const response = await fetch('/api/auth/me', {
-            credentials: 'include'
-          });
-  
-          if (!response.ok) {
-            throw new Error('Not authenticated');
-          }
-  
-          const data = await response.json();
-          setUser(data.user);
-        } catch (error) {
-          console.error("Authentication error:", error);
-          router.push('/');
-        } 
-      };
-  
-      fetchUser();
-    }, [router]);
+    if (!file.type.startsWith('image/')) {
+      setError('Please select an image file');
+      return;
+    }
+
+    // For base64 conversion 
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setFormData(prev => ({ ...prev, image: reader.result as string }));
+      setError(null);
+    };
+    reader.onerror = () => {
+      setError('Failed to read image file');
+    };
+    reader.readAsDataURL(file);
+  };
 
 
   if (isUserLoading || !user) {
@@ -221,6 +192,7 @@ export default function Profile() {
       </div>
     );
   }
+
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -345,18 +317,6 @@ export default function Profile() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-                <div>
-                  <label className="block text-sm font-medium text-[var(--secondary)] mb-1">Email*</label>
-                  <input
-                    type="text"
-                    name="firstname"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    className={`w-full px-4 py-2 border rounded-md ${formErrors.email ? 'border-red-500' : 'border-[var(--border)]'}`}
-                    disabled={isLoading}
-                  />
-                  {formErrors.email && <p className="text-red-500 text-xs mt-1">{formErrors.email}</p>}
-                </div>
                 <div>
                   <label className="block text-sm font-medium text-[var(--secondary)] mb-1">First Name*</label>
                   <input

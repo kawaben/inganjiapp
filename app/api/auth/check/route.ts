@@ -33,7 +33,11 @@ export async function GET() {
         firstname: true,
         lastname: true,
         username: true,
-        image: true
+        image: true,
+        phone: true,       
+        location: true,
+        country: true,
+        bio: true,
       }
     })
 

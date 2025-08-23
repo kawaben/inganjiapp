@@ -42,7 +42,7 @@ useEffect(() => {
         if (res.ok) {
           const data = await res.json();
           const token = document.cookie.split('; ').find(row => row.startsWith('token='))?.split('=')[1];
-          login(data.user, token || '');
+          login( token || '');
         }
       } catch (error) {
         console.error("Auth check error:", error);
@@ -92,7 +92,7 @@ const handleLogin = async (e: React.FormEvent) => {
   try {
     const data = await handleAuthRequest("/api/auth/login", { email, password });
     
-    login(data.user, data.token);
+    login( data.token);
     if (!isAccountPanel) {
       onClose?.();
       router.push("/user");
@@ -138,7 +138,7 @@ const handleSignup = async (e: React.FormEvent) => {
     }
 
     console.log("Signup successful:", data);
-    login(data.user, data.token);
+    login( data.token);
     
     if (!isAccountPanel) {
       onClose?.();

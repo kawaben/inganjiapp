@@ -9,7 +9,7 @@ interface User {
   lastname?: string;
   username?: string;
   image?: string;
-  phone?:string;
+  phone?: string;
   location?: string;
   country?: string;
   bio?: string;
@@ -19,7 +19,7 @@ interface UserContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (userData: User, token: string) => void;
+  login: (token: string) => Promise<void>;
   logout: () => Promise<void>;
   checkAuth: () => Promise<void>;
 }
@@ -32,9 +32,36 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
 
+  const fetchUser = async () => {
+    try {
+      const response = await fetch('/api/auth/me', {
+        credentials: 'include'
+      });
+
+      if (!response.ok) {
+        throw new Error('Not authenticated');
+      }
+
+      const data = await response.json();
+      setUser(data.user);
+      setIsAuthenticated(true);
+      return data.user;
+    } catch (error) {
+      console.error("Authentication error:", error);
+      setUser(null);
+      setIsAuthenticated(false);
+      return null;
+    }
+  };
+
   useEffect(() => {
-    // Initial auth check when component mounts
-    checkAuth();
+    const initializeAuth = async () => {
+      setIsLoading(true);
+      await fetchUser();
+      setIsLoading(false);
+    };
+    
+    initializeAuth();
   }, []);
 
   const checkAuth = async () => {
@@ -43,9 +70,8 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       const response = await fetch('/api/auth/check');
       const data = await response.json();
       
-      if (data.isAuthenticated && data.user) {
-        setUser(data.user);
-        setIsAuthenticated(true);
+      if (data.isAuthenticated) {
+        await fetchUser();
       } else {
         setUser(null);
         setIsAuthenticated(false);
@@ -59,9 +85,8 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const login = (userData: User, token: string) => {
-    setUser(userData);
-    setIsAuthenticated(true);
+  const login = async (token: string) => {
+    await fetchUser();
   };
 
   const logout = async () => {
