@@ -39,8 +39,13 @@ export async function GET(request: NextRequest) {
         location: true,
         country: true,
         bio: true,
-        image: true
-      }
+        image: true,
+        gender: true,
+        account_status: true,
+        createdAt: true,
+        email_verified: true,
+        display_name: true,
+              }
     });
 
     if (!user) {

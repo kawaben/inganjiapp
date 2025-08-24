@@ -38,6 +38,7 @@ export async function GET() {
         location: true,
         country: true,
         bio: true,
+        gender: true,
       }
     })
 

@@ -13,6 +13,11 @@ interface User {
   location?: string;
   country?: string;
   bio?: string;
+  gender?: string;
+  account_status?: string,
+  createdAt?: string,
+  email_verified: boolean,
+  display_name?: string,
 }
 
 interface UserContextType {

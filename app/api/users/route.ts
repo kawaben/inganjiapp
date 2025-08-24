@@ -17,6 +17,7 @@ export async function GET() {
         location: true,
         country: true,
         image: true,
+        gender: true,
       },
     });
 

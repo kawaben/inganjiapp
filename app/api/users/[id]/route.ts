@@ -29,6 +29,7 @@ export async function GET(request: Request, { params }: Params) {
         location: true,
         country: true,
         image: true,
+        gender: true,
       },
     });
 
@@ -68,6 +69,7 @@ export async function PUT(request: Request, { params }: Params) {
         location: body.location,
         country: body.country,
         image: body.image,
+        
       },
       select: {
         user_id: true,

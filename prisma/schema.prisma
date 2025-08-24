@@ -1,11 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["clientExtensions"]
 }
 
@@ -15,20 +9,72 @@ datasource db {
 }
 
 model User {
-  user_id        Int      @id @default(autoincrement())
-  email     String   @unique
-  password  String
-  firstname String?
-  lastname  String?
-  username  String? @unique
-  phone     String?
-  bio       String?
-  location  String?
-  country   String?
-  image     String?
-  cart      Cart[]
-  orders    Order[]
-  createdAt DateTime @default(now())
+  email                                     String     @unique
+  password                                  String
+  bio                                       String?
+  country                                   String?
+  firstname                                 String?
+  image                                     String?
+  lastname                                  String?
+  location                                  String?
+  phone                                     String?
+  username                                  String?    @unique
+  createdAt                                 DateTime   @default(now())
+  user_id                                   Int        @id @default(autoincrement())
+  gender                                    String?
+  salt                                      String
+  account_status                            String     @default("active") @db.VarChar(20)
+  updated_at                                DateTime   @default(now()) @db.Timestamptz(6)
+  last_login_at                             DateTime?  @db.Timestamptz(6)
+  email_verified                            Boolean    @default(false)
+  verification_token                        String?    @db.VarChar(255)
+  verification_token_expires_at             DateTime?  @db.Timestamptz(6)
+  password_reset_token                      String?    @db.VarChar(255)
+  password_reset_token_expires_at           DateTime?  @db.Timestamptz(6)
+  display_name                              String     @default("") @db.VarChar(50)
+  profile_complete                          Boolean?   @default(dbgenerated("(((display_name)::text <> ''::text) AND (email_verified = true))"))
+  date_of_birth                             DateTime?  @db.Date
+  billing_address_id                        Int?
+  shipping_address_id                       Int?
+  default_address_id                        Int?
+  language_preference                       String     @default("en") @db.VarChar(5)
+  currency_preference                       String     @default("USD") @db.VarChar(3)
+  marketing_opt_in                          Boolean    @default(false)
+  sms_opt_in                                Boolean    @default(false)
+  theme_preference                          theme_mode @default(light)
+  customer_segment                          String     @default("new") @db.VarChar(20)
+  loyalty_points                            Int        @default(0)
+  wishlist_count                            Int        @default(0)
+  last_purchase_date                        DateTime?  @db.Timestamptz(6)
+  total_orders                              Int        @default(0)
+  total_spent                               Decimal    @default(0.00) @db.Decimal(12, 2)
+  account_credit                            Decimal    @default(0.00) @db.Decimal(12, 2)
+  average_order_value                       Decimal?   @default(dbgenerated("\nCASE\n    WHEN (total_orders > 0) THEN (total_spent / (total_orders)::numeric)\n    ELSE (0)::numeric\nEND")) @db.Decimal(12, 2)
+  gdpr_consent                              Boolean    @default(false)
+  privacy_policy_accepted                   DateTime?  @db.Timestamptz(6)
+  terms_accepted                            DateTime?  @db.Timestamptz(6)
+  failed_login_attempts                     Int        @default(0)
+  account_locked_until                      DateTime?  @db.Timestamptz(6)
+  privacy_policy_version                    String?    @db.VarChar(20)
+  terms_version                             String?    @db.VarChar(20)
+  social_provider                           String?    @db.VarChar(20)
+  social_provider_id                        String?    @db.VarChar(128)
+  social_profile_data                       Json?
+  Address_Address_user_idToUser             Address[]  @relation("Address_user_idToUser")
+  cart                                      Cart[]
+  orders                                    Order[]
+  Address_User_billing_address_idToAddress  Address?   @relation("User_billing_address_idToAddress", fields: [billing_address_id], references: [address_id], onDelete: NoAction, onUpdate: NoAction)
+  Address_User_default_address_idToAddress  Address?   @relation("User_default_address_idToAddress", fields: [default_address_id], references: [address_id], onDelete: NoAction, onUpdate: NoAction)
+  Address_User_shipping_address_idToAddress Address?   @relation("User_shipping_address_idToAddress", fields: [shipping_address_id], references: [address_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([social_provider, social_provider_id], map: "uq_social_auth")
+  @@index([social_profile_data], map: "idx_social_profile", type: Gin)
+  @@index([billing_address_id], map: "idx_user_billing")
+  @@index([display_name(ops: raw("gin_trgm_ops"))], map: "idx_user_display_name_search", type: Gin)
+  @@index([shipping_address_id], map: "idx_user_shipping")
+  @@index([social_provider, social_provider_id], map: "idx_user_social")
+  @@index([account_status], map: "idx_user_status")
+  @@index([updated_at], map: "idx_user_updated_at")
 }
 
 model Product {
@@ -39,26 +85,51 @@ model Product {
   image       String
   category    String
   createdAt   DateTime @default(now())
-
-  cartItems Cart[]
+  cartItems   Cart[]
 }
 
 model Cart {
   id        Int     @id @default(autoincrement())
-  user      User    @relation(fields: [userId], references: [user_id])  // Changed from [id]
-  product   Product @relation(fields: [productId], references: [id])
   userId    Int
   productId Int
+  quantity  Int
   color     String
   size      String
-  quantity  Int
+  product   Product @relation(fields: [productId], references: [id])
+  user      User    @relation(fields: [userId], references: [user_id])
 }
 
 model Order {
   id        Int      @id @default(autoincrement())
-  user      User     @relation(fields: [userId], references: [user_id])  // Changed from [id]
   userId    Int
   items     Json
   total     Float
   createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [user_id])
+}
+
+model Address {
+  address_id                             Int      @id @default(autoincrement())
+  user_id                                Int
+  street_address1                        String   @db.VarChar(100)
+  street_address2                        String?  @db.VarChar(100)
+  city                                   String   @db.VarChar(50)
+  state                                  String   @db.VarChar(50)
+  postal_code                            String   @db.VarChar(20)
+  country                                String   @db.VarChar(50)
+  is_default                             Boolean  @default(false)
+  created_at                             DateTime @default(now()) @db.Timestamptz(6)
+  updated_at                             DateTime @default(now()) @db.Timestamptz(6)
+  User_Address_user_idToUser             User     @relation("Address_user_idToUser", fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+  User_User_billing_address_idToAddress  User[]   @relation("User_billing_address_idToAddress")
+  User_User_default_address_idToAddress  User[]   @relation("User_default_address_idToAddress")
+  User_User_shipping_address_idToAddress User[]   @relation("User_shipping_address_idToAddress")
+
+  @@index([user_id], map: "idx_address_user")
+}
+
+enum theme_mode {
+  light
+  dark
+  system
 }

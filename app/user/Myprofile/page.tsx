@@ -1,4 +1,3 @@
-
 'use client';
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -16,6 +15,7 @@ const userSchema = z.object({
   country: z.string().optional(),
   bio: z.string().max(500, "Bio must be less than 500 characters").optional(),
   image: z.string().optional(),
+  gender: z.string().optional(),
 });
 
 type UserFormData = z.infer<typeof userSchema>;
@@ -37,6 +37,7 @@ export default function Profile() {
     location: "",
     country: "",
     bio: "",
+    gender: "",
   });
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
@@ -54,6 +55,7 @@ export default function Profile() {
         country: user.country || "",
         image: user.image || "",
         bio: user.bio || "",
+        gender: user.gender || "",
       });
     }
   }, [user]);
@@ -77,6 +79,7 @@ export default function Profile() {
       country: user.country || "",
       image: user.image || "",
       bio: user.bio || "",
+      gender: user.gender || "",
     });
     setFormErrors({});
     setIsModalOpen(true);
@@ -84,7 +87,8 @@ export default function Profile() {
     setSuccess(null);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  // FIXED: Updated to handle select elements
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     
@@ -268,6 +272,39 @@ export default function Profile() {
               <p className="font-medium">{user.phone}</p>
             </div>
           )}
+          {user.gender && (
+            <div>
+              <p className="text-sm text-[var(--secondary)] mb-1">Gender</p>
+              <p className="font-medium">{user.gender}</p>
+            </div>
+          )}
+          {user.account_status && (
+            <div>
+              <p className="text-sm text-[var(--secondary)] mb-1">Status</p>
+              <p className="font-medium">{user.account_status}</p>
+            </div>
+          )}
+
+          {user.email_verified && (
+            <div>
+              <p className="text-sm text-[var(--secondary)] mb-1">Verified</p>
+              <p className="font-medium">{user.email_verified}</p>
+            </div>
+          )}
+
+          {user.createdAt && (
+            <div className="md:col-span-2">
+              <p className="text-sm text-[var(--secondary)] mb-1">Joined</p>
+              <p className="font-medium">
+                {new Date(user.createdAt).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </p>
+            </div>
+          )}
+
           {user.bio && (
             <div className="md:col-span-2">
               <p className="text-sm text-[var(--secondary)] mb-1">Bio</p>
@@ -384,6 +421,20 @@ export default function Profile() {
                     className="w-full px-4 py-2 border border-[var(--border)] rounded-md"
                     disabled={isLoading}
                   />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[var(--secondary)] mb-1">Gender</label>
+                  <select
+                    name="gender"
+                    value={formData.gender}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 border border-[var(--border)] rounded-md"
+                    disabled={isLoading}
+                  >
+                    <option value="MALE">Male</option>
+                    <option value="FEMALE">Female</option>
+                    <option value="PREFER_NOT_TO_SAY">Prefer not to say</option>
+                  </select>
                 </div>
               </div>
 
