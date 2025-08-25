@@ -16,6 +16,7 @@ const userSchema = z.object({
   bio: z.string().max(500, "Bio must be less than 500 characters").optional(),
   image: z.string().optional(),
   gender: z.enum(['male', 'female', 'prefer_not_to_say']).optional().or(z.undefined()),
+  theme_preference: z.enum(['light', 'dark', 'system']).optional(),
 });
 
 type UserFormData = z.infer<typeof userSchema>;

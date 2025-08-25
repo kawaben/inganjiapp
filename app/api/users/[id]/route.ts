@@ -14,6 +14,7 @@ const updateUserSchema = z.object({
   country: z.string().optional(),
   image: z.string().optional(),
   gender: z.enum(['male', 'female', 'prefer_not_to_say']).optional().or(z.literal('').transform(() => undefined)),
+  theme_preference: z.enum(['light', 'dark', 'system']).optional(),
 });
 
 type Params = {
@@ -43,6 +44,7 @@ export async function GET(request: Request, { params }: Params) {
         country: true,
         image: true,
         gender: true,
+        theme_preference: true,
       },
     });
 
@@ -91,6 +93,8 @@ export async function PUT(request: Request, { params }: Params) {
     if (validatedData.country !== undefined) updateData.country = validatedData.country;
     if (validatedData.image !== undefined) updateData.image = validatedData.image;
     if (validatedData.gender !== undefined) updateData.gender = validatedData.gender;
+    if (validatedData.theme_preference !== undefined) updateData.theme_preference = validatedData.theme_preference;
+
 
     const updatedUser = await prisma.user.update({
       where: { user_id },
@@ -107,6 +111,7 @@ export async function PUT(request: Request, { params }: Params) {
         country: true,
         image: true,
         gender: true,
+        theme_preference: true,
       },
     });
 
