@@ -15,7 +15,7 @@ const userSchema = z.object({
   country: z.string().optional(),
   bio: z.string().max(500, "Bio must be less than 500 characters").optional(),
   image: z.string().optional(),
-  gender: z.string().optional(),
+  gender: z.enum(['male', 'female', 'prefer_not_to_say']).optional().or(z.undefined()),
 });
 
 type UserFormData = z.infer<typeof userSchema>;
@@ -37,10 +37,9 @@ export default function Profile() {
     location: "",
     country: "",
     bio: "",
-    gender: "",
+    gender: undefined,
   });
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
-
 
   // Initialize form data when user is available
   useEffect(() => {
@@ -55,7 +54,7 @@ export default function Profile() {
         country: user.country || "",
         image: user.image || "",
         bio: user.bio || "",
-        gender: user.gender || "",
+        gender: user.gender as "male" | "female" | "prefer_not_to_say" | undefined || undefined,
       });
     }
   }, [user]);
@@ -67,7 +66,7 @@ export default function Profile() {
     }
   }, [isUserLoading, isAuthenticated, router]);
 
- const openEditModal = () => {
+  const openEditModal = () => {
     if (!user) return;
     setFormData({
       email: user.email || "",
@@ -79,7 +78,7 @@ export default function Profile() {
       country: user.country || "",
       image: user.image || "",
       bio: user.bio || "",
-      gender: user.gender || "",
+      gender: user.gender as "male" | "female" | "prefer_not_to_say" | undefined || undefined,
     });
     setFormErrors({});
     setIsModalOpen(true);
@@ -87,10 +86,31 @@ export default function Profile() {
     setSuccess(null);
   };
 
-  // FIXED: Updated to handle select elements
+  // Type guard for gender validation
+  function isValidGender(value: string): value is "male" | "female" | "prefer_not_to_say" {
+    return ["male", "female", "prefer_not_to_say"].includes(value);
+  }
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    
+    // Special handling for gender field
+    if (name === 'gender') {
+      let genderValue: "male" | "female" | "prefer_not_to_say" | undefined;
+      
+      if (value === '') {
+        genderValue = undefined;
+      } else if (isValidGender(value)) {
+        genderValue = value;
+      } else {
+        // Handle invalid value
+        genderValue = undefined;
+      }
+      
+      setFormData(prev => ({ ...prev, [name]: genderValue }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
     
     // Clear error when user starts typing
     if (formErrors[name]) {
@@ -139,7 +159,7 @@ export default function Profile() {
       }
 
       // ✅ Update user context by re-fetching user data
-      await checkAuth(); // This will update the user context with fresh data
+      //await checkAuth(); // This will update the user context with fresh data
       
       setIsModalOpen(false);
       setSuccess('Profile updated successfully!');
@@ -151,7 +171,6 @@ export default function Profile() {
       setIsLoading(false);
     }
   };
-
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -180,7 +199,6 @@ export default function Profile() {
     reader.readAsDataURL(file);
   };
 
-
   if (isUserLoading || !user) {
     return (
       <div className="min-h-screen bg-[var(--background)] flex items-center justify-center text-center p-4">
@@ -196,7 +214,6 @@ export default function Profile() {
       </div>
     );
   }
-
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -426,14 +443,15 @@ export default function Profile() {
                   <label className="block text-sm font-medium text-[var(--secondary)] mb-1">Gender</label>
                   <select
                     name="gender"
-                    value={formData.gender}
+                    value={formData.gender || ''}
                     onChange={handleInputChange}
                     className="w-full px-4 py-2 border border-[var(--border)] rounded-md"
                     disabled={isLoading}
                   >
-                    <option value="MALE">Male</option>
-                    <option value="FEMALE">Female</option>
-                    <option value="PREFER_NOT_TO_SAY">Prefer not to say</option>
+                    <option value="">Select Gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="prefer_not_to_say">Prefer not to say</option>
                   </select>
                 </div>
               </div>
@@ -487,12 +505,8 @@ export default function Profile() {
                 </button>
                 <button type="button"
                   className="px-6 py-2 rounded-md bg-[var(--primary)] text-[var(--foreground)] cursor-pointer transition-colors flex items-center justify-center min-w-[100px]"
-                  onClick={() => {
-                        handleSave();
-                       
-                      }}
+                  onClick={handleSave}
                   disabled={isLoading}
-                  
                 >
                   {isLoading ? (
                     <>

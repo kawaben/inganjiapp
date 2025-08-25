@@ -13,7 +13,7 @@ interface User {
   location?: string;
   country?: string;
   bio?: string;
-  gender?: string;
+  gender?: "male" | "female" | "prefer_not_to_say" | undefined;
   account_status?: string,
   createdAt?: string,
   email_verified: boolean,
