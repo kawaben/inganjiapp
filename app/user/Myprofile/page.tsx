@@ -310,7 +310,7 @@ export default function Profile() {
           )}
 
           {user.createdAt && (
-            <div className="md:col-span-2">
+            <div>
               <p className="text-sm text-[var(--secondary)] mb-1">Joined</p>
               <p className="font-medium">
                 {new Date(user.createdAt).toLocaleDateString('en-US', {
@@ -445,7 +445,7 @@ export default function Profile() {
                     name="gender"
                     value={formData.gender || ''}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 border border-[var(--border)] rounded-md"
+                    className="w-full px-4 py-2 border border-[var(--border)] rounded-md bg-[var(--background2)]"
                     disabled={isLoading}
                   >
                     <option value="">Select Gender</option>
