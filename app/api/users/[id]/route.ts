@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "../../../lib/prisma";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { z } from "zod";
+import { tr } from "zod/v4/locales";
 
 // Validation schema
 const updateUserSchema = z.object({
@@ -15,6 +16,7 @@ const updateUserSchema = z.object({
   image: z.string().optional(),
   gender: z.enum(['male', 'female', 'prefer_not_to_say']).optional().or(z.literal('').transform(() => undefined)),
   theme_preference: z.enum(['light', 'dark', 'system']).optional(),
+  language_preference: z.string().optional(),
 });
 
 type Params = {
@@ -45,6 +47,7 @@ export async function GET(request: Request, { params }: Params) {
         image: true,
         gender: true,
         theme_preference: true,
+        language_preference: true,
       },
     });
 
@@ -94,6 +97,7 @@ export async function PUT(request: Request, { params }: Params) {
     if (validatedData.image !== undefined) updateData.image = validatedData.image;
     if (validatedData.gender !== undefined) updateData.gender = validatedData.gender;
     if (validatedData.theme_preference !== undefined) updateData.theme_preference = validatedData.theme_preference;
+    if (validatedData.language_preference !== undefined) updateData.language_preference = validatedData.language_preference;
 
 
     const updatedUser = await prisma.user.update({
@@ -112,6 +116,7 @@ export async function PUT(request: Request, { params }: Params) {
         image: true,
         gender: true,
         theme_preference: true,
+        language_preference: true,
       },
     });
 

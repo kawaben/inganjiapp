@@ -6,8 +6,6 @@ export default function ThemeToggle() {
 
   return (
     <div className="flex items-center gap-2 p-2 bg-[var(--background2)] rounded-lg">
-      <span className="text-sm text-[var(--text)]">Theme:</span>
-      
       <select
         value={theme}
         onChange={(e) => setTheme(e.target.value as "light" | "dark" | "system")}

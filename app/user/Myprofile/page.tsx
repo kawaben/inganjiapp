@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { useUser } from "../../context/UserContext";
+import { useTranslation } from '../../hooks/useTranslation';
 
 // Define schema for form validation
 const userSchema = z.object({
@@ -17,6 +18,8 @@ const userSchema = z.object({
   image: z.string().optional(),
   gender: z.enum(['male', 'female', 'prefer_not_to_say']).optional().or(z.undefined()),
   theme_preference: z.enum(['light', 'dark', 'system']).optional(),
+  language_preference: z.string().optional(),
+  
 });
 
 type UserFormData = z.infer<typeof userSchema>;
@@ -41,6 +44,7 @@ export default function Profile() {
     gender: undefined,
   });
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const { t } = useTranslation();
 
   // Initialize form data when user is available
   useEffect(() => {
@@ -218,7 +222,7 @@ export default function Profile() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-6 text-[var(--primary)]">My Profile</h1>
+      <h1 className="text-2xl font-bold mb-6 text-[var(--primary)]">{t('myprofile')}</h1>
       
       {success && (
         <div className="mb-6 p-4 bg-green-100 text-green-700 rounded-md shadow">

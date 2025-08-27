@@ -1,5 +1,6 @@
 
 import ThemeToggle from "../../components/ThemeButton";
+import LanguageToggle from "../../components/LanguageToggle";
 
 export default function Settings() {
  
@@ -16,6 +17,7 @@ export default function Settings() {
 
       <div className="flex items-center justify-between bg-[var(--background)] p-6 rounded">
         <span className="text-lg">Language</span>
+        <LanguageToggle/>
       </div>
 
       {/* Placeholder for other settings */}

@@ -46,6 +46,7 @@ export async function GET(request: NextRequest) {
         email_verified: true,
         display_name: true,
         theme_preference: true,
+        language_preference: true,
               }
     });
 

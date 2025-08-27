@@ -19,6 +19,7 @@ interface User {
   email_verified: boolean;
   display_name?: string;
   theme_preference?: "light" | "dark" | "system";
+  language_preference?: string;
 }
 
 interface UserContextType {
@@ -29,16 +30,28 @@ interface UserContextType {
   logout: () => Promise<void>;
   checkAuth: () => Promise<void>;
   theme: "light" | "dark" | "system"; 
-  setTheme: (theme: "light" | "dark" | "system") => Promise<void>; 
+  setTheme: (theme: "light" | "dark" | "system") => Promise<void>;
+  language: string; // Add this
+  setLanguage: (language: string) => Promise<void>; // Add this
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
+
+// Supported languages
+export const SUPPORTED_LANGUAGES = [
+  { code: 'en', name: 'English', flag: '🇺🇸' },
+  { code: 'fr', name: 'Français', flag: '🇫🇷' },
+  { code: 'rw', name: 'Ikinyarwanda', flag: '🇷🇼' },
+  { code: 'sw', name: 'Kiswahili', flag: '🇹🇿' },
+  
+];
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [theme, setThemeState] = useState<"light" | "dark" | "system">("system");
+  const [language, setLanguageState] = useState<string>('en'); // Default to English
   const router = useRouter();
 
   // Apply theme to document
@@ -54,7 +67,6 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     
     document.documentElement.setAttribute('data-theme', effectiveTheme);
     
-    // Also set the class for compatibility
     if (effectiveTheme === 'dark') {
       document.documentElement.classList.add('dark');
     } else {
@@ -62,8 +74,14 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Initialize theme from localStorage or system preference
+  // Apply language to document
+  const applyLanguage = (lang: string) => {
+    document.documentElement.lang = lang;
+  };
+
+  // Initialize from localStorage or system preferences
   useEffect(() => {
+    // Initialize theme
     const savedTheme = localStorage.getItem('theme') as "light" | "dark" | "system" | null;
     if (savedTheme) {
       setThemeState(savedTheme);
@@ -71,9 +89,19 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     } else {
       applyTheme('system');
     }
+
+    // Initialize language
+    const savedLanguage = localStorage.getItem('language');
+    const browserLanguage = navigator.language.split('-')[0]; // Get base language code
+    const defaultLanguage = savedLanguage || 
+                           (SUPPORTED_LANGUAGES.some(l => l.code === browserLanguage) ? browserLanguage : 'en');
+    
+    setLanguageState(defaultLanguage);
+    applyLanguage(defaultLanguage);
+    localStorage.setItem('language', defaultLanguage);
   }, []);
 
-  // Listen for system theme changes when theme is set to 'system'
+  // Listen for system theme changes
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     
@@ -109,6 +137,13 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         setThemeState(data.user.theme_preference);
         applyTheme(data.user.theme_preference);
         localStorage.setItem('theme', data.user.theme_preference);
+      }
+      
+      // Set language from user preference if available
+      if (data.user.language_preference) {
+        setLanguageState(data.user.language_preference);
+        applyLanguage(data.user.language_preference);
+        localStorage.setItem('language', data.user.language_preference);
       }
       
       return data.user;
@@ -174,21 +209,35 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     applyTheme(newTheme);
     localStorage.setItem('theme', newTheme);
 
-    // Save to database if user is authenticated
     if (user) {
       try {
-        const response = await fetch(`/api/users/${user.user_id}`, {
+        await fetch(`/api/users/${user.user_id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ theme_preference: newTheme }),
           credentials: 'include',
         });
-
-        if (!response.ok) {
-          console.error('Failed to save theme preference to database');
-        }
       } catch (error) {
         console.error('Failed to save theme preference:', error);
+      }
+    }
+  };
+
+  const setLanguage = async (newLanguage: string) => {
+    setLanguageState(newLanguage);
+    applyLanguage(newLanguage);
+    localStorage.setItem('language', newLanguage);
+
+    if (user) {
+      try {
+        await fetch(`/api/users/${user.user_id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ language_preference: newLanguage }),
+          credentials: 'include',
+        });
+      } catch (error) {
+        console.error('Failed to save language preference:', error);
       }
     }
   };
@@ -202,6 +251,8 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     checkAuth,
     theme,
     setTheme,
+    language,
+    setLanguage,
   };
 
   return (
